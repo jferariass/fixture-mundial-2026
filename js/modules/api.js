@@ -65,7 +65,7 @@ export function cargarResultados() {
             rutaProxyLocal, // 1. Proxy local / Vercel rewrite (sin CORS, rápido y de confianza)
             url,            // 2. Intento directo original
             `https://corsproxy.io/?${encodeURIComponent(url)}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+            `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
         ];
         
         if (proxyIdx >= proxies.length) {
