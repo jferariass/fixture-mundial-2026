@@ -372,25 +372,81 @@ function cargarResultados() {
         });
     });
 
-    // Intentar descargar en vivo de la API
-    // 1. Primero consultamos la API de Equipos para mapear IDs a Códigos FIFA
-    fetch("https://worldcup26.ir/get/teams")
-        .then(response => {
-            if (!response.ok) throw new Error("API Equipos Offline");
-            return response.json();
-        })
+    const URL_TEAMS = "https://worldcup26.ir/get/teams";
+    const URL_GAMES = "https://worldcup26.ir/get/games";
+    
+    // Función para poblar la lista de partidos con los datos locales si la API falla
+    const poblarListaPartidosLocal = () => {
+        listaPartidosCompleta = [];
+        Object.keys(PARTIDOS).forEach(letra => {
+            PARTIDOS[letra].forEach((p, idx) => {
+                const s1 = partidosGoles[`${letra}-${idx}-1`];
+                const s2 = partidosGoles[`${letra}-${idx}-2`];
+                const jugado = s1 !== undefined && s2 !== undefined;
+                
+                listaPartidosCompleta.push({
+                    id: `local-${letra}-${idx}`,
+                    type: "group",
+                    group: letra,
+                    matchday: Math.floor(idx / 2) + 1,
+                    finished: jugado ? "TRUE" : "FALSE",
+                    time_elapsed: jugado ? "finished" : "notstarted",
+                    isStarted: jugado,
+                    fifaHome: p.l1,
+                    fifaAway: p.l2,
+                    nombreHome: PAISES[p.l1].nombre,
+                    nombreAway: PAISES[p.l2].nombre,
+                    fechaArg: p.fecha,
+                    horaArg: p.hora,
+                    s1: jugado ? s1 : null,
+                    s2: jugado ? s2 : null
+                });
+            });
+        });
+    };
+
+    // Intentar descargar de la API con fallback encadenado a proxies CORS
+    const fetchConProxy = (url, proxyIdx = 0) => {
+        const proxies = [
+            url, // Intento directo primero
+            `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+        ];
+        
+        if (proxyIdx >= proxies.length) {
+            return Promise.reject(new Error("Todos los intentos (directo y proxies CORS) fallaron."));
+        }
+        
+        return fetch(proxies[proxyIdx])
+            .then(res => {
+                if (!res.ok) throw new Error(`Status ${res.status}`);
+                
+                // AllOrigins devuelve la respuesta en una propiedad "contents" como string JSON si se consulta directo
+                if (proxies[proxyIdx].includes("allorigins")) {
+                    return res.json().then(json => {
+                        // Si viene envuelto, lo extraemos, si no, lo devolvemos directo
+                        if (json && json.contents) {
+                            return JSON.parse(json.contents);
+                        }
+                        return json;
+                    });
+                }
+                return res.json();
+            })
+            .catch(err => {
+                console.warn(`Intento ${proxyIdx + 1} fallido para ${url} (${err.message}). Probando alternativa...`);
+                return fetchConProxy(url, proxyIdx + 1);
+            });
+    };
+
+    fetchConProxy(URL_TEAMS)
         .then(data => {
             if (data && data.teams) {
                 data.teams.forEach(t => {
                     mapaEquiposIdACodigo[t.id.toString()] = t.fifa_code;
                 });
             }
-            // 2. Una vez que tenemos los equipos, consultamos los partidos
-            return fetch("https://worldcup26.ir/get/games");
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("API Partidos Offline");
-            return response.json();
+            return fetchConProxy(URL_GAMES);
         })
         .then(data => {
             console.log("Carga de API exitosa:", data);
@@ -399,11 +455,14 @@ function cargarResultados() {
                 data.games.forEach(match => {
                     procesarPartidoAPI(match);
                 });
+            } else {
+                poblarListaPartidosLocal();
             }
             actualizarInterfaz();
         })
         .catch(err => {
-            console.warn("Usando base de datos estática local para resultados. API no disponible:", err.message);
+            console.warn("Usando base de datos estática local para resultados y partidos de hoy. API no disponible:", err.message);
+            poblarListaPartidosLocal();
             actualizarInterfaz();
         });
 }
