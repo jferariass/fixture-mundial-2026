@@ -380,8 +380,6 @@ function crearTarjetaGrupoAmplia(letra) {
     return card;
 }
 
-}
-
 // ==========================================================
 // FICHA DE DETALLES DEL PARTIDO (MODAL, EVENTOS Y TÁCTICA)
 // ==========================================================
