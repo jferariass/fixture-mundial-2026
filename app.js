@@ -895,4 +895,11 @@ window.onload = () => {
     
     // Configurar refresco automático en vivo cada 60 segundos
     setInterval(cargarResultados, 60000);
+    
+    // Registrar Service Worker para soporte PWA y offline
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js")
+            .then(reg => console.log("Service Worker registrado con éxito:", reg.scope))
+            .catch(err => console.warn("Error al registrar Service Worker:", err));
+    }
 };
