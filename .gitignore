@@ -1,0 +1,12 @@
+# Ignorar capturas de previsualización temporales
+preview.png
+preview_pag1.png
+preview_pag2.png
+preview_pag3.png
+preview_pag4.png
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+__pycache__/
+*.pyc

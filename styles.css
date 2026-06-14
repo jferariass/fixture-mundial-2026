@@ -1,0 +1,652 @@
+/* Estilos Premium para el Fixture de 4 Páginas del Mundial 2026 */
+
+:root {
+    --bg-dark: #071e08;
+    --card-bg: rgba(12, 45, 15, 0.9);
+    --header-bg: #184c1c;
+    --border-white: rgba(255, 255, 255, 0.35);
+    --gold: #ffd700;
+    --gold-glow: rgba(255, 215, 0, 0.4);
+    --white: #ffffff;
+    --text-muted: #d0ebd2;
+    --green-bright: #2e7d32;
+    --field-lines: rgba(255, 255, 255, 0.12);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--white);
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fondo de Campo de Fútbol */
+.cancha-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    background: repeating-linear-gradient(
+        90deg,
+        #1b5e20,
+        #1b5e20 100px,
+        #227027 100px,
+        #227027 200px
+    );
+}
+
+.cancha-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.65) 90%);
+    pointer-events: none;
+}
+
+/* Cabecera */
+.header {
+    background: linear-gradient(135deg, #0f4012 0%, #1c5f20 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 10px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 10;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px #0a290d;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* Pestañas de Navegación */
+.nav-tabs {
+    display: flex;
+    gap: 6px;
+}
+
+.tab-btn {
+    background-color: rgba(0,0,0,0.4);
+    border: 1px solid var(--border-white);
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background-color: var(--green-bright);
+    border-color: #fff;
+}
+
+.tab-btn.active {
+    background-color: var(--green-bright);
+    border-color: var(--gold);
+    box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.btn-download {
+    background-color: var(--gold);
+    color: #000;
+}
+
+.btn-download:hover {
+    background-color: #ffe44d;
+    transform: translateY(-1px);
+}
+
+.btn-print {
+    background-color: #ffffff;
+    color: #111;
+}
+
+.btn-print:hover {
+    background-color: #e6e6e6;
+    transform: translateY(-1px);
+}
+
+/* Contenido Principal */
+.main-content {
+    flex: 1;
+    width: 100%;
+    max-width: 1350px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+/* Páginas de Impresión / Secciones */
+.print-page {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.print-page.active {
+    display: block;
+}
+
+.print-page-title {
+    display: none;
+}
+
+/* Cuadrícula de 2x2 para grupos */
+.grid-grupos-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Tarjetas de Grupos */
+.grupo-card {
+    background-color: var(--card-bg);
+    border: 1.5px solid var(--border-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+.grupo-header {
+    background-color: var(--green-bright);
+    padding: 8px 15px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid var(--border-white);
+}
+
+/* Tabla de Posiciones Interna */
+.grupo-tabla-pos {
+    padding: 8px 10px;
+    background-color: rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.tabla-mini {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+}
+
+.tabla-mini th {
+    background-color: rgba(46, 125, 50, 0.6);
+    color: var(--white);
+    font-weight: 800;
+    text-align: center;
+    padding: 4px 6px;
+}
+
+.tabla-mini th:first-child {
+    text-align: left;
+}
+
+.tabla-mini td {
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+}
+
+.tabla-mini td:first-child {
+    text-align: left;
+}
+
+.tabla-mini tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.03);
+}
+
+.tabla-mini .eq-cell {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+}
+
+.tabla-mini .eq-flag {
+    width: 18px;
+    height: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 1px;
+}
+
+/* Partidos en 4 páginas */
+.grupo-partidos {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    justify-content: space-around;
+}
+
+.partido-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.78rem;
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+}
+
+.partido-row:last-child {
+    border-bottom: none;
+}
+
+.partido-info {
+    width: 110px;
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.partido-team-l {
+    flex: 1;
+    text-align: right;
+    padding-right: 10px;
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.partido-team-r {
+    flex: 1;
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
+
+.partido-score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Tablero de Marcador (No editable) */
+.score-display {
+    width: 28px;
+    height: 24px;
+    background-color: rgba(0,0,0,0.65);
+    border: 1.5px solid var(--border-white);
+    border-radius: 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.score-display.has-score {
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 5px var(--gold-glow);
+}
+
+.score-divider {
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+}
+
+/* --- SECCIÓN CENTRAL: BRACKET DE FASE FINAL (PAGINA 4) --- */
+.fase-final-bracket {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+    background-color: rgba(12, 45, 15, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.6);
+    overflow: hidden;
+    align-items: center;
+    min-height: 520px;
+}
+
+.copa-decoracion {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 500px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/FIFA_World_Cup_Trophy.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bracket-stage {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    z-index: 1;
+}
+
+/* Estilo de Llaves */
+.match-card {
+    background-color: rgba(10, 36, 12, 0.96);
+    border: 1.5px solid var(--gold);
+    border-radius: 6px;
+    padding: 6px 8px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 140px;
+    margin: 0 auto;
+}
+
+.match-title {
+    color: var(--gold);
+    font-weight: 800;
+    text-align: center;
+    font-size: 0.6rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,215,0,0.25);
+    padding-bottom: 3px;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.match-team-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.team-name {
+    font-weight: 700;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+.score-display-bracket {
+    width: 20px;
+    height: 18px;
+    background-color: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+}
+
+.score-display-bracket.has-score {
+    color: var(--gold);
+    border-color: var(--gold);
+}
+
+/* Centro: Finales */
+.bracket-center {
+    grid-column: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.gold-trophy {
+    font-size: 3rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
+    animation: pulse 2.5s infinite;
+}
+
+.match-final {
+    max-width: 170px;
+    background: linear-gradient(135deg, #184c1c 0%, #0c2b10 100%);
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+    padding: 8px 12px;
+}
+
+.match-final .match-title {
+    font-size: 0.75rem;
+    color: #fff;
+    border-bottom-color: rgba(255,255,255,0.3);
+}
+
+.match-final .score-display-bracket {
+    width: 24px;
+    height: 20px;
+    font-size: 0.85rem;
+    background-color: rgba(255,255,255,0.15);
+}
+
+.match-bronze {
+    max-width: 160px;
+    border-color: #cd7f32;
+}
+
+.match-bronze .match-title {
+    color: #cd7f32;
+}
+
+.footer {
+    background-color: #041405;
+    text-align: center;
+    padding: 15px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* --- ESTILOS DE IMPRESIÓN (POSTER DE 4 PÁGINAS A4 HORIZONTALES) --- */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+    
+    body {
+        background-color: #1b5e20;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        width: 297mm;
+        height: 210mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    
+    .cancha-background {
+        background: repeating-linear-gradient(
+            90deg,
+            #1b5e20,
+            #1b5e20 100px,
+            #227027 100px,
+            #227027 200px
+        ) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        width: 297mm;
+        height: 210mm;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .main-content {
+        max-width: 297mm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Mostrar todas las páginas y forzar salto de página entre ellas */
+    .print-page {
+        display: block !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        padding: 10mm 15mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        position: relative !important;
+        box-sizing: border-box !important;
+    }
+    
+    .print-page-title {
+        display: block !important;
+        text-align: center;
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 14pt;
+        color: #fff;
+        margin-bottom: 2mm;
+        text-shadow: 2px 2px 0px #0a290d;
+    }
+    
+    /* Cuadrícula de 2x2 para grupos al imprimir */
+    .grid-grupos-2x2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6mm !important;
+        height: 175mm !important;
+    }
+    
+    .grupo-card {
+        border-color: #fff !important;
+        background-color: rgb(12, 45, 15) !important;
+        box-shadow: none !important;
+        height: 82mm !important;
+    }
+    
+    .grupo-header {
+        background-color: rgb(24, 76, 28) !important;
+        padding: 2mm 4mm !important;
+        font-size: 11pt !important;
+    }
+    
+    .grupo-tabla-pos {
+        padding: 1.5mm 3mm !important;
+    }
+    
+    .tabla-mini th {
+        background-color: rgb(36, 114, 42) !important;
+    }
+    
+    .grupo-partidos {
+        padding: 2mm 4mm !important;
+        gap: 1.5mm !important;
+    }
+    
+    .partido-row {
+        font-size: 8pt !important;
+        padding: 1mm 0 !important;
+    }
+    
+    /* Bracket en la página 4 al imprimir */
+    .fase-final-bracket {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        height: 180mm !important;
+        min-height: auto !important;
+        grid-template-columns: repeat(9, 1fr) !important;
+        gap: 1mm !important;
+    }
+    
+    .match-card {
+        border-color: #ffd700 !important;
+        background-color: rgb(10, 36, 12) !important;
+        box-shadow: none !important;
+        padding: 1.5mm 2mm !important;
+        max-width: 25mm !important;
+    }
+    
+    .match-title {
+        font-size: 4.8pt !important;
+    }
+    
+    .team-name {
+        font-size: 6pt !important;
+        max-width: 18mm !important;
+    }
+    
+    .score-display, .score-display-bracket {
+        background-color: transparent !important;
+        border: 1px solid rgba(255,255,255,0.4) !important;
+        color: #fff !important;
+    }
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixture Oficial Automático - Copa Mundial FIFA 2026</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="cancha-background"></div>
+    
+    <header class="header no-print">
+        <div class="header-content">
+            <h1 class="logo-text">COPA MUNDIAL DE LA FIFA 2026</h1>
+            <p class="subtitle">TABLERO DE RESULTADOS EN VIVO • HORARIO DE ARGENTINA (GMT-3)</p>
+        </div>
+        
+        <!-- Pestañas de Navegación -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-page-1')">PÁG 1: GRUPOS A-D</button>
+            <button class="tab-btn" onclick="switchTab('tab-page-2')">PÁG 2: GRUPOS E-H</button>
+            <button class="tab-btn" onclick="switchTab('tab-page-3')">PÁG 3: GRUPOS I-L</button>
+            <button class="tab-btn" onclick="switchTab('tab-page-4')">PÁG 4: FASE FINAL</button>
+        </nav>
+
+        <div class="actions">
+            <a href="fixture_mundial_2026.pdf" download class="btn btn-download">
+                <i class="fa-solid fa-file-pdf"></i> Descargar PDF Actualizado
+            </a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- PÁGINA 1: GRUPOS A-D -->
+        <div class="print-page active" id="tab-page-1">
+            <div class="print-page-title">FASE DE GRUPOS • PARTE 1 (GRUPOS A, B, C, D)</div>
+            <div class="grid-grupos-2x2" id="grid-page-1"></div>
+        </div>
+
+        <!-- PÁGINA 2: GRUPOS E-H -->
+        <div class="print-page" id="tab-page-2">
+            <div class="print-page-title">FASE DE GRUPOS • PARTE 2 (GRUPOS E, F, G, H)</div>
+            <div class="grid-grupos-2x2" id="grid-page-2"></div>
+        </div>
+
+        <!-- PÁGINA 3: GRUPOS I-L -->
+        <div class="print-page" id="tab-page-3">
+            <div class="print-page-title">FASE DE GRUPOS • PARTE 3 (GRUPOS I, J, K, L)</div>
+            <div class="grid-grupos-2x2" id="grid-page-3"></div>
+        </div>
+
+        <!-- PÁGINA 4: FASE FINAL -->
+        <div class="print-page" id="tab-page-4">
+            <div class="print-page-title">FASE DE ELIMINACIÓN DIRECTA (PLAYOFFS)</div>
+            <section class="fase-final-bracket">
+                <div class="copa-decoracion"></div>
+                
+                <div class="bracket-stage stage-16-izq" id="d16-izq">
+                    <!-- Dieciseisavos Izquierda -->
+                </div>
+                
+                <div class="bracket-stage stage-8-izq" id="o8-izq">
+                    <!-- Octavos Izquierda -->
+                </div>
+                
+                <div class="bracket-stage stage-4-izq" id="c4-izq">
+                    <!-- Cuartos Izquierda -->
+                </div>
+                
+                <div class="bracket-stage stage-2-izq" id="semi-izq">
+                    <!-- Semi Izquierda -->
+                </div>
+                
+                <!-- Centro: Gran Final & 3er Puesto -->
+                <div class="bracket-center">
+                    <div class="campeon-crown">
+                        <i class="fa-solid fa-trophy gold-trophy"></i>
+                    </div>
+                    
+                    <div class="match-card match-final">
+                        <div class="match-title">FINAL</div>
+                        <div class="match-team-row">
+                            <span class="team-name" id="final-t1">SEMIFINALISTA 1</span>
+                            <span class="score-display-bracket" id="final-s1">-</span>
+                        </div>
+                        <div class="match-team-row">
+                            <span class="team-name" id="final-t2">SEMIFINALISTA 2</span>
+                            <span class="score-display-bracket" id="final-s2">-</span>
+                        </div>
+                    </div>
+
+                    <div class="match-card match-bronze">
+                        <div class="match-title">TERCER PUESTO</div>
+                        <div class="match-team-row">
+                            <span class="team-name" id="bronze-t1">PERDEDOR SEMI 1</span>
+                            <span class="score-display-bracket" id="bronze-s1">-</span>
+                        </div>
+                        <div class="match-team-row">
+                            <span class="team-name" id="bronze-t2">PERDEDOR SEMI 2</span>
+                            <span class="score-display-bracket" id="bronze-s2">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bracket-stage stage-2-der" id="semi-der">
+                    <!-- Semi Derecha -->
+                </div>
+
+                <div class="bracket-stage stage-4-der" id="c4-der">
+                    <!-- Cuartos Derecha -->
+                </div>
+
+                <div class="bracket-stage stage-8-der" id="o8-der">
+                    <!-- Octavos Derecha -->
+                </div>
+
+                <div class="bracket-stage stage-16-der" id="d16-der">
+                    <!-- Dieciseisavos Derecha -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer no-print">
+        <p>Mundial de Fútbol 2026 • Tablero 100% Automático. Conectado a la API oficial con resultados y cruces en vivo.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
