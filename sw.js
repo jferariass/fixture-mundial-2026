@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v17";
+const CACHE_NAME = "fixture-mundial-2026-v18";
 const ASSETS = [
     "./",
     "./index.html",
@@ -68,6 +68,11 @@ self.addEventListener("activate", e => {
 // 1. Network First para llamadas a la API (worldcup26.ir) -> siempre actual, pero disponible offline.
 // 2. Cache First para recursos estáticos (imágenes, banderas, fuentes, etc.) -> carga instantánea.
 self.addEventListener("fetch", e => {
+    // Solo interceptar y cachear peticiones con método GET (POST, PUT, DELETE no son soportados por la Cache API)
+    if (e.request.method !== "GET") {
+        return;
+    }
+
     const url = new URL(e.request.url);
     
     // Ignorar esquemas que no sean HTTP o HTTPS (ej. extensiones de navegador chrome-extension://)
