@@ -324,7 +324,7 @@ function cargarResultados() {
     });
 
     // Intentar descargar en vivo de la API
-    fetch("https://worldcup26.ir/api/matches")
+    fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://worldcup26.ir/api/matches"))
         .then(response => {
             if (!response.ok) throw new Error("API Offline");
             return response.json();

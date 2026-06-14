@@ -650,3 +650,174 @@ body {
         color: #fff !important;
     }
 }
+
+/* --- DISEÑO ADAPTIVO A TODAS LAS PANTALLAS (RESPONSIVE) --- */
+
+/* Texto instructivo para móviles */
+.mobile-help-text {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold);
+    background-color: rgba(12, 45, 15, 0.85);
+    border: 1px dashed var(--gold);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media screen and (max-width: 1024px) {
+    .main-content {
+        padding: 12px;
+    }
+    
+    .grid-grupos-2x2 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .mobile-help-text {
+        display: flex;
+    }
+    
+    /* Adaptación del Bracket de Fase Final */
+    .fase-final-bracket {
+        grid-template-columns: repeat(9, 140px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 10px;
+        padding: 20px 10px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gold) rgba(0,0,0,0.5);
+    }
+    
+    /* Scrollbar estético para navegadores webkit */
+    .fase-final-bracket::-webkit-scrollbar {
+        height: 8px;
+    }
+    
+    .fase-final-bracket::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 4px;
+    }
+    
+    .fase-final-bracket::-webkit-scrollbar-thumb {
+        background: var(--gold);
+        border-radius: 4px;
+        border: 1px solid var(--bg-dark);
+    }
+    
+    .copa-decoracion {
+        width: 200px;
+        height: 350px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        gap: 12px;
+    }
+    
+    .header-content {
+        align-items: center;
+    }
+    
+    .logo-text {
+        font-size: 1.15rem;
+    }
+    
+    .subtitle {
+        font-size: 0.7rem;
+    }
+    
+    /* Pestañas con scroll horizontal en móviles */
+    .nav-tabs {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Ocultar barra en Firefox */
+    }
+    
+    .nav-tabs::-webkit-scrollbar {
+        display: none; /* Ocultar barra en Chrome/Safari */
+    }
+    
+    .tab-btn {
+        flex: 0 0 auto;
+        padding: 8px 12px;
+        font-size: 0.7rem;
+    }
+    
+    .actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .main-content {
+        padding: 8px;
+    }
+    
+    .grupo-header {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+    }
+    
+    .tabla-mini {
+        font-size: 0.65rem;
+    }
+    
+    .tabla-mini th, .tabla-mini td {
+        padding: 3px 4px;
+    }
+    
+    .partido-row {
+        font-size: 0.72rem;
+    }
+    
+    .partido-info {
+        width: 75px;
+        font-size: 0.68rem;
+    }
+    
+    .partido-team-l {
+        padding-right: 6px;
+        gap: 4px;
+    }
+    
+    .partido-team-r {
+        padding-left: 6px;
+        gap: 4px;
+    }
+    
+    .tabla-mini .eq-flag, .eq-cell img {
+        width: 15px;
+        height: 10px;
+    }
+    
+    .score-display {
+        width: 24px;
+        height: 20px;
+        font-size: 0.85rem;
+    }
+}
+
