@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v18";
+const CACHE_NAME = "fixture-mundial-2026-v19";
 const ASSETS = [
     "./",
     "./index.html",
@@ -110,9 +110,6 @@ self.addEventListener("fetch", e => {
                         });
                     }
                     return response;
-                }).catch(() => {
-                    // Si falla la red y no está en caché, simplemente dejamos pasar o devolvemos error
-                    return null;
                 });
             })
         );
