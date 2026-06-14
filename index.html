@@ -197,6 +197,19 @@
         <p>Mundial de Fútbol 2026 • Tablero 100% Automático. Conectado a la API oficial con resultados y cruces en vivo.</p>
     </footer>
 
+    <!-- Modal de Detalles del Partido -->
+    <div id="match-detail-modal" class="modal no-print">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-container">
+            <button class="modal-close-btn" id="modal-close-btn" aria-label="Cerrar modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-content" id="modal-detail-content">
+                <!-- Se llenará dinámicamente desde JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
