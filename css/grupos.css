@@ -1,0 +1,612 @@
+/* Tarjetas de grupos, tablas de posiciones y partidos de hoy */
+
+/* Cuadrícula de 2x2 para grupos */
+.grid-grupos-2x2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+/* Tarjetas de Grupos */
+.grupo-card {
+    background-color: var(--card-bg);
+    border: 1.5px solid var(--border-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+.grupo-header {
+    background-color: var(--green-bright);
+    padding: 8px 15px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid var(--border-white);
+}
+
+/* Tabla de Posiciones Interna */
+.grupo-tabla-pos {
+    padding: 8px 10px;
+    background-color: rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.tabla-mini {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+}
+
+.tabla-mini th {
+    background-color: rgba(46, 125, 50, 0.6);
+    color: var(--white);
+    font-weight: 800;
+    text-align: center;
+    padding: 4px 6px;
+}
+
+.tabla-mini th:first-child {
+    text-align: left;
+}
+
+.tabla-mini td {
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+}
+
+.tabla-mini td:first-child {
+    text-align: left;
+}
+
+.tabla-mini tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.03);
+}
+
+.tabla-mini .eq-cell {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+}
+
+.tabla-mini .eq-flag {
+    width: 18px;
+    height: 12px;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 1px;
+}
+
+/* Lista de Partidos del Grupo */
+.grupo-partidos {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    justify-content: space-around;
+}
+
+.partido-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.78rem;
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.08);
+}
+
+.partido-row:last-child {
+    border-bottom: none;
+}
+
+.partido-info {
+    width: 110px;
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.partido-team-l {
+    flex: 1;
+    text-align: right;
+    padding-right: 10px;
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.partido-team-r {
+    flex: 1;
+    text-align: left;
+    padding-left: 10px;
+    font-weight: 700;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.team-fullname {
+    display: inline;
+}
+
+.team-shortname {
+    display: none;
+}
+
+.partido-score {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Marcador (Scoreboard) */
+.score-display {
+    width: 28px;
+    height: 24px;
+    background-color: rgba(0,0,0,0.65);
+    border: 1.5px solid var(--border-white);
+    border-radius: 4px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.score-display.has-score {
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 5px var(--gold-glow);
+}
+
+.score-divider {
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+}
+
+/* --- PARTIDOS DE HOY --- */
+.hoy-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 750px;
+    margin: 20px auto;
+    width: 100%;
+}
+
+.hoy-match-card {
+    background: linear-gradient(135deg, rgba(16, 54, 21, 0.95) 0%, rgba(6, 26, 9, 0.98) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hoy-match-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--gold);
+}
+
+.hoy-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.hoy-match-stage {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.hoy-match-status {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-programado {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.status-live {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: #ff4d4d;
+    border: 1px solid #ff4d4d;
+    animation: blink-live 1.5s infinite;
+}
+
+.status-finalizado {
+    background-color: rgba(46, 125, 50, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+}
+
+@keyframes blink-live {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.hoy-match-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.hoy-team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.hoy-flag {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.hoy-team-name {
+    font-size: 0.95rem;
+    font-weight: 800;
+    text-align: center;
+    color: #fff;
+}
+
+.hoy-score-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 140px;
+}
+
+.hoy-score-num {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 10px var(--gold-glow);
+    background-color: rgba(0,0,0,0.45);
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid rgba(255,215,0,0.25);
+}
+
+.hoy-score-divider {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgba(255,255,255,0.35);
+}
+
+.hoy-time-center {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--gold);
+    background-color: rgba(0,0,0,0.4);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    min-width: 110px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.hoy-no-matches {
+    text-align: center;
+    background-color: var(--card-bg);
+    border: 1.5px solid var(--border-white);
+    border-radius: 8px;
+    padding: 40px;
+    font-weight: 700;
+    color: var(--text-muted);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.hoy-no-matches i {
+    font-size: 2.8rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 5px var(--gold-glow));
+}
+
+/* Sección de predicciones en la tarjeta de hoy */
+.hoy-prediction-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prediction-title {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.prediction-title i {
+    color: var(--gold);
+}
+
+.prediction-bar {
+    display: flex;
+    height: 26px;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.bar-segment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    transition: width 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+.bar-home {
+    background: linear-gradient(90deg, #1b5e20 0%, #2e7d32 100%);
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.bar-draw {
+    background: linear-gradient(90deg, #555555 0%, #6e6e6e 100%);
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.bar-away {
+    background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
+}
+
+/* Spinner de carga "Hoy" animado */
+.hoy-loading-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    margin: 20px 0;
+}
+
+.clock-spinner {
+    font-size: 2.8rem;
+    color: var(--gold);
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    animation: clock-spin 2s linear infinite;
+}
+
+@keyframes clock-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hoy-loading-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0.3px;
+    animation: pulse-text 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+
+/* Hover e interactividad */
+.hoy-match-card {
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.hoy-match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 215, 0, 0.15);
+    border-color: var(--gold) !important;
+}
+
+@media screen and (max-width: 1024px) {
+    .grid-grupos-2x2 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .grupo-header {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+    }
+    
+    .tabla-mini {
+        font-size: 0.65rem;
+    }
+    
+    .tabla-mini th, .tabla-mini td {
+        padding: 3px 4px;
+    }
+    
+    .partido-row {
+        font-size: 0.72rem;
+    }
+    
+    .partido-info {
+        width: 80px;
+        font-size: 0.65rem;
+    }
+    
+    .partido-team-l {
+        padding-right: 6px;
+        gap: 5px;
+    }
+    
+    .partido-team-r {
+        padding-left: 6px;
+        gap: 5px;
+    }
+    
+    .team-fullname {
+        display: none;
+    }
+    
+    .team-shortname {
+        display: inline;
+    }
+    
+    .partido-score {
+        min-width: 58px;
+        justify-content: center;
+    }
+    
+    .tabla-mini .eq-flag, .eq-cell img {
+        width: 15px;
+        height: 10px;
+    }
+    
+    .score-display {
+        width: 24px;
+        height: 20px;
+        font-size: 0.85rem;
+    }
+    
+    /* Ajustes responsivos para tarjetas de hoy */
+    .hoy-flag {
+        width: 48px;
+        height: 32px;
+    }
+    
+    .hoy-team-name {
+        font-size: 0.8rem;
+    }
+    
+    .hoy-score-num {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .hoy-score-center {
+        min-width: 100px;
+        gap: 8px;
+    }
+    
+    .hoy-time-center {
+        font-size: 1.05rem;
+        min-width: 90px;
+        padding: 6px 10px;
+    }
+    
+    .prediction-bar {
+        height: 24px;
+        font-size: 0.72rem;
+    }
+}
+
+/* Impresión */
+@media print {
+    .grid-grupos-2x2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6mm !important;
+        height: 175mm !important;
+    }
+    
+    .grupo-card {
+        border-color: #fff !important;
+        background-color: rgb(12, 45, 15) !important;
+        box-shadow: none !important;
+        height: 82mm !important;
+    }
+    
+    .grupo-header {
+        background-color: rgb(24, 76, 28) !important;
+        padding: 2mm 4mm !important;
+        font-size: 11pt !important;
+    }
+    
+    .grupo-tabla-pos {
+        padding: 1.5mm 3mm !important;
+    }
+    
+    .tabla-mini th {
+        background-color: rgb(36, 114, 42) !important;
+    }
+    
+    .grupo-partidos {
+        padding: 2mm 4mm !important;
+        gap: 1.5mm !important;
+    }
+    
+    .partido-row {
+        font-size: 8pt !important;
+        padding: 1mm 0 !important;
+    }
+    
+    .score-display {
+        background-color: transparent !important;
+        border: 1px solid rgba(255,255,255,0.4) !important;
+        color: #fff !important;
+    }
+}

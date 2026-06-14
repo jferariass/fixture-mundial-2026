@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v13";
+const CACHE_NAME = "fixture-mundial-2026-v17";
 const ASSETS = [
     "./",
     "./index.html",
@@ -10,7 +10,34 @@ const ASSETS = [
     "./favicon.ico",
     "./fondo_cancha.png",
     "./fondo_cancha_final.png",
-    "./fondo_cancha_grupos.png"
+    "./fondo_cancha_grupos.png",
+    
+    // Archivos de Datos Modularizados
+    "./js/data/paises.js",
+    "./js/data/partidos.js",
+    "./js/data/resultados.js",
+    "./js/data/plantillas.js",
+    
+    // Archivos de Lógica Modularizados
+    "./js/modules/estado.js",
+    "./js/modules/calculations.js",
+    "./js/modules/pwa.js",
+    "./js/modules/api.js",
+    "./js/modules/ui.js",
+    "./js/modules/navigation.js",
+    "./js/modules/ui-groups.js",
+    "./js/modules/ui-bracket.js",
+    "./js/modules/ui-matches-today.js",
+    "./js/modules/ui-modal.js",
+    
+    // Estilos CSS Modularizados
+    "./css/variables.css",
+    "./css/base.css",
+    "./css/tabs.css",
+    "./css/grupos.css",
+    "./css/playoffs.css",
+    "./css/modal.css",
+    "./css/pwa.css"
 ];
 
 // Instalar el Service Worker y almacenar recursos clave en caché

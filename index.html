@@ -217,6 +217,48 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Banner de Instalación PWA (Android / PC) -->
+    <div id="pwa-install-banner" class="pwa-banner no-print">
+        <div class="pwa-banner-content">
+            <i class="fa-solid fa-mobile-screen-button pwa-banner-icon"></i>
+            <div class="pwa-banner-text">
+                <span class="pwa-banner-title">¡Instala la App en tu Celular!</span>
+                <span class="pwa-banner-desc">Accede al fixture al instante y sin conexión a internet.</span>
+            </div>
+        </div>
+        <div class="pwa-banner-actions">
+            <button id="pwa-btn-install" class="btn-pwa-action-install">Instalar</button>
+            <button id="pwa-btn-close" class="btn-pwa-action-close" aria-label="Cerrar aviso">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Guía de Instalación para iPhone / iOS -->
+    <div id="ios-install-modal" class="ios-modal no-print">
+        <div class="ios-modal-backdrop" id="ios-modal-backdrop"></div>
+        <div class="ios-modal-container">
+            <button id="ios-modal-close-x" class="ios-modal-close-x-btn" aria-label="Cerrar guía">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3>📱 Instalar en tu iPhone</h3>
+            <p class="ios-modal-intro">Sigue estos dos sencillos pasos para agregar el fixture a tu pantalla de inicio:</p>
+            <div class="ios-step-row">
+                <div class="ios-step-badge">1</div>
+                <div class="ios-step-text">
+                    Pulsa el botón de <strong>Compartir</strong> en la barra inferior de Safari <i class="fa-solid fa-arrow-up-from-bracket ios-safari-icon"></i>.
+                </div>
+            </div>
+            <div class="ios-step-row">
+                <div class="ios-step-badge">2</div>
+                <div class="ios-step-text">
+                    Desplázate hacia abajo y selecciona <strong>Agregar a la pantalla de inicio</strong> <i class="fa-regular fa-square-plus ios-add-icon"></i>.
+                </div>
+            </div>
+            <button id="ios-modal-btn-understand" class="btn-ios-modal-understand">Entendido</button>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,289 @@
+/* Banner de instalación PWA y guía interactiva de iOS */
+
+/* --- BANNER DE INSTALACIÓN PWA (OPTIMIZADO PARA UX) --- */
+.pwa-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    width: 90%;
+    max-width: 500px;
+    background: linear-gradient(135deg, rgba(7, 30, 8, 0.96) 0%, rgba(3, 13, 4, 0.98) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 20px rgba(255, 215, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    z-index: 1500;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.pwa-banner.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.pwa-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.pwa-banner-icon {
+    font-size: 1.8rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.pwa-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pwa-banner-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.pwa-banner-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.pwa-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-pwa-action-install {
+    background: var(--gold);
+    color: #071e08;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.btn-pwa-action-install:hover {
+    background-color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 215, 0, 0.2);
+}
+
+.btn-pwa-action-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-pwa-action-close:hover {
+    color: #fff;
+}
+
+
+/* --- GUÍA INSTRUCTIVA DE INSTALACIÓN PARA IPHONE (iOS MODAL) --- */
+.ios-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.ios-modal.show {
+    display: flex;
+}
+
+.ios-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(3, 15, 5, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.ios-modal-container {
+    position: relative;
+    width: 90%;
+    max-width: 380px;
+    background: linear-gradient(145deg, #0a290e 0%, #031204 100%);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.15);
+    z-index: 2510;
+    box-sizing: border-box;
+    color: #fff;
+    animation: modal-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ios-modal-close-x-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.ios-modal-close-x-btn:hover {
+    color: #fff;
+}
+
+.ios-modal h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.ios-modal-intro {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.ios-step-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ios-step-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--gold);
+    color: #071e08;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.ios-step-text {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #eee;
+    font-weight: 600;
+}
+
+.ios-safari-icon {
+    font-size: 0.95rem;
+    color: #007aff;
+    background: #fff;
+    padding: 3px 5px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.ios-add-icon {
+    font-size: 0.95rem;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    padding: 3px 5px;
+    border-radius: 4px;
+    margin-left: 2px;
+}
+
+.btn-ios-modal-understand {
+    width: 100%;
+    background: var(--gold);
+    color: #071e08;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-top: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.btn-ios-modal-understand:hover {
+    background-color: #fff;
+}
+
+@media (max-width: 480px) {
+    .pwa-banner {
+        width: 95%;
+        bottom: 15px;
+        padding: 10px 12px;
+        gap: 10px;
+    }
+    
+    .pwa-banner-icon {
+        font-size: 1.5rem;
+    }
+    
+    .pwa-banner-title {
+        font-size: 0.75rem;
+    }
+    
+    .pwa-banner-desc {
+        font-size: 0.62rem;
+    }
+    
+    .btn-pwa-action-install {
+        padding: 6px 12px;
+        font-size: 0.7rem;
+    }
+}

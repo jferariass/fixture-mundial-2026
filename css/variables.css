@@ -1,0 +1,14 @@
+/* Variables globales de diseño y tema */
+
+:root {
+    --bg-dark: #071e08;
+    --card-bg: rgba(12, 45, 15, 0.9);
+    --header-bg: #184c1c;
+    --border-white: rgba(255, 255, 255, 0.35);
+    --gold: #ffd700;
+    --gold-glow: rgba(255, 215, 0, 0.4);
+    --white: #ffffff;
+    --text-muted: #d0ebd2;
+    --green-bright: #2e7d32;
+    --field-lines: rgba(255, 255, 255, 0.12);
+}

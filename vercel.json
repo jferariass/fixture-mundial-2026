@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api-proxy/games",
+      "destination": "https://worldcup26.ir/get/games"
+    },
+    {
+      "source": "/api-proxy/teams",
+      "destination": "https://worldcup26.ir/get/teams"
+    }
+  ]
+}
