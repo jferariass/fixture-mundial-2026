@@ -864,10 +864,10 @@ body {
 
 .prediction-bar {
     display: flex;
-    height: 22px;
+    height: 26px;
     border-radius: 6px;
     overflow: hidden;
-    font-size: 0.68rem;
+    font-size: 0.78rem;
     font-weight: 800;
     color: #fff;
     text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
@@ -882,7 +882,9 @@ body {
     transition: width 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
-    padding: 0 4px;
+    text-overflow: ellipsis;
+    padding: 0 6px;
+    box-sizing: border-box;
 }
 
 .bar-home {
@@ -908,49 +910,117 @@ body {
     margin: 8px auto 0 auto;
 }
 
-.mobile-tab-select {
+/* Dropdown personalizado de navegación para móviles */
+.mobile-dropdown-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    padding: 10px 40px 10px 15px;
+    padding: 12px 18px;
     background: linear-gradient(135deg, rgba(16, 54, 21, 0.95) 0%, rgba(6, 26, 9, 0.98) 100%);
     border: 2px solid var(--gold);
     border-radius: 8px;
     color: #fff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 800;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
     transition: all 0.2s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.mobile-tab-select:focus, .mobile-tab-select:hover {
+.mobile-dropdown-btn:focus, .mobile-dropdown-btn:hover {
     border-color: #fff;
     box-shadow: 0 0 15px var(--gold-glow);
 }
 
-.mobile-tab-select option {
+.mobile-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
     background-color: #071e08;
-    color: #fff;
-    font-weight: 700;
-    padding: 10px;
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    margin-top: 6px;
+    z-index: 1000;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
 }
 
-.mobile-nav-container::after {
-    content: '\f0d7';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
+.mobile-dropdown-content.show {
+    display: block;
+}
+
+.mobile-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 15px 20px; /* Tamaño generoso para dedos grandes */
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15); /* Bordes definidos entre opciones */
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: left;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.mobile-dropdown-item:hover, .mobile-dropdown-item.active {
+    background-color: var(--gold);
+    color: #071e08;
+}
+
+/* Spinner de carga "Hoy" animado */
+.hoy-loading-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    margin: 20px 0;
+}
+
+.clock-spinner {
+    font-size: 2.8rem;
     color: var(--gold);
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    font-size: 0.95rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    animation: clock-spin 2s linear infinite;
+}
+
+@keyframes clock-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hoy-loading-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0.3px;
+    animation: pulse-text 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
 }
 
 
@@ -1156,8 +1226,8 @@ body {
     }
     
     .prediction-bar {
-        height: 18px;
-        font-size: 0.6rem;
+        height: 24px;
+        font-size: 0.72rem;
     }
 }
 

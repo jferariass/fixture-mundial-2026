@@ -247,10 +247,20 @@ function switchTab(tabId) {
         botones[index].classList.add("active");
     }
     
-    // Sincronizar el selector móvil
-    const selectMovil = document.getElementById("mobile-tab-select");
-    if (selectMovil) {
-        selectMovil.value = tabId;
+    // Sincronizar el selector móvil personalizado
+    const dropdownBtnText = document.getElementById("mobile-dropdown-current");
+    const dropdownItems = document.querySelectorAll(".mobile-dropdown-item");
+    if (dropdownItems.length > 0) {
+        dropdownItems.forEach(item => {
+            if (item.getAttribute("data-value") === tabId) {
+                item.classList.add("active");
+                if (dropdownBtnText) {
+                    dropdownBtnText.textContent = item.textContent;
+                }
+            } else {
+                item.classList.remove("active");
+            }
+        });
     }
 }
 
@@ -679,6 +689,35 @@ function actualizarPartidosDeHoy() {
         let prediccionHtml = "";
         if (mostrarPrediccion) {
             const pred = calcularPrediccion(p.fifaHome, p.fifaAway);
+            
+            // Calcular etiquetas dinámicas según el espacio disponible (porcentaje) para evitar solapamientos en móviles
+            let labelHome = "";
+            if (pred.home >= 18) {
+                labelHome = `${p.fifaHome} ${pred.home}%`;
+            } else if (pred.home >= 10) {
+                labelHome = `${pred.home}%`;
+            } else if (pred.home >= 5) {
+                labelHome = `${pred.home}`;
+            }
+
+            let labelDraw = "";
+            if (pred.draw >= 22) {
+                labelDraw = `Empate ${pred.draw}%`;
+            } else if (pred.draw >= 13) {
+                labelDraw = `Emp. ${pred.draw}%`;
+            } else if (pred.draw >= 8) {
+                labelDraw = `${pred.draw}%`;
+            }
+
+            let labelAway = "";
+            if (pred.away >= 18) {
+                labelAway = `${p.fifaAway} ${pred.away}%`;
+            } else if (pred.away >= 10) {
+                labelAway = `${pred.away}%`;
+            } else if (pred.away >= 5) {
+                labelAway = `${pred.away}`;
+            }
+
             prediccionHtml = `
                 <div class="hoy-prediction-section">
                     <div class="prediction-title">
@@ -686,13 +725,13 @@ function actualizarPartidosDeHoy() {
                     </div>
                     <div class="prediction-bar">
                         <div class="bar-segment bar-home" style="width: ${pred.home}%;" title="Victoria ${p.nombreHome}">
-                            ${p.fifaHome} ${pred.home}%
+                            ${labelHome}
                         </div>
                         <div class="bar-segment bar-draw" style="width: ${pred.draw}%;" title="Empate">
-                            Empate ${pred.draw}%
+                            ${labelDraw}
                         </div>
                         <div class="bar-segment bar-away" style="width: ${pred.away}%;" title="Victoria ${p.nombreAway}">
-                            ${p.fifaAway} ${pred.away}%
+                            ${labelAway}
                         </div>
                     </div>
                 </div>
@@ -1048,6 +1087,33 @@ window.onload = () => {
     // mostramos la primera página de grupos para evitar pantalla en blanco.
     if (!document.getElementById("tab-page-0")) {
         switchTab("tab-page-1");
+    }
+
+    // Configurar Dropdown Personalizado Móvil
+    const dropdownBtn = document.getElementById("mobile-dropdown-btn");
+    const dropdownContent = document.getElementById("mobile-dropdown-content");
+    
+    if (dropdownBtn && dropdownContent) {
+        // Toggle abrir/cerrar
+        dropdownBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            dropdownContent.classList.toggle("show");
+        });
+        
+        // Clic en opciones del dropdown
+        const dropdownItems = document.querySelectorAll(".mobile-dropdown-item");
+        dropdownItems.forEach(item => {
+            item.addEventListener("click", () => {
+                const targetValue = item.getAttribute("data-value");
+                switchTab(targetValue);
+                dropdownContent.classList.remove("show");
+            });
+        });
+        
+        // Cerrar al hacer clic en cualquier otra parte de la pantalla
+        document.addEventListener("click", () => {
+            dropdownContent.classList.remove("show");
+        });
     }
 
     renderizarGrupos();

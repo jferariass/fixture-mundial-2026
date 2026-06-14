@@ -15,15 +15,21 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="🏆 Fixture Copa Mundial FIFA 2026 - ¡Resultados en Vivo y PDF! ⚽">
     <meta property="og:description" content="Sigue todos los partidos del Mundial 2026 en tiempo real. Tablas de posiciones, playoffs interactivos y descarga de fixture en PDF con goles reales. ¡Actualización automática!">
-    <meta property="og:image" content="https://fixturemundial2026-rho.vercel.app/preview_pag1.png">
+    <meta property="og:image" content="https://fixturemundial2026-rho.vercel.app/preview.png">
+    <meta property="og:image:secure_url" content="https://fixturemundial2026-rho.vercel.app/preview.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fixture Copa Mundial FIFA 2026">
     <meta property="og:url" content="https://fixturemundial2026-rho.vercel.app/">
     <meta property="og:site_name" content="Fixture Mundial 2026">
+    <link rel="image_src" href="https://fixturemundial2026-rho.vercel.app/preview.png">
     
     <!-- Metatags de Twitter Cards (X / Twitter) -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="🏆 Fixture Copa Mundial FIFA 2026 - En Vivo ⚽">
     <meta name="twitter:description" content="Resultados automáticos en vivo del Mundial 2026, bracket interactivo y descarga de fixture en PDF con goles reales.">
-    <meta name="twitter:image" content="https://fixturemundial2026-rho.vercel.app/preview_pag1.png">
+    <meta name="twitter:image" content="https://fixturemundial2026-rho.vercel.app/preview.png">
     <!-- Soporte PWA -->
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icono-192.png">
@@ -57,15 +63,19 @@
             <button class="tab-btn" onclick="switchTab('tab-page-4')">PÁG 4: FASE FINAL</button>
         </nav>
 
-        <!-- Selector Desplegable para Móviles -->
-        <div class="mobile-nav-container no-print">
-            <select id="mobile-tab-select" class="mobile-tab-select" onchange="switchTab(this.value)">
-                <option value="tab-page-0">📅 HOY</option>
-                <option value="tab-page-1">📄 PÁG 1: GRUPOS A-D</option>
-                <option value="tab-page-2">📄 PÁG 2: GRUPOS E-H</option>
-                <option value="tab-page-3">📄 PÁG 3: GRUPOS I-L</option>
-                <option value="tab-page-4">🏆 PÁG 4: FASE FINAL</option>
-            </select>
+        <!-- Selector Desplegable para Móviles (Dropdown Personalizado) -->
+        <div class="mobile-nav-container no-print" id="custom-mobile-dropdown">
+            <button class="mobile-dropdown-btn" id="mobile-dropdown-btn">
+                <span id="mobile-dropdown-current">📅 HOY</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="mobile-dropdown-content" id="mobile-dropdown-content">
+                <button class="mobile-dropdown-item active" data-value="tab-page-0">📅 HOY</button>
+                <button class="mobile-dropdown-item" data-value="tab-page-1">📄 PÁG 1: GRUPOS A-D</button>
+                <button class="mobile-dropdown-item" data-value="tab-page-2">📄 PÁG 2: GRUPOS E-H</button>
+                <button class="mobile-dropdown-item" data-value="tab-page-3">📄 PÁG 3: GRUPOS I-L</button>
+                <button class="mobile-dropdown-item" data-value="tab-page-4">🏆 PÁG 4: FASE FINAL</button>
+            </div>
         </div>
 
         <div class="actions">
@@ -80,7 +90,13 @@
         <div class="print-page active" id="tab-page-0">
             <div class="print-page-title">PARTIDOS DE HOY (HORARIO ARGENTINA)</div>
             <div class="hoy-container" id="hoy-matches-list">
-                <!-- Se llenará dinámicamente -->
+                <!-- Loader de reloj para espera activa -->
+                <div class="hoy-loading-loader">
+                    <div class="clock-spinner">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <p class="hoy-loading-text">Espere, estamos cargando los partidos de hoy...</p>
+                </div>
             </div>
         </div>
 
