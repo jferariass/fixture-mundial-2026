@@ -341,7 +341,8 @@ function crearTarjetaGrupoAmplia(letra) {
             <div class="partido-row">
                 <div class="partido-info">${p.fecha} ${p.hora}</div>
                 <div class="partido-team-l">
-                    <span>${n1}</span>
+                    <span class="team-fullname">${n1}</span>
+                    <span class="team-shortname">${p.l1}</span>
                     <img src="banderas/${p.l1.toLowerCase()}.png" class="eq-flag" alt="${p.l1}">
                 </div>
                 <div class="partido-score">
@@ -351,7 +352,8 @@ function crearTarjetaGrupoAmplia(letra) {
                 </div>
                 <div class="partido-team-r">
                     <img src="banderas/${p.l2.toLowerCase()}.png" class="eq-flag" alt="${p.l2}">
-                    <span>${n2}</span>
+                    <span class="team-fullname">${n2}</span>
+                    <span class="team-shortname">${p.l2}</span>
                 </div>
             </div>
         `;

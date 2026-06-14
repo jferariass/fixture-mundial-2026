@@ -61,7 +61,7 @@ body {
 .header {
     background: linear-gradient(135deg, #0f4012 0%, #1c5f20 100%);
     border-bottom: 3px solid var(--gold);
-    padding: 10px 25px;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 25px 12px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -300,6 +300,7 @@ body {
     justify-content: flex-end;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .partido-team-r {
@@ -311,6 +312,15 @@ body {
     justify-content: flex-start;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
+}
+
+.team-fullname {
+    display: inline;
+}
+
+.team-shortname {
+    display: none;
 }
 
 .partido-score {
@@ -902,7 +912,7 @@ body {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        padding: 15px;
+        padding: calc(15px + env(safe-area-inset-top, 0px)) 15px 15px 15px;
         gap: 12px;
     }
     
@@ -974,18 +984,31 @@ body {
     }
     
     .partido-info {
-        width: 75px;
-        font-size: 0.68rem;
+        width: 80px;
+        font-size: 0.65rem;
     }
     
     .partido-team-l {
         padding-right: 6px;
-        gap: 4px;
+        gap: 5px;
     }
     
     .partido-team-r {
         padding-left: 6px;
-        gap: 4px;
+        gap: 5px;
+    }
+    
+    .team-fullname {
+        display: none;
+    }
+    
+    .team-shortname {
+        display: inline;
+    }
+    
+    .partido-score {
+        min-width: 58px;
+        justify-content: center;
     }
     
     .tabla-mini .eq-flag, .eq-cell img {
