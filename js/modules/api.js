@@ -57,7 +57,7 @@ export function cargarResultados() {
         });
     };
 
-    // Intentar descargar de la API con fallback encadenado a proxies CORS y timeout de 3 segundos
+    // Intentar descargar de la API con fallback encadenado a proxies CORS y timeouts adaptativos
     const fetchConProxy = (url, proxyIdx = 0) => {
         const rutaProxyLocal = url.includes("games") ? "/api-proxy/games" : "/api-proxy/teams";
         
@@ -72,8 +72,12 @@ export function cargarResultados() {
             return Promise.reject(new Error("Todos los intentos (directo y proxies CORS) fallaron."));
         }
         
+        // Timeout de 15 segundos para el proxy local/Vercel (por lentitud del servidor remoto), 5 segundos para proxies públicos
+        const timeouts = [15000, 5000, 5000, 5000];
+        const timeoutMs = timeouts[proxyIdx] || 5000;
+        
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 segundos de timeout
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         
         return fetch(proxies[proxyIdx], { signal: controller.signal })
             .then(res => {
@@ -100,15 +104,36 @@ export function cargarResultados() {
             });
     };
 
-    // Poblar inicialmente con la base de datos local para renderizado instantáneo
-    poblarListaPartidosLocal();
-    actualizarInterfaz();
+    // Intentar cargar datos cacheados de la API en localStorage para mostrar resultados en vivo de visitas previas al instante
+    const juegosCache = localStorage.getItem('cached_worldcup_games');
+    if (juegosCache) {
+        try {
+            console.log("Cargando marcadores en vivo cacheados de localStorage...");
+            const games = JSON.parse(juegosCache);
+            limpiarListaPartidosCompleta();
+            games.forEach(match => {
+                procesarPartidoAPI(match);
+            });
+            actualizarInterfaz();
+        } catch (e) {
+            console.warn("Error leyendo caché de localStorage, usando respaldo estático:", e.message);
+            poblarListaPartidosLocal();
+            actualizarInterfaz();
+        }
+    } else {
+        // Fallback local estático inicial
+        poblarListaPartidosLocal();
+        actualizarInterfaz();
+    }
 
-    // Consultar la API de partidos en segundo plano
+    // Consultar la API de partidos en segundo plano (con timeouts adaptativos de hasta 15 segundos)
     fetchConProxy(URL_GAMES)
         .then(data => {
             console.log("Carga de API exitosa:", data);
             if (data && data.games) {
+                // Guardar los datos frescos en la caché de localStorage
+                localStorage.setItem('cached_worldcup_games', JSON.stringify(data.games));
+                
                 limpiarListaPartidosCompleta();
                 data.games.forEach(match => {
                     procesarPartidoAPI(match);
@@ -117,8 +142,7 @@ export function cargarResultados() {
             }
         })
         .catch(err => {
-            console.warn("Usando base de datos estática local para resultados y partidos de hoy. API no disponible (usando respaldo):", err.message);
-            // La interfaz ya está mostrando los datos locales, por lo que no es necesario repoblar.
+            console.warn("API de partidos no disponible en vivo (se muestran datos cacheados o estáticos):", err.message);
         });
 }
 
