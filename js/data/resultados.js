@@ -1,22 +1,7 @@
 // Resultados de respaldo y ratings de elo del Mundial 2026
 
 export const RESULTADOS_REALES = {
-    "A": [
-        { idx: 0, s1: 2, s2: 0 }, // MEX 2 - 0 RSA (11/06)
-        { idx: 1, s1: 2, s2: 1 }  // KOR 2 - 1 CZE (11/06)
-    ],
-    "B": [
-        { idx: 0, s1: 1, s2: 1 }, // CAN 1 - 1 BIH (12/06)
-        { idx: 1, s1: 1, s2: 1 }  // QAT 1 - 1 SUI (13/06)
-    ],
-    "C": [
-        { idx: 0, s1: 1, s2: 1 }, // BRA 1 - 1 MAR (13/06)
-        { idx: 1, s1: 0, s2: 1 }  // HAI 0 - 1 SCO (13/06)
-    ],
-    "D": [
-        { idx: 0, s1: 4, s2: 1 }, // USA 4 - 1 PAR (12/06)
-        { idx: 1, s1: 2, s2: 0 }  // AUS 2 - 0 TUR (13/06)
-    ]
+    "A": [], "B": [], "C": [], "D": [], "E": [], "F": [], "G": [], "H": [], "I": [], "J": [], "K": [], "L": []
 };
 
 export const RATINGS_FUERZA = {

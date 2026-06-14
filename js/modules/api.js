@@ -104,6 +104,12 @@ export function cargarResultados() {
             });
     };
 
+    // Función para ocultar el loader global
+    const ocultarLoader = () => {
+        const loader = document.getElementById('global-loader');
+        if (loader) loader.classList.add('hidden');
+    };
+
     // Intentar cargar datos cacheados de la API en localStorage para mostrar resultados en vivo de visitas previas al instante
     const juegosCache = localStorage.getItem('cached_worldcup_games');
     if (juegosCache) {
@@ -115,6 +121,7 @@ export function cargarResultados() {
                 procesarPartidoAPI(match);
             });
             actualizarInterfaz();
+            ocultarLoader(); // Ocultar si cargó de caché
         } catch (e) {
             console.warn("Error leyendo caché de localStorage, usando respaldo estático:", e.message);
             poblarListaPartidosLocal();
@@ -143,6 +150,9 @@ export function cargarResultados() {
         })
         .catch(err => {
             console.warn("API de partidos no disponible en vivo (se muestran datos cacheados o estáticos):", err.message);
+        })
+        .finally(() => {
+            ocultarLoader(); // Ocultar cuando la API termine (éxito o error)
         });
 }
 
