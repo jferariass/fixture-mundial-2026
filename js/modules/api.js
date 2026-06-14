@@ -176,12 +176,18 @@ function procesarPartidoAPI(match) {
     const g2 = (isStarted && match.away_score !== null && match.away_score !== undefined && match.away_score !== "") ? parseInt(match.away_score) : null;
     
     const argentinaInfo = obtenerFechaHoraArgentina(match.local_date, match.stadium_id);
+    let finalFechaArg = argentinaInfo.fecha;
+    let finalHoraArg = argentinaInfo.hora;
     
     if (type === "group") {
         if (fifaHome && fifaAway) {
             Object.keys(PARTIDOS).forEach(letra => {
                 PARTIDOS[letra].forEach((p, idx) => {
                     if (p.l1 === fifaHome && p.l2 === fifaAway) {
+                        // Sincronización estricta: usar fecha/hora local perfecta en vez de la API para evitar desajustes
+                        finalFechaArg = p.fecha;
+                        finalHoraArg = p.hora;
+                        
                         if (g1 !== null && g2 !== null) {
                             partidosGoles[`${letra}-${idx}-1`] = g1;
                             partidosGoles[`${letra}-${idx}-2`] = g2;
@@ -209,8 +215,8 @@ function procesarPartidoAPI(match) {
         fifaAway: fifaAway,
         nombreHome: fifaHome ? PAISES[fifaHome].nombre : (match.home_team_name_en || "Pendiente"),
         nombreAway: fifaAway ? PAISES[fifaAway].nombre : (match.away_team_name_en || "Pendiente"),
-        fechaArg: argentinaInfo.fecha,
-        horaArg: argentinaInfo.hora,
+        fechaArg: finalFechaArg,
+        horaArg: finalHoraArg,
         s1: g1,
         s2: g2
     });
