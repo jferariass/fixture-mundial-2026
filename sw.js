@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v4";
+const CACHE_NAME = "fixture-mundial-2026-v5";
 const ASSETS = [
     "./",
     "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
     "./manifest.json",
     "./icono-192.png",
     "./icono-512.png",
+    "./favicon.ico",
     "./fondo_cancha.png",
     "./fondo_cancha_final.png",
     "./fondo_cancha_grupos.png"
