@@ -899,6 +899,60 @@ body {
     background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
 }
 
+/* Selector desplegable de navegación para móviles */
+.mobile-nav-container {
+    display: none;
+    position: relative;
+    width: 100%;
+    max-width: 290px;
+    margin: 8px auto 0 auto;
+}
+
+.mobile-tab-select {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    background: linear-gradient(135deg, rgba(16, 54, 21, 0.95) 0%, rgba(6, 26, 9, 0.98) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mobile-tab-select:focus, .mobile-tab-select:hover {
+    border-color: #fff;
+    box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.mobile-tab-select option {
+    background-color: #071e08;
+    color: #fff;
+    font-weight: 700;
+    padding: 10px;
+}
+
+.mobile-nav-container::after {
+    content: '\f0d7';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--gold);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.95rem;
+}
+
 
 /* --- DISEÑO ADAPTIVO A TODAS LAS PANTALLAS (RESPONSIVE) --- */
 
@@ -988,25 +1042,17 @@ body {
         font-size: 0.7rem;
     }
     
-    /* Pestañas con scroll horizontal en móviles */
+    /* Pestañas de Navegación en móvil: usar select desplegable */
     .nav-tabs {
-        width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-        justify-content: flex-start;
-        padding-bottom: 6px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Ocultar barra en Firefox */
+        display: none !important;
     }
     
-    .nav-tabs::-webkit-scrollbar {
-        display: none; /* Ocultar barra en Chrome/Safari */
+    .mobile-nav-container {
+        display: block !important;
     }
     
     .tab-btn {
-        flex: 0 0 auto;
-        padding: 8px 12px;
-        font-size: 0.7rem;
+        display: none;
     }
     
     .actions {

@@ -57,6 +57,17 @@
             <button class="tab-btn" onclick="switchTab('tab-page-4')">PÁG 4: FASE FINAL</button>
         </nav>
 
+        <!-- Selector Desplegable para Móviles -->
+        <div class="mobile-nav-container no-print">
+            <select id="mobile-tab-select" class="mobile-tab-select" onchange="switchTab(this.value)">
+                <option value="tab-page-0">📅 HOY</option>
+                <option value="tab-page-1">📄 PÁG 1: GRUPOS A-D</option>
+                <option value="tab-page-2">📄 PÁG 2: GRUPOS E-H</option>
+                <option value="tab-page-3">📄 PÁG 3: GRUPOS I-L</option>
+                <option value="tab-page-4">🏆 PÁG 4: FASE FINAL</option>
+            </select>
+        </div>
+
         <div class="actions">
             <a href="fixture_mundial_2026.pdf" download class="btn btn-download">
                 <i class="fa-solid fa-file-pdf"></i> Descargar PDF Actualizado

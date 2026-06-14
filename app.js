@@ -246,6 +246,12 @@ function switchTab(tabId) {
     if (botones[index]) {
         botones[index].classList.add("active");
     }
+    
+    // Sincronizar el selector móvil
+    const selectMovil = document.getElementById("mobile-tab-select");
+    if (selectMovil) {
+        selectMovil.value = tabId;
+    }
 }
 
 function renderizarGrupos() {
