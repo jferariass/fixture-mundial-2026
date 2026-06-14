@@ -271,3 +271,107 @@ body.modal-open {
         padding: 8px;
     }
 }
+
+/* Tarjeta de Donación */
+.donation-section {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.donation-card {
+    background: rgba(30, 30, 30, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.donation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.6);
+}
+
+.donation-icon {
+    font-size: 3rem;
+}
+
+.donation-content {
+    flex: 1;
+}
+
+.donation-content h3 {
+    color: #FFC107;
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.donation-content p {
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.btn-donation {
+    background: linear-gradient(135deg, #FFC107, #FF9800);
+    color: #1a1a1a;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    white-space: nowrap;
+}
+
+.btn-donation:hover {
+    background: linear-gradient(135deg, #FFD54F, #FFB300);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.6);
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
+    .donation-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 15px;
+        gap: 15px;
+    }
+    
+    .donation-icon {
+        font-size: 4rem;
+        margin-bottom: -10px;
+    }
+    
+    .donation-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .donation-content p {
+        font-size: 0.9rem;
+    }
+    
+    .btn-donation {
+        width: 100%;
+        justify-content: center;
+        padding: 15px;
+        font-size: 1.1rem;
+        margin-top: 5px;
+    }
+}
