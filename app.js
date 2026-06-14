@@ -223,7 +223,16 @@ const MAPA_PLAYOFFS = {
 // Estado global
 let tablasEstado = {};
 let partidosGoles = {}; // Almacenará los goles de fase de grupos
-let mapaEquiposIdACodigo = {}; // Mapa de ID -> Código FIFA (ej. 1 -> MEX)
+let mapaEquiposIdACodigo = {
+    "1": "MEX", "2": "RSA", "3": "KOR", "4": "CZE", "5": "CAN", "6": "BIH",
+    "7": "QAT", "8": "SUI", "9": "BRA", "10": "MAR", "11": "HAI", "12": "SCO",
+    "13": "USA", "14": "PAR", "15": "AUS", "16": "TUR", "17": "GER", "18": "CUW",
+    "19": "CIV", "20": "ECU", "21": "NED", "22": "JPN", "23": "SWE", "24": "TUN",
+    "25": "BEL", "26": "EGY", "27": "IRN", "28": "NZL", "29": "ESP", "30": "CPV",
+    "31": "KSA", "32": "URU", "33": "FRA", "34": "SEN", "35": "IRQ", "36": "NOR",
+    "37": "ARG", "38": "ALG", "39": "AUT", "40": "JOR", "41": "POR", "42": "COD",
+    "43": "UZB", "44": "COL", "45": "ENG", "46": "CRO", "47": "GHA", "48": "PAN"
+}; // Mapa de ID -> Código FIFA (ej. 1 -> MEX)
 let partidosPlayoffsGoles = {}; // Marcadores de playoffs {partidoId: {s1, s2}}
 let partidosPlayoffsEquipos = {}; // Equipos clasificados de playoffs {partidoId: {t1, t2}}
 let listaPartidosCompleta = []; // Todos los partidos formateados para "Partidos de Hoy"
@@ -1249,15 +1258,8 @@ function cargarResultados() {
             });
     };
 
-    fetchConProxy(URL_TEAMS)
-        .then(data => {
-            if (data && data.teams) {
-                data.teams.forEach(t => {
-                    mapaEquiposIdACodigo[t.id.toString()] = t.fifa_code;
-                });
-            }
-            return fetchConProxy(URL_GAMES);
-        })
+    // Consultar directamente la lista de partidos (URL_GAMES) ya que tenemos el mapa de equipos precargado estáticamente
+    fetchConProxy(URL_GAMES)
         .then(data => {
             console.log("Carga de API exitosa:", data);
             if (data && data.games) {
