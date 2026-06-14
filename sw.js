@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v2";
+const CACHE_NAME = "fixture-mundial-2026-v3";
 const ASSETS = [
     "./",
     "./index.html",
@@ -41,6 +41,11 @@ self.addEventListener("activate", e => {
 // 2. Cache First para recursos estáticos (imágenes, banderas, fuentes, etc.) -> carga instantánea.
 self.addEventListener("fetch", e => {
     const url = new URL(e.request.url);
+    
+    // Ignorar esquemas que no sean HTTP o HTTPS (ej. extensiones de navegador chrome-extension://)
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+        return;
+    }
     
     if (url.hostname.includes("worldcup26.ir")) {
         // Petición a la API: Network First
