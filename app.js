@@ -229,6 +229,9 @@ let partidosPlayoffsEquipos = {}; // Equipos clasificados de playoffs {partidoId
 let listaPartidosCompleta = []; // Todos los partidos formateados para "Partidos de Hoy"
 
 function switchTab(tabId) {
+    const targetPage = document.getElementById(tabId);
+    if (!targetPage) return; // protección contra HTML viejo
+    
     document.querySelectorAll(".print-page").forEach(page => {
         page.classList.remove("active");
     });
@@ -236,11 +239,13 @@ function switchTab(tabId) {
         btn.classList.remove("active");
     });
     
-    document.getElementById(tabId).classList.add("active");
+    targetPage.classList.add("active");
     
     const index = parseInt(tabId.split("-")[2]);
     const botones = document.querySelectorAll(".tab-btn");
-    botones[index].classList.add("active");
+    if (botones[index]) {
+        botones[index].classList.add("active");
+    }
 }
 
 function renderizarGrupos() {
@@ -248,17 +253,23 @@ function renderizarGrupos() {
     const p2 = document.getElementById("grid-page-2");
     const p3 = document.getElementById("grid-page-3");
     
-    ["A", "B", "C", "D"].forEach(letra => {
-        p1.appendChild(crearTarjetaGrupoAmplia(letra));
-    });
+    if (p1) {
+        ["A", "B", "C", "D"].forEach(letra => {
+            p1.appendChild(crearTarjetaGrupoAmplia(letra));
+        });
+    }
     
-    ["E", "F", "G", "H"].forEach(letra => {
-        p2.appendChild(crearTarjetaGrupoAmplia(letra));
-    });
+    if (p2) {
+        ["E", "F", "G", "H"].forEach(letra => {
+            p2.appendChild(crearTarjetaGrupoAmplia(letra));
+        });
+    }
     
-    ["I", "J", "K", "L"].forEach(letra => {
-        p3.appendChild(crearTarjetaGrupoAmplia(letra));
-    });
+    if (p3) {
+        ["I", "J", "K", "L"].forEach(letra => {
+            p3.appendChild(crearTarjetaGrupoAmplia(letra));
+        });
+    }
 }
 
 function crearTarjetaGrupoAmplia(letra) {
@@ -834,40 +845,56 @@ function actualizarPlayoffsAutomatico() {
 
 function renderizarBracket() {
     const d16Izq = document.getElementById("d16-izq");
-    for(let i=1; i<=8; i++) {
-        d16Izq.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-i-${i}`));
+    if (d16Izq) {
+        for(let i=1; i<=8; i++) {
+            d16Izq.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-i-${i}`));
+        }
     }
     
     const d16Der = document.getElementById("d16-der");
-    for(let i=9; i<=16; i++) {
-        d16Der.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-d-${i}`));
+    if (d16Der) {
+        for(let i=9; i<=16; i++) {
+            d16Der.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-d-${i}`));
+        }
     }
     
     const o8Izq = document.getElementById("o8-izq");
-    for(let i=1; i<=4; i++) {
-        o8Izq.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-i-${i}`));
+    if (o8Izq) {
+        for(let i=1; i<=4; i++) {
+            o8Izq.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-i-${i}`));
+        }
     }
     
     const o8Der = document.getElementById("o8-der");
-    for(let i=5; i<=8; i++) {
-        o8Der.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-d-${i}`));
+    if (o8Der) {
+        for(let i=5; i<=8; i++) {
+            o8Der.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-d-${i}`));
+        }
     }
     
     const c4Izq = document.getElementById("c4-izq");
-    for(let i=1; i<=2; i++) {
-        c4Izq.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-i-${i}`));
+    if (c4Izq) {
+        for(let i=1; i<=2; i++) {
+            c4Izq.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-i-${i}`));
+        }
     }
     
     const c4Der = document.getElementById("c4-der");
-    for(let i=3; i<=4; i++) {
-        c4Der.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-d-${i}`));
+    if (c4Der) {
+        for(let i=3; i<=4; i++) {
+            c4Der.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-d-${i}`));
+        }
     }
     
     const semiIzq = document.getElementById("semi-izq");
-    semiIzq.appendChild(crearCardBracket("SEMIFINAL 1", "semi-i-1"));
+    if (semiIzq) {
+        semiIzq.appendChild(crearCardBracket("SEMIFINAL 1", "semi-i-1"));
+    }
     
     const semiDer = document.getElementById("semi-der");
-    semiDer.appendChild(crearCardBracket("SEMIFINAL 2", "semi-d-2"));
+    if (semiDer) {
+        semiDer.appendChild(crearCardBracket("SEMIFINAL 2", "semi-d-2"));
+    }
 }
 
 function crearCardBracket(titulo, idPrefijo) {
@@ -889,6 +916,12 @@ function crearCardBracket(titulo, idPrefijo) {
 
 // Iniciar aplicación cargando recursos
 window.onload = () => {
+    // Si por algún motivo no existe la pestaña de hoy en el DOM (HTML viejo en caché),
+    // mostramos la primera página de grupos para evitar pantalla en blanco.
+    if (!document.getElementById("tab-page-0")) {
+        switchTab("tab-page-1");
+    }
+
     renderizarGrupos();
     renderizarBracket();
     cargarResultados();
@@ -896,10 +929,33 @@ window.onload = () => {
     // Configurar refresco automático en vivo cada 60 segundos
     setInterval(cargarResultados, 60000);
     
-    // Registrar Service Worker para soporte PWA y offline
+    // Registrar Service Worker para soporte PWA y offline con auto-reload
     if ("serviceWorker" in navigator) {
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+            if (!refreshing) {
+                refreshing = true;
+                console.log("Nuevo Service Worker activo. Recargando página para actualizar a la última versión...");
+                window.location.reload();
+            }
+        });
+
         navigator.serviceWorker.register("./sw.js")
-            .then(reg => console.log("Service Worker registrado con éxito:", reg.scope))
+            .then(reg => {
+                console.log("Service Worker registrado con éxito:", reg.scope);
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    if (installingWorker) {
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === "installed") {
+                                if (navigator.serviceWorker.controller) {
+                                    console.log("Nueva actualización disponible. El Service Worker se activará automáticamente.");
+                                }
+                            }
+                        };
+                    }
+                };
+            })
             .catch(err => console.warn("Error al registrar Service Worker:", err));
     }
 };
