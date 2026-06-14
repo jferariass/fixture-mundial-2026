@@ -2,7 +2,7 @@
   "name": "Fixture Copa Mundial FIFA 2026",
   "short_name": "Mundial 2026",
   "description": "Fixture interactivo y automático de la Copa Mundial de la FIFA 2026 con marcadores en vivo y descarga de PDF.",
-  "start_url": "./index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#071e08",
   "theme_color": "#184c1c",

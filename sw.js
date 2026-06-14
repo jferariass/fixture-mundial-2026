@@ -1,7 +1,6 @@
-const CACHE_NAME = "fixture-mundial-2026-v19";
+const CACHE_NAME = "fixture-mundial-2026-v20";
 const ASSETS = [
     "./",
-    "./index.html",
     "./styles.css",
     "./app.js",
     "./manifest.json",
@@ -110,6 +109,12 @@ self.addEventListener("fetch", e => {
                         });
                     }
                     return response;
+                }).catch(err => {
+                    // Si falla la red y el usuario pide navegar o index.html, retornar el index local cacheado ('./')
+                    if (e.request.mode === 'navigate' || e.request.url.includes('index.html')) {
+                        return caches.match('./').then(res => res || new Response("Offline", { status: 503 }));
+                    }
+                    return new Response("Offline", { status: 503, statusText: "Service Unavailable" });
                 });
             })
         );
