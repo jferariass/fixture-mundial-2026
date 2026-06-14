@@ -839,6 +839,66 @@ body {
     filter: drop-shadow(0 0 5px var(--gold-glow));
 }
 
+/* Sección de predicciones en la tarjeta de hoy */
+.hoy-prediction-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prediction-title {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.prediction-title i {
+    color: var(--gold);
+}
+
+.prediction-bar {
+    display: flex;
+    height: 22px;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.bar-segment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    transition: width 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0 4px;
+}
+
+.bar-home {
+    background: linear-gradient(90deg, #1b5e20 0%, #2e7d32 100%);
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.bar-draw {
+    background: linear-gradient(90deg, #555555 0%, #6e6e6e 100%);
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+.bar-away {
+    background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
+}
+
 
 /* --- DISEÑO ADAPTIVO A TODAS LAS PANTALLAS (RESPONSIVE) --- */
 
@@ -1047,6 +1107,11 @@ body {
         font-size: 1.05rem;
         min-width: 90px;
         padding: 6px 10px;
+    }
+    
+    .prediction-bar {
+        height: 18px;
+        font-size: 0.6rem;
     }
 }
 

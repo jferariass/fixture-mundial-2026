@@ -572,6 +572,41 @@ function procesarPartidoAPI(match) {
     });
 }
 
+const RATINGS_FUERZA = {
+    "ARG": 1860, "FRA": 1840, "ESP": 1835, "ENG": 1820, "BRA": 1810, "POR": 1800,
+    "NED": 1790, "BEL": 1780, "GER": 1770, "URU": 1765, "COL": 1760, "CRO": 1750,
+    "MAR": 1740, "JPN": 1720, "SUI": 1715, "SEN": 1710, "USA": 1700, "ECU": 1695,
+    "MEX": 1690, "AUT": 1685, "CIV": 1680, "IRN": 1678, "TUR": 1675, "NOR": 1670,
+    "KOR": 1668, "EGY": 1660, "CZE": 1655, "AUS": 1650, "ALG": 1645, "TUN": 1640,
+    "CAN": 1665, "PAR": 1625, "SCO": 1615, "BIH": 1610, "GHA": 1605, "QAT": 1600,
+    "CPV": 1595, "RSA": 1590, "PAN": 1585, "COD": 1580, "IRQ": 1575, "UZB": 1565,
+    "JOR": 1550, "HAI": 1520, "NZL": 1510, "CUW": 1480
+};
+
+function calcularPrediccion(fifaHome, fifaAway) {
+    const rA = RATINGS_FUERZA[fifaHome] || 1600;
+    const rB = RATINGS_FUERZA[fifaAway] || 1600;
+    
+    const diff = rA - rB;
+    const expectedA = 1 / (1 + Math.pow(10, -diff / 400));
+    
+    // Empate base: 24%, disminuye a medida que la diferencia es mayor
+    let pDraw = Math.round(24 * (1 - Math.min(Math.abs(diff) / 500, 0.6)));
+    
+    // Distribución del resto
+    let pResto = 100 - pDraw;
+    let pHome = Math.round(expectedA * pResto);
+    let pAway = pResto - pHome;
+    
+    // Ajustar si sumase más de 100 por redondeos
+    const suma = pHome + pDraw + pAway;
+    if (suma !== 100) {
+        pHome += (100 - suma);
+    }
+    
+    return { home: pHome, draw: pDraw, away: pAway };
+}
+
 function actualizarPartidosDeHoy() {
     const contenedor = document.getElementById("hoy-matches-list");
     if (!contenedor) return;
@@ -633,6 +668,31 @@ function actualizarPartidosDeHoy() {
         const imgHomeHtml = banderaHome ? `<img src="${banderaHome}" class="hoy-flag" alt="${p.fifaHome}" onerror="this.style.display='none';">` : "";
         const imgAwayHtml = banderaAway ? `<img src="${banderaAway}" class="hoy-flag" alt="${p.fifaAway}" onerror="this.style.display='none';">` : "";
         
+        // Calcular porcentajes de predicciones si ambos equipos están definidos
+        const mostrarPrediccion = p.fifaHome && p.fifaAway;
+        let prediccionHtml = "";
+        if (mostrarPrediccion) {
+            const pred = calcularPrediccion(p.fifaHome, p.fifaAway);
+            prediccionHtml = `
+                <div class="hoy-prediction-section">
+                    <div class="prediction-title">
+                        <i class="fa-solid fa-chart-pie"></i> Probabilidad de Resultado (Fórmula de Expectativa FIFA)
+                    </div>
+                    <div class="prediction-bar">
+                        <div class="bar-segment bar-home" style="width: ${pred.home}%;" title="Victoria ${p.nombreHome}">
+                            ${p.fifaHome} ${pred.home}%
+                        </div>
+                        <div class="bar-segment bar-draw" style="width: ${pred.draw}%;" title="Empate">
+                            Empate ${pred.draw}%
+                        </div>
+                        <div class="bar-segment bar-away" style="width: ${pred.away}%;" title="Victoria ${p.nombreAway}">
+                            ${p.fifaAway} ${pred.away}%
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         html += `
             <div class="hoy-match-card">
                 <div class="hoy-match-header">
@@ -664,6 +724,7 @@ function actualizarPartidosDeHoy() {
                         <span class="hoy-team-name">${p.nombreAway}</span>
                     </div>
                 </div>
+                ${prediccionHtml}
             </div>
         `;
     });
