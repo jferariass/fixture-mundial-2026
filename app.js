@@ -186,9 +186,47 @@ const RESULTADOS_REALES = {
     ]
 };
 
+// Constantes para conversión horaria por estadio de la API a Hora de Argentina (GMT-3)
+const DIFERENCIA_HORAS_ESTADIO = {
+    "1": 2,  // Estadio Azteca (CDMX) -> GMT-5 a GMT-3 (+2)
+    "2": 2,  // Estadio BBVA (Monterrey) -> GMT-5 a GMT-3 (+2)
+    "3": 2,  // Estadio Akron (Guadalajara) -> GMT-5 a GMT-3 (+2)
+    "4": 4,  // BC Place (Vancouver) -> GMT-7 a GMT-3 (+4)
+    "5": 1,  // BMO Field (Toronto) -> GMT-4 a GMT-3 (+1)
+    "6": 1,  // MetLife Stadium (NY/NJ) -> GMT-4 a GMT-3 (+1)
+    "7": 1,  // Gillette Stadium (Boston) -> GMT-4 a GMT-3 (+1)
+    "8": 1,  // Lincoln Financial Field (Filadelfia) -> GMT-4 a GMT-3 (+1)
+    "9": 1,  // Mercedes-Benz Stadium (Atlanta) -> GMT-4 a GMT-3 (+1)
+    "10": 1, // Hard Rock Stadium (Miami) -> GMT-4 a GMT-3 (+1)
+    "11": 2, // Arrowhead Stadium (Kansas City) -> GMT-5 a GMT-3 (+2)
+    "12": 2, // AT&T Stadium (Dallas) -> GMT-5 a GMT-3 (+2)
+    "13": 2, // NRG Stadium (Houston) -> GMT-5 a GMT-3 (+2)
+    "14": 4, // SoFi Stadium (Los Ángeles) -> GMT-7 a GMT-3 (+4)
+    "15": 4, // Levi's Stadium (San Francisco) -> GMT-7 a GMT-3 (+4)
+    "16": 4  // Lumen Field (Seattle) -> GMT-7 a GMT-3 (+4)
+};
+
+// Mapeo de IDs de partidos de Playoffs de la API con los elementos DOM
+const MAPA_PLAYOFFS = {
+    "73": "d16-i-1", "74": "d16-i-2", "75": "d16-i-3", "76": "d16-i-4",
+    "77": "d16-i-5", "78": "d16-i-6", "79": "d16-i-7", "80": "d16-i-8",
+    "81": "d16-d-9", "82": "d16-d-10", "83": "d16-d-11", "84": "d16-d-12",
+    "85": "d16-d-13", "86": "d16-d-14", "87": "d16-d-15", "88": "d16-d-16",
+    "89": "o8-i-1", "90": "o8-i-2", "91": "o8-i-3", "92": "o8-i-4",
+    "93": "o8-d-5", "94": "o8-d-6", "95": "o8-d-7", "96": "o8-d-8",
+    "97": "c4-i-1", "98": "c4-i-2", "99": "c4-d-3", "100": "c4-d-4",
+    "101": "semi-i-1", "102": "semi-d-2",
+    "103": "bronze",
+    "104": "final"
+};
+
 // Estado global
 let tablasEstado = {};
-let partidosGoles = {}; // Almacenará los goles cargados de forma dinámica
+let partidosGoles = {}; // Almacenará los goles de fase de grupos
+let mapaEquiposIdACodigo = {}; // Mapa de ID -> Código FIFA (ej. 1 -> MEX)
+let partidosPlayoffsGoles = {}; // Marcadores de playoffs {partidoId: {s1, s2}}
+let partidosPlayoffsEquipos = {}; // Equipos clasificados de playoffs {partidoId: {t1, t2}}
+let listaPartidosCompleta = []; // Todos los partidos formateados para "Partidos de Hoy"
 
 function switchTab(tabId) {
     document.querySelectorAll(".print-page").forEach(page => {
@@ -200,9 +238,9 @@ function switchTab(tabId) {
     
     document.getElementById(tabId).classList.add("active");
     
-    const index = tabId.split("-")[2];
+    const index = parseInt(tabId.split("-")[2]);
     const botones = document.querySelectorAll(".tab-btn");
-    botones[index - 1].classList.add("active");
+    botones[index].classList.add("active");
 }
 
 function renderizarGrupos() {
@@ -315,7 +353,7 @@ function crearTarjetaGrupoAmplia(letra) {
 
 // Cargar marcadores (Primero locales de respaldo, luego consulta API)
 function cargarResultados() {
-    // Inicializar marcadores con datos estáticos locales
+    // Inicializar marcadores con datos estáticos locales de respaldo
     Object.keys(RESULTADOS_REALES).forEach(letra => {
         RESULTADOS_REALES[letra].forEach(res => {
             partidosGoles[`${letra}-${res.idx}-1`] = res.s1;
@@ -324,15 +362,30 @@ function cargarResultados() {
     });
 
     // Intentar descargar en vivo de la API
-    fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent("https://worldcup26.ir/api/matches"))
+    // 1. Primero consultamos la API de Equipos para mapear IDs a Códigos FIFA
+    fetch("https://worldcup26.ir/get/teams")
         .then(response => {
-            if (!response.ok) throw new Error("API Offline");
+            if (!response.ok) throw new Error("API Equipos Offline");
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.teams) {
+                data.teams.forEach(t => {
+                    mapaEquiposIdACodigo[t.id.toString()] = t.fifa_code;
+                });
+            }
+            // 2. Una vez que tenemos los equipos, consultamos los partidos
+            return fetch("https://worldcup26.ir/get/games");
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("API Partidos Offline");
             return response.json();
         })
         .then(data => {
             console.log("Carga de API exitosa:", data);
-            if (data && data.matches) {
-                data.matches.forEach(match => {
+            if (data && data.games) {
+                listaPartidosCompleta = [];
+                data.games.forEach(match => {
                     procesarPartidoAPI(match);
                 });
             }
@@ -344,22 +397,206 @@ function cargarResultados() {
         });
 }
 
+function obtenerFechaHoraArgentina(localDateStr, stadiumId) {
+    if (!localDateStr) return { fecha: "--/--", hora: "--:--" };
+    try {
+        const parts = localDateStr.split(" ");
+        const dateParts = parts[0].split("/");
+        const timeParts = parts[1].split(":");
+        
+        const mes = parseInt(dateParts[0]) - 1;
+        const dia = parseInt(dateParts[1]);
+        const anio = parseInt(dateParts[2]);
+        const hora = parseInt(timeParts[0]);
+        const min = parseInt(timeParts[1]);
+        
+        const fechaEstadio = new Date(anio, mes, dia, hora, min);
+        const diffHoras = DIFERENCIA_HORAS_ESTADIO[stadiumId] || 1;
+        const fechaArg = new Date(fechaEstadio.getTime() + (diffHoras * 3600000));
+        
+        const diaStr = String(fechaArg.getDate()).padStart(2, '0');
+        const mesStr = String(fechaArg.getMonth() + 1).padStart(2, '0');
+        const horaStr = String(fechaArg.getHours()).padStart(2, '0');
+        const minStr = String(fechaArg.getMinutes()).padStart(2, '0');
+        
+        return {
+            fecha: `${diaStr}/${mesStr}`,
+            hora: `${horaStr}:${minStr}`
+        };
+    } catch (e) {
+        console.warn("Error formateando fecha de API:", localDateStr, e.message);
+        return { fecha: "--/--", hora: "--:--" };
+    }
+}
+
+function getFechaArgentinaHoy() {
+    const d = new Date();
+    // Ajustar a GMT-3
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const offsetArg = -3;
+    const fechaArg = new Date(utc + (3600000 * offsetArg));
+    
+    const dia = String(fechaArg.getDate()).padStart(2, '0');
+    const mes = String(fechaArg.getMonth() + 1).padStart(2, '0');
+    return `${dia}/${mes}`;
+}
+
 function procesarPartidoAPI(match) {
-    const eq1 = match.home_team_country_code;
-    const eq2 = match.away_team_country_code;
-    const g1 = match.home_team_score;
-    const g2 = match.away_team_score;
+    const id = match.id.toString();
+    const type = match.type;
     
-    if (g1 === null || g2 === null) return;
+    const idHome = match.home_team_id ? match.home_team_id.toString() : "0";
+    const idAway = match.away_team_id ? match.away_team_id.toString() : "0";
     
-    Object.keys(PARTIDOS).forEach(letra => {
-        PARTIDOS[letra].forEach((p, idx) => {
-            if (p.l1 === eq1 && p.l2 === eq2) {
-                partidosGoles[`${letra}-${idx}-1`] = g1;
-                partidosGoles[`${letra}-${idx}-2`] = g2;
-            }
-        });
+    const fifaHome = (idHome !== "0" && mapaEquiposIdACodigo[idHome]) ? mapaEquiposIdACodigo[idHome] : "";
+    const fifaAway = (idAway !== "0" && mapaEquiposIdACodigo[idAway]) ? mapaEquiposIdACodigo[idAway] : "";
+    
+    // Validar si el partido ha comenzado realmente (finished = TRUE, o time_elapsed en vivo)
+    const timeElap = match.time_elapsed ? match.time_elapsed.toLowerCase().replace("_", "").trim() : "";
+    const isStarted = match.finished === "TRUE" || (timeElap && timeElap !== "notstarted" && timeElap !== "finished" && timeElap !== "not_started" && timeElap !== "null");
+    
+    const g1 = (isStarted && match.home_score !== null && match.home_score !== undefined && match.home_score !== "") ? parseInt(match.home_score) : null;
+    const g2 = (isStarted && match.away_score !== null && match.away_score !== undefined && match.away_score !== "") ? parseInt(match.away_score) : null;
+    
+    const argentinaInfo = obtenerFechaHoraArgentina(match.local_date, match.stadium_id);
+    
+    if (type === "group") {
+        if (fifaHome && fifaAway) {
+            Object.keys(PARTIDOS).forEach(letra => {
+                PARTIDOS[letra].forEach((p, idx) => {
+                    if (p.l1 === fifaHome && p.l2 === fifaAway) {
+                        if (g1 !== null && g2 !== null) {
+                            partidosGoles[`${letra}-${idx}-1`] = g1;
+                            partidosGoles[`${letra}-${idx}-2`] = g2;
+                        }
+                    }
+                });
+            });
+        }
+    } else {
+        partidosPlayoffsEquipos[id] = { t1: fifaHome, t2: fifaAway };
+        if (g1 !== null && g2 !== null && match.finished === "TRUE") {
+            partidosPlayoffsGoles[id] = { s1: g1, s2: g2 };
+        }
+    }
+    
+    // Guardar en la lista completa para partidos de hoy
+    listaPartidosCompleta.push({
+        id: id,
+        type: type,
+        group: match.group,
+        matchday: match.matchday,
+        finished: match.finished,
+        time_elapsed: match.time_elapsed,
+        isStarted: isStarted,
+        fifaHome: fifaHome,
+        fifaAway: fifaAway,
+        nombreHome: fifaHome ? PAISES[fifaHome].nombre : (match.home_team_name_en || "Pendiente"),
+        nombreAway: fifaAway ? PAISES[fifaAway].nombre : (match.away_team_name_en || "Pendiente"),
+        fechaArg: argentinaInfo.fecha,
+        horaArg: argentinaInfo.hora,
+        s1: g1,
+        s2: g2
     });
+}
+
+function actualizarPartidosDeHoy() {
+    const contenedor = document.getElementById("hoy-matches-list");
+    if (!contenedor) return;
+    
+    const hoyArg = getFechaArgentinaHoy();
+    
+    // Filtrar los partidos que se juegan hoy
+    const partidosDeHoy = listaPartidosCompleta.filter(p => p.fechaArg === hoyArg);
+    
+    // Ordenar por hora de Argentina
+    partidosDeHoy.sort((a, b) => a.horaArg.localeCompare(b.horaArg));
+    
+    if (partidosDeHoy.length === 0) {
+        contenedor.innerHTML = `
+            <div class="hoy-no-matches">
+                <i class="fa-regular fa-calendar-xmark"></i>
+                <p>No hay partidos programados para hoy (${hoyArg}) en horario de Argentina.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = "";
+    partidosDeHoy.forEach(p => {
+        let faseText = "";
+        if (p.type === "group") {
+            faseText = `Fase de Grupos • Grupo ${p.group} • Jornada ${p.matchday}`;
+        } else if (p.type === "r32") {
+            faseText = "Dieciseisavos de Final";
+        } else if (p.type === "r16") {
+            faseText = "Octavos de Final";
+        } else if (p.type === "qf") {
+            faseText = "Cuartos de Final";
+        } else if (p.type === "sf") {
+            faseText = "Semifinales";
+        } else if (p.type === "third") {
+            faseText = "Tercer Puesto";
+        } else if (p.type === "final") {
+            faseText = "Gran Final";
+        }
+        
+        let statusClass = "status-programado";
+        let statusText = "Programado";
+        
+        const timeElap = p.time_elapsed ? p.time_elapsed.toLowerCase().replace("_", "").trim() : "";
+        
+        if (p.finished === "TRUE") {
+            statusClass = "status-finalizado";
+            statusText = "Finalizado";
+        } else if (timeElap && timeElap !== "notstarted" && timeElap !== "finished" && timeElap !== "not_started" && timeElap !== "null") {
+            statusClass = "status-live";
+            statusText = `En Vivo • ${p.time_elapsed}`;
+        }
+        
+        const tieneMarcador = p.isStarted && p.s1 !== null && p.s2 !== null;
+        const banderaHome = p.fifaHome ? `banderas/${p.fifaHome.toLowerCase()}.png` : "";
+        const banderaAway = p.fifaAway ? `banderas/${p.fifaAway.toLowerCase()}.png` : "";
+        
+        const imgHomeHtml = banderaHome ? `<img src="${banderaHome}" class="hoy-flag" alt="${p.fifaHome}" onerror="this.style.display='none';">` : "";
+        const imgAwayHtml = banderaAway ? `<img src="${banderaAway}" class="hoy-flag" alt="${p.fifaAway}" onerror="this.style.display='none';">` : "";
+        
+        html += `
+            <div class="hoy-match-card">
+                <div class="hoy-match-header">
+                    <span class="hoy-match-stage">${faseText}</span>
+                    <span class="hoy-match-status ${statusClass}">
+                        ${statusText.includes("Vivo") ? "🟢 " : ""}${statusText}
+                    </span>
+                </div>
+                <div class="hoy-match-body">
+                    <div class="hoy-team team-home">
+                        ${imgHomeHtml}
+                        <span class="hoy-team-name">${p.nombreHome}</span>
+                    </div>
+                    
+                    <div class="hoy-score-center">
+                        ${tieneMarcador ? `
+                            <span class="hoy-score-num">${p.s1}</span>
+                            <span class="hoy-score-divider">-</span>
+                            <span class="hoy-score-num">${p.s2}</span>
+                        ` : `
+                            <div class="hoy-time-center">
+                                <i class="fa-regular fa-clock"></i> ${p.horaArg} hs
+                            </div>
+                        `}
+                    </div>
+                    
+                    <div class="hoy-team team-away">
+                        ${imgAwayHtml}
+                        <span class="hoy-team-name">${p.nombreAway}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    contenedor.innerHTML = html;
 }
 
 // Actualizar toda la interfaz (Tablas y Bracket) de forma automática
@@ -371,6 +608,9 @@ function actualizarInterfaz() {
     
     // Rellenar brackets
     actualizarPlayoffsAutomatico();
+    
+    // Renderizar los partidos de hoy
+    actualizarPartidosDeHoy();
 }
 
 function calcularGrupo(letra) {
@@ -488,6 +728,7 @@ function calcularGrupo(letra) {
 }
 
 function actualizarPlayoffsAutomatico() {
+    // 1. Calcular clasificados desde fase de grupos a los dieciseisavos (d16) como fallback si la API no reporta equipos en d16
     let ganadores = {};
     let segundos = {};
     let terceros = [];
@@ -517,35 +758,76 @@ function actualizarPlayoffsAutomatico() {
         mejoresTerceros.push("");
     }
     
-    const cruces = [
-        { id: "d16-i-1", t1: ganadores["A"], t2: mejoresTerceros[0] },
-        { id: "d16-i-2", t1: segundos["B"], t2: segundos["C"] },
-        { id: "d16-i-3", t1: ganadores["C"], t2: mejoresTerceros[1] },
-        { id: "d16-i-4", t1: segundos["D"], t2: segundos["E"] },
-        { id: "d16-i-5", t1: ganadores["E"], t2: mejoresTerceros[2] },
-        { id: "d16-i-6", t1: segundos["F"], t2: segundos["G"] },
-        { id: "d16-i-7", t1: ganadores["G"], t2: mejoresTerceros[3] },
-        { id: "d16-i-8", t1: segundos["H"], t2: segundos["I"] },
+    // Cruces teóricos de la fase de grupos si la API aún no los calcula
+    const crucesTeoricos = {
+        "73": { t1: ganadores["A"], t2: mejoresTerceros[0] },
+        "74": { t1: segundos["B"], t2: segundos["C"] },
+        "75": { t1: ganadores["C"], t2: mejoresTerceros[1] },
+        "76": { t1: segundos["D"], t2: segundos["E"] },
+        "77": { t1: ganadores["E"], t2: mejoresTerceros[2] },
+        "78": { t1: segundos["F"], t2: segundos["G"] },
+        "79": { t1: ganadores["G"], t2: mejoresTerceros[3] },
+        "80": { t1: segundos["H"], t2: segundos["I"] },
+        "81": { t1: ganadores["I"], t2: mejoresTerceros[4] },
+        "82": { t1: segundos["J"], t2: segundos["K"] },
+        "83": { t1: ganadores["K"], t2: mejoresTerceros[5] },
+        "84": { t1: segundos["L"], t2: segundos["A"] },
+        "85": { t1: ganadores["B"], t2: mejoresTerceros[6] },
+        "86": { t1: ganadores["D"], t2: mejoresTerceros[7] },
+        "87": { t1: ganadores["F"], t2: ganadores["H"] },
+        "88": { t1: ganadores["J"], t2: ganadores["L"] }
+    };
+
+    // 2. Pintar todas las llaves (ID 73 al 104) de forma dinámica con los datos de la API
+    Object.keys(MAPA_PLAYOFFS).forEach(partidoId => {
+        const idPrefijo = MAPA_PLAYOFFS[partidoId];
         
-        { id: "d16-d-9", t1: ganadores["I"], t2: mejoresTerceros[4] },
-        { id: "d16-d-10", t1: segundos["J"], t2: segundos["K"] },
-        { id: "d16-d-11", t1: ganadores["K"], t2: mejoresTerceros[5] },
-        { id: "d16-d-12", t1: segundos["L"], t2: segundos["A"] },
-        { id: "d16-d-13", t1: ganadores["B"], t2: mejoresTerceros[6] },
-        { id: "d16-d-14", t1: ganadores["D"], t2: mejoresTerceros[7] },
-        { id: "d16-d-15", t1: ganadores["F"], t2: ganadores["H"] },
-        { id: "d16-d-16", t1: ganadores["J"], t2: ganadores["L"] }
-    ];
-    
-    cruces.forEach(cruce => {
-        const t1El = document.getElementById(`${cruce.id}-t1`);
-        const t2El = document.getElementById(`${cruce.id}-t2`);
+        let t1 = "";
+        let t2 = "";
+        
+        // Si la API tiene equipos cargados para esta llave de playoffs, los usamos
+        if (partidosPlayoffsEquipos[partidoId]) {
+            t1 = partidosPlayoffsEquipos[partidoId].t1;
+            t2 = partidosPlayoffsEquipos[partidoId].t2;
+        }
+        
+        // Si es Ronda de 32 (73-88) y la API aún no tiene equipos pero nosotros ya calculamos grupos, aplicamos fallback local
+        const pIdInt = parseInt(partidoId);
+        if (!t1 && !t2 && pIdInt >= 73 && pIdInt <= 88 && crucesTeoricos[partidoId]) {
+            t1 = crucesTeoricos[partidoId].t1;
+            t2 = crucesTeoricos[partidoId].t2;
+        }
+        
+        // Pintar en el DOM
+        const t1El = document.getElementById(`${idPrefijo}-t1`);
+        const t2El = document.getElementById(`${idPrefijo}-t2`);
+        const s1El = document.getElementById(`${idPrefijo}-s1`);
+        const s2El = document.getElementById(`${idPrefijo}-s2`);
         
         if (t1El) {
-            t1El.innerText = cruce.t1 ? PAISES[cruce.t1].nombre : "___________";
+            t1El.innerText = t1 ? (PAISES[t1] ? PAISES[t1].nombre : t1) : "___________";
         }
         if (t2El) {
-            t2El.innerText = cruce.t2 ? PAISES[cruce.t2].nombre : "___________";
+            t2El.innerText = t2 ? (PAISES[t2] ? PAISES[t2].nombre : t2) : "___________";
+        }
+        
+        // Pintar marcadores
+        if (partidosPlayoffsGoles[partidoId] !== undefined) {
+            const s1 = partidosPlayoffsGoles[partidoId].s1;
+            const s2 = partidosPlayoffsGoles[partidoId].s2;
+            if (s1El && s2El) {
+                s1El.innerText = s1;
+                s1El.classList.add("has-score");
+                s2El.innerText = s2;
+                s2El.classList.add("has-score");
+            }
+        } else {
+            if (s1El && s2El) {
+                s1El.innerText = "-";
+                s1El.classList.remove("has-score");
+                s2El.innerText = "-";
+                s2El.classList.remove("has-score");
+            }
         }
     });
 }
@@ -610,4 +892,7 @@ window.onload = () => {
     renderizarGrupos();
     renderizarBracket();
     cargarResultados();
+    
+    // Configurar refresco automático en vivo cada 60 segundos
+    setInterval(cargarResultados, 60000);
 };

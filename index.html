@@ -21,7 +21,8 @@
         
         <!-- Pestañas de Navegación -->
         <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('tab-page-1')">PÁG 1: GRUPOS A-D</button>
+            <button class="tab-btn active" onclick="switchTab('tab-page-0')">HOY 📅</button>
+            <button class="tab-btn" onclick="switchTab('tab-page-1')">PÁG 1: GRUPOS A-D</button>
             <button class="tab-btn" onclick="switchTab('tab-page-2')">PÁG 2: GRUPOS E-H</button>
             <button class="tab-btn" onclick="switchTab('tab-page-3')">PÁG 3: GRUPOS I-L</button>
             <button class="tab-btn" onclick="switchTab('tab-page-4')">PÁG 4: FASE FINAL</button>
@@ -35,8 +36,16 @@
     </header>
 
     <main class="main-content">
+        <!-- PÁGINA 0: PARTIDOS DE HOY -->
+        <div class="print-page active" id="tab-page-0">
+            <div class="print-page-title">PARTIDOS DE HOY (HORARIO ARGENTINA)</div>
+            <div class="hoy-container" id="hoy-matches-list">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+
         <!-- PÁGINA 1: GRUPOS A-D -->
-        <div class="print-page active" id="tab-page-1">
+        <div class="print-page" id="tab-page-1">
             <div class="print-page-title">FASE DE GRUPOS • PARTE 1 (GRUPOS A, B, C, D)</div>
             <div class="grid-grupos-2x2" id="grid-page-1"></div>
         </div>
