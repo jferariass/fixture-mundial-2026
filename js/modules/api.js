@@ -42,6 +42,17 @@ function simularPartidosFicticios() {
             if (p.s1 === null) p.s1 = 0;
             if (p.s2 === null) p.s2 = 0;
             
+            // Sincronizar con el estado global para que se actualice la vista de grupos
+            if (p.type === "group" && p.id.startsWith("local-")) {
+                const parts = p.id.split("-");
+                const letra = parts[1];
+                const idx = parts[2];
+                partidosGoles[`${letra}-${idx}-1`] = p.s1;
+                partidosGoles[`${letra}-${idx}-2`] = p.s2;
+            } else if (p.type === "playoff") {
+                partidosPlayoffsGoles[p.id] = { s1: p.s1, s2: p.s2 };
+            }
+            
             if (diffMinutes > 115) {
                 p.finished = "TRUE";
                 p.time_elapsed = "finished";
