@@ -1,5 +1,5 @@
 import { PAISES } from '../data/paises.js';
-import { topGoleadores, topAmarillas, topRojas, topPenales, topAutogoles } from './ui-podium.js';
+import { podioStats } from './ui-podium.js';
 
 export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     const modal = document.getElementById('player-card-modal');
@@ -8,9 +8,9 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     // Obtener estadísticas del jugador de nuestro Podium (torneo actual)
     const playerId = `${jugador.shortName || jugador.lastName || jugador.displayName} (${fifaCode})`;
     
-    const goles = topGoleadores.find(g => g.id === playerId)?.count || 0;
-    const amarillas = topAmarillas.find(g => g.id === playerId)?.count || 0;
-    const rojas = topRojas.find(g => g.id === playerId)?.count || 0;
+    const goles = podioStats.goles[playerId] ? podioStats.goles[playerId].count : 0;
+    const amarillas = podioStats.amarillas[playerId] ? podioStats.amarillas[playerId].count : 0;
+    const rojas = podioStats.rojas[playerId] ? podioStats.rojas[playerId].count : 0;
     
     // Buscar la bandera del país
     const flagUrl = `banderas/${fifaCode.toLowerCase()}.png`;

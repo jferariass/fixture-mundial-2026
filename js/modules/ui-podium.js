@@ -1,6 +1,17 @@
 import { listaPartidosCompleta } from './estado.js';
 import { PAISES } from '../data/paises.js';
 
+// Objeto global de estadísticas para que otras pestañas (como la de Equipos) puedan consultarlo
+export const podioStats = {
+    goles: {},
+    amarillas: {},
+    rojas: {},
+    penales: {},
+    enContra: {},
+    golesPorPais: {},
+    tarjetasPorPais: {} // amarillas + rojas
+};
+
 /**
  * Recalcula y renderiza la pestaña de Podio Estadístico
  */
@@ -8,17 +19,15 @@ export function renderizarPodio() {
     const contenedor = document.getElementById("podium-view");
     if (!contenedor) return;
 
-    // Diccionarios para acumular estadísticas
-    // Clave: nombre corto + país (ej. "L. Messi (ARG)")
-    const stats = {
-        goles: {},
-        amarillas: {},
-        rojas: {},
-        penales: {},
-        enContra: {},
-        golesPorPais: {},
-        tarjetasPorPais: {} // amarillas + rojas
-    };
+    // Resetear las estadísticas en cada renderizado
+    podioStats.goles = {};
+    podioStats.amarillas = {};
+    podioStats.rojas = {};
+    podioStats.penales = {};
+    podioStats.enContra = {};
+    podioStats.golesPorPais = {};
+    podioStats.tarjetasPorPais = {};
+    const stats = podioStats;
 
     // Función auxiliar para sumar a las métricas del jugador
     const addStat = (dict, id, name, code, flag, qty) => {
