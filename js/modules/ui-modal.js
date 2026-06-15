@@ -250,11 +250,12 @@ function construirModalDetalles(p, container) {
             
             return {
                 min: parseInt(evt.min.replace(/\D/g, '')) || 0,
-                minLabel: evt.min,
+                minLabel: evt.min + "'",
                 team: evt.team,
                 type: tipoUI,
                 text: texto,
-                detail: evt.detail || "Jugador"
+                detail: evt.detail || "Jugador",
+                athlete: evt.athlete
             };
         });
         todasIncidencias.sort((a, b) => a.min - b.min);
