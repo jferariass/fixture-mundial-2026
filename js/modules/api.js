@@ -1,4 +1,4 @@
-// Sincronización en tiempo real y consumo de API
+﻿// SincronizaciÃ³n en tiempo real y consumo de API
 
 import { PARTIDOS, DIFERENCIA_HORAS_ESTADIO } from '../data/partidos.js';
 import { PAISES, mapaEquiposIdACodigo } from '../data/paises.js';
@@ -13,10 +13,10 @@ import {
 import { actualizarInterfaz } from './ui.js';
 import { calcularPrediccion } from './calculations.js';
 
-// Sincronización en tiempo real y consumo de API
-// Modificado para NUNCA inventar goles falsos. Si no hay datos, mostrará "Actualizando..."
+// SincronizaciÃ³n en tiempo real y consumo de API
+// Modificado para NUNCA inventar goles falsos. Si no hay datos, mostrarÃ¡ "Actualizando..."
 
-// Función para procesar partidos que pasaron su horario pero no tienen datos reales
+// FunciÃ³n para procesar partidos que pasaron su horario pero no tienen datos reales
 function simularPartidosFicticios() {
     const d = new Date();
     const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
@@ -42,7 +42,7 @@ function simularPartidosFicticios() {
         const diffMinutes = Math.floor(diffMs / 60000);
         
         if (diffMinutes >= 0) {
-            // El partido ya debería haber empezado según el reloj
+            // El partido ya deberÃ­a haber empezado segÃºn el reloj
             // Pero NO TENEMOS DATOS REALES de la API.
             // Por exigencia del usuario, NO INVENTAMOS GOLES (ni 0-0 ni random).
             p.isStarted = true; // Se considera iniciado para UI, pero sin goles
@@ -54,12 +54,12 @@ function simularPartidosFicticios() {
     });
 }
 
-// ESPN API no requiere API KEY, es súper rápida, confiable y soporta CORS
+// ESPN API no requiere API KEY, es sÃºper rÃ¡pida, confiable y soporta CORS
 const URL_GAMES = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=150";
 
 // Mapa para corregir abreviaturas de ESPN si difieren de las nuestras
 const ESPN_A_FIFA = {
-    "ZAF": "RSA", // Sudáfrica
+    "ZAF": "RSA", // SudÃ¡frica
     "KOR": "KOR",
     "CZE": "CZE",
     "CAN": "CAN",
@@ -109,10 +109,10 @@ const ESPN_A_FIFA = {
 };
 
 /**
- * Carga los marcadores (primero datos locales estáticos de respaldo, luego realiza fetch a la API)
+ * Carga los marcadores (primero datos locales estÃ¡ticos de respaldo, luego realiza fetch a la API)
  */
 export function cargarResultados() {
-    // Inicializar marcadores con datos estáticos locales de respaldo si no se han cargado antes
+    // Inicializar marcadores con datos estÃ¡ticos locales de respaldo si no se han cargado antes
     Object.keys(RESULTADOS_REALES).forEach(letra => {
         RESULTADOS_REALES[letra].forEach(res => {
             partidosGoles[`${letra}-${res.idx}-1`] = res.s1;
@@ -120,7 +120,7 @@ export function cargarResultados() {
         });
     });
 
-    // Función de fallback local
+    // FunciÃ³n de fallback local
     const poblarListaPartidosLocal = () => {
         limpiarListaPartidosCompleta();
         Object.keys(PARTIDOS).forEach(letra => {
@@ -155,7 +155,7 @@ export function cargarResultados() {
         if (loader) loader.classList.add('hidden');
     };
 
-    // Intentar cargar caché inicial
+    // Intentar cargar cachÃ© inicial
     const juegosCache = localStorage.getItem('cached_espn_games');
     if (juegosCache) {
         try {
@@ -167,7 +167,7 @@ export function cargarResultados() {
             actualizarInterfaz();
             ocultarLoader();
         } catch (e) {
-            console.warn("Error leyendo caché, usando respaldo:", e.message);
+            console.warn("Error leyendo cachÃ©, usando respaldo:", e.message);
             poblarListaPartidosLocal();
             simularPartidosFicticios();
             actualizarInterfaz();
@@ -212,7 +212,7 @@ function procesarPartidoESPN(ev) {
     const comp = ev.competitions[0];
     if (!comp.competitors || comp.competitors.length < 2) return;
 
-    // Identificar local y visitante según la API de ESPN
+    // Identificar local y visitante segÃºn la API de ESPN
     const homeTeamData = comp.competitors.find(c => c.homeAway === 'home');
     const awayTeamData = comp.competitors.find(c => c.homeAway === 'away');
 
@@ -224,7 +224,7 @@ function procesarPartidoESPN(ev) {
     const fifaHome = ESPN_A_FIFA[espnHome] || espnHome;
     const fifaAway = ESPN_A_FIFA[espnAway] || espnAway;
 
-    // Determinar si ya empezó o terminó
+    // Determinar si ya empezÃ³ o terminÃ³
     const state = ev.status.type.state; // "pre", "in", "post"
     const isStarted = state === "in" || state === "post";
     const isFinished = state === "post";
@@ -241,7 +241,7 @@ function procesarPartidoESPN(ev) {
             if (p.l1 === fifaHome && p.l2 === fifaAway) {
                 encontradoGrupos = true;
                 
-                // Actualizar goles si el partido arrancó
+                // Actualizar goles si el partido arrancÃ³
                 if (g1 !== null && g2 !== null) {
                     partidosGoles[`${letra}-${idx}-1`] = g1;
                     partidosGoles[`${letra}-${idx}-2`] = g2;
@@ -308,7 +308,7 @@ function procesarPartidoESPN(ev) {
                 fifaAway: fifaAway,
                 nombreHome: (fifaHome && PAISES[fifaHome]) ? PAISES[fifaHome].nombre : (homeTeamData.team.displayName || fifaHome),
                 nombreAway: (fifaAway && PAISES[fifaAway]) ? PAISES[fifaAway].nombre : (awayTeamData.team.displayName || fifaAway),
-                fechaArg: "--/--", // No tenemos fecha local para playoffs aún en este demo
+                fechaArg: "--/--", // No tenemos fecha local para playoffs aÃºn en este demo
                 horaArg: "--:--",
                 s1: g1,
                 s2: g2
@@ -338,22 +338,20 @@ function procesarPartidoESPN(ev) {
             
             listaPartidosCompleta.push(nuevoPartido);
         }
-    }
-}
 
 /**
- * Obtiene el plantel completo y el estado actual de un equipo espec�fico
+ * Obtiene el plantel completo y el estado actual de un equipo específico
  * @param {string} teamId El ID del equipo en ESPN
  */
 export async function fetchTeamRoster(teamId) {
     try {
-        const url = \https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/\/roster\;
+        const url = https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/ + teamId + /roster;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Error fetching team roster");
         const data = await response.json();
         
-        // Tambi�n traemos el resumen del equipo para el r�cord
-        const teamUrl = \https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/\\;
+        // También traemos el resumen del equipo para el récord
+        const teamUrl = https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/ + teamId;
         const teamResponse = await fetch(teamUrl);
         const teamData = teamResponse.ok ? await teamResponse.json() : null;
 
