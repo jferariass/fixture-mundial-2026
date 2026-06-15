@@ -54,7 +54,7 @@ export function renderizarPodio() {
                 const playerId = `${player} (${fifaCode})`;
 
                 // Analizar el tipo de incidencia
-                if (type === "Goal" || type === "Goal - Header" || type === "Goal - Free-kick") {
+                if (type.includes("Goal") && type !== "Own Goal") {
                     addStat(stats.goles, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.golesPorPais, fifaCode, 1);
                 } else if (type === "Penalty - Scored") {
