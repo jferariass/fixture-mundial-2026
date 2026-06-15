@@ -306,8 +306,8 @@ function procesarPartidoESPN(ev) {
                 isStarted: isStarted,
                 fifaHome: fifaHome,
                 fifaAway: fifaAway,
-                nombreHome: fifaHome ? PAISES[fifaHome].nombre : homeTeamData.team.displayName,
-                nombreAway: fifaAway ? PAISES[fifaAway].nombre : awayTeamData.team.displayName,
+                nombreHome: (fifaHome && PAISES[fifaHome]) ? PAISES[fifaHome].nombre : (homeTeamData.team.displayName || fifaHome),
+                nombreAway: (fifaAway && PAISES[fifaAway]) ? PAISES[fifaAway].nombre : (awayTeamData.team.displayName || fifaAway),
                 fechaArg: "--/--", // No tenemos fecha local para playoffs aún en este demo
                 horaArg: "--:--",
                 s1: g1,
