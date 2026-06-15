@@ -41,15 +41,20 @@ function simularPartidosFicticios() {
         const diffMs = now.getTime() - matchDate.getTime();
         const diffMinutes = Math.floor(diffMs / 60000);
         
-        if (diffMinutes >= 0) {
-            // El partido ya deberÃ­a haber empezado segÃºn el reloj
-            // Pero NO TENEMOS DATOS REALES de la API.
-            // Por exigencia del usuario, NO INVENTAMOS GOLES (ni 0-0 ni random).
-            p.isStarted = true; // Se considera iniciado para UI, pero sin goles
+        if (diffMinutes >= 0 && diffMinutes <= 150) {
+            // El partido est en curso (entre el inicio y 2.5 horas despus)
+            p.isStarted = true;
             p.s1 = null;
             p.s2 = null;
             p.finished = "FALSE";
             p.time_elapsed = "Actualizando..."; // Mensaje de "Actualizando..."
+        } else if (diffMinutes > 150) {
+            // El partido ya termin hace tiempo, pero no tenemos datos de ESPN
+            p.isStarted = true;
+            p.s1 = null;
+            p.s2 = null;
+            p.finished = "TRUE";
+            p.time_elapsed = "Finalizado";
         }
     });
 }
