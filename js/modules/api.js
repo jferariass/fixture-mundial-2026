@@ -296,7 +296,7 @@ function procesarPartidoESPN(ev) {
         // Agregar a la lista si no existe
         const existePlayoff = listaPartidosCompleta.find(item => item.id === playOffId);
         if (!existePlayoff) {
-            listaPartidosCompleta.push({
+            const nuevoPartido = {
                 id: playOffId,
                 type: "playoff",
                 group: "",
