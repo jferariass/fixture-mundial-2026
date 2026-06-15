@@ -77,6 +77,7 @@
             <button class="tab-btn" onclick="switchTab('tab-page-2')">PÁG 2: GRUPOS E-H</button>
             <button class="tab-btn" onclick="switchTab('tab-page-3')">PÁG 3: GRUPOS I-L</button>
             <button class="tab-btn" onclick="switchTab('tab-page-4')">PÁG 4: FASE FINAL</button>
+            <button class="tab-btn" onclick="switchTab('tab-page-podium')"><i class="fa-solid fa-trophy"></i> PODIO</button>
         </nav>
 
         <!-- Selector Desplegable para Móviles (Dropdown Personalizado) -->
@@ -91,6 +92,7 @@
                 <button class="mobile-dropdown-item" data-value="tab-page-2">📄 PÁG 2: GRUPOS E-H</button>
                 <button class="mobile-dropdown-item" data-value="tab-page-3">📄 PÁG 3: GRUPOS I-L</button>
                 <button class="mobile-dropdown-item" data-value="tab-page-4">🏆 PÁG 4: FASE FINAL</button>
+                <button class="mobile-dropdown-item" data-value="tab-page-podium">🏆 PODIO (ESTADÍSTICAS)</button>
             </div>
         </div>
 
@@ -206,6 +208,21 @@
                     <!-- Dieciseisavos Derecha -->
                 </div>
             </section>
+        </div>
+
+        <!-- PÁGINA PODIO: ESTADÍSTICAS GLOBALES -->
+        <div class="print-page" id="tab-page-podium" style="display: none;">
+            <div class="print-page-title">🏆 EL PODIO ESTADÍSTICO</div>
+            
+            <div id="podium-view" class="podium-grid">
+                <!-- Se llenará dinámicamente con JS -->
+                <div class="hoy-loading-loader" style="grid-column: 1 / -1; margin-top: 40px;">
+                    <div class="clock-spinner">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <p class="hoy-loading-text">Calculando estadísticas globales en vivo...</p>
+                </div>
+            </div>
         </div>
     </main>
 

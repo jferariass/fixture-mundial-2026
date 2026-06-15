@@ -16,11 +16,12 @@ export function switchTab(tabId) {
     
     targetPage.classList.add("active");
     
-    const index = parseInt(tabId.split("-")[2]);
     const botones = document.querySelectorAll(".tab-btn");
-    if (botones[index]) {
-        botones[index].classList.add("active");
-    }
+    botones.forEach(btn => {
+        if (btn.getAttribute("onclick") && btn.getAttribute("onclick").includes(tabId)) {
+            btn.classList.add("active");
+        }
+    });
     
     // Sincronizar el selector móvil personalizado
     const dropdownBtnText = document.getElementById("mobile-dropdown-current");
