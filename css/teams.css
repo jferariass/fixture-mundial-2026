@@ -252,15 +252,30 @@
     to { transform: scale(1); }
 }
 
+.player-card-top-bar {
+    background: #000;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #334155;
+    position: relative;
+    z-index: 30;
+}
+
+.player-card-top-bar-title {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
 .player-card-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     cursor: pointer;
     z-index: 20;
