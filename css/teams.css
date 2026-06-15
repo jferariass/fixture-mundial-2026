@@ -254,25 +254,30 @@
 
 .player-card-close {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(0,0,0,0.5);
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    border: none;
-    width: 32px;
-    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 10;
+    z-index: 20;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    transition: background 0.2s;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .player-card-close:hover {
-    background: rgba(255,0,0,0.8);
+    background: rgba(239, 68, 68, 0.9);
+    border-color: rgba(239, 68, 68, 1);
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
 }
 
 #player-card-content {
