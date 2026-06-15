@@ -1,13 +1,18 @@
 import { PAISES } from '../data/paises.js';
-import { podioStats } from './ui-podium.js';
+import { podioStats, calcularPodioStats } from './ui-podium.js';
 
 window.abrirPlayerCard = abrirPlayerCard;
 export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     const modal = document.getElementById('player-card-modal');
     const content = document.getElementById('player-card-content');
     
+    // Asegurarnos de que las estadísticas estén calculadas
+    if (typeof calcularPodioStats === 'function') {
+        calcularPodioStats();
+    }
+    
     // Obtener estadísticas del jugador de nuestro Podium (torneo actual)
-    const playerId = `${jugador.shortName || jugador.lastName || jugador.displayName} (${fifaCode})`;
+    const playerId = `${jugador.shortName || jugador.displayName} (${fifaCode})`;
     
     const goles = podioStats.goles[playerId] ? podioStats.goles[playerId].count : 0;
     const amarillas = podioStats.amarillas[playerId] ? podioStats.amarillas[playerId].count : 0;
@@ -25,7 +30,14 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
         height = jugador.displayHeight;
     }
     const weight = jugador.displayWeight || '-';
-    const positionName = jugador.position ? jugador.position.name : 'Unknown';
+    
+    let positionName = 'Unknown';
+    if (typeof jugador.position === 'string') {
+        positionName = jugador.position;
+    } else if (jugador.position) {
+        positionName = jugador.position.abbreviation || jugador.position.name || 'Unknown';
+    }
+    
     const jersey = jugador.jersey || '#';
     
     // Determinar color de fondo

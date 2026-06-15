@@ -13,13 +13,10 @@ export const podioStats = {
 };
 
 /**
- * Recalcula y renderiza la pestaña de Podio Estadístico
+ * Recalcula las estadsticas (para ser llamado independientemente del render)
  */
-export function renderizarPodio() {
-    const contenedor = document.getElementById("podium-view");
-    if (!contenedor) return;
-
-    // Resetear las estadísticas en cada renderizado
+export function calcularPodioStats() {
+    // Resetear las estadsticas en cada renderizado
     podioStats.goles = {};
     podioStats.amarillas = {};
     podioStats.rojas = {};
@@ -93,6 +90,17 @@ export function renderizarPodio() {
             });
         }
     });
+}
+
+/**
+ * Renderiza la pestaña de Podio Estadístico
+ */
+export function renderizarPodio() {
+    const contenedor = document.getElementById("podium-view");
+    if (!contenedor) return;
+    
+    calcularPodioStats();
+    const stats = podioStats;
 
     // 2. Convertir diccionarios a arrays y ordenar (Top 5)
     const topGoleadores = Object.values(stats.goles).sort((a, b) => b.count - a.count).slice(0, 5);
