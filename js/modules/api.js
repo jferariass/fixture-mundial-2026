@@ -334,24 +334,20 @@ function procesarPartidoESPN(ev) {
                         detail: player
                     };
                 });
-            }
-            
-            listaPartidosCompleta.push(nuevoPartido);
-        }
 
 /**
- * Obtiene el plantel completo y el estado actual de un equipo específico
+ * Obtiene el plantel completo y el estado actual de un equipo especifico
  * @param {string} teamId El ID del equipo en ESPN
  */
 export async function fetchTeamRoster(teamId) {
     try {
-        const url = https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/ + teamId + /roster;
+        const url = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/" + teamId + "/roster";
         const response = await fetch(url);
         if (!response.ok) throw new Error("Error fetching team roster");
         const data = await response.json();
         
-        // También traemos el resumen del equipo para el récord
-        const teamUrl = https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/ + teamId;
+        // Tambien traemos el resumen del equipo para el record
+        const teamUrl = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/" + teamId;
         const teamResponse = await fetch(teamUrl);
         const teamData = teamResponse.ok ? await teamResponse.json() : null;
 
