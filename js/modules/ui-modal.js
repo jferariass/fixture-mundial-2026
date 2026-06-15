@@ -236,7 +236,12 @@ function construirModalDetalles(p, container) {
             
             if (evt.type.includes("Goal")) {
                 tipoUI = "gol";
-                texto = `¡GOL de ${evt.team === "home" ? p.nombreHome : p.nombreAway}!`;
+                if (evt.type.toLowerCase().includes("own goal")) {
+                    const beneficiado = evt.team === "home" ? p.nombreAway : p.nombreHome;
+                    texto = `¡GOL EN CONTRA! (Suma para ${beneficiado})`;
+                } else {
+                    texto = `¡GOL de ${evt.team === "home" ? p.nombreHome : p.nombreAway}!`;
+                }
             } else if (evt.type.includes("Yellow Card")) {
                 tipoUI = "tarjeta-amarilla";
                 texto = "Tarjeta Amarilla";
@@ -354,7 +359,10 @@ function construirModalDetalles(p, container) {
         todasIncidencias.forEach(evt => {
             let badgeClass = "badge-goal";
             let icon = '<i class="fa-solid fa-soccer-ball"></i>';
-            if (evt.type === "tarjeta-amarilla") {
+            if (evt.type === "gol-en-contra") {
+                badgeClass = "badge-card-red";
+                icon = '<i class="fa-solid fa-futbol"></i>';
+            } else if (evt.type === "tarjeta-amarilla") {
                 badgeClass = "badge-card-yellow";
                 icon = '<i class="fa-solid fa-square"></i>';
             } else if (evt.type === "tarjeta-roja") {
