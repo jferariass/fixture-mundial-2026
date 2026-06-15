@@ -70,10 +70,16 @@ export function renderizarPodio() {
                     addStat(stats.rojas, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.tarjetasPorPais, fifaCode, 1); // Asumimos que la roja suma a la indisciplina
                 } else if (typeLower.includes("own goal")) {
-                    addStat(stats.enContra, playerId, player, fifaCode, flagUrl, 1);
-                    // Los goles en contra se los anotan al país RIVAL
+                    // En ESPN, d.team es el equipo que RECIBE el punto a favor (ej. USA)
+                    // Por lo tanto, el jugador que lo cometió pertenece al equipo rival.
                     const rivalCode = incidencia.team === "home" ? partido.fifaAway : partido.fifaHome;
-                    addCountryStat(stats.golesPorPais, rivalCode, 1);
+                    const rivalFlagUrl = rivalCode ? `banderas/${rivalCode.toLowerCase()}.png` : "";
+                    const rivalPlayerId = `${player} (${rivalCode})`;
+                    
+                    addStat(stats.enContra, rivalPlayerId, player, rivalCode, rivalFlagUrl, 1);
+                    
+                    // El país beneficiado es fifaCode, así que le sumamos 1 gol a favor
+                    addCountryStat(stats.golesPorPais, fifaCode, 1);
                 }
             });
         }
