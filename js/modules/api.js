@@ -13,17 +13,10 @@ import {
 import { actualizarInterfaz } from './ui.js';
 import { calcularPrediccion } from './calculations.js';
 
-// Generador pseudoaleatorio simple basado en string
-function hashSimple(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i);
-        hash |= 0;
-    }
-    return Math.abs(hash);
-}
+// Sincronización en tiempo real y consumo de API
+// Modificado para NUNCA inventar goles falsos. Si no hay datos, mostrará "Actualizando..."
 
-// Función para simular el estado en vivo de partidos ficticios (ya que ESPN no los tiene)
+// Función para procesar partidos que pasaron su horario pero no tienen datos reales
 function simularPartidosFicticios() {
     const d = new Date();
     const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
@@ -31,7 +24,7 @@ function simularPartidosFicticios() {
     const now = new Date(utc + (3600000 * offsetArg));
     
     listaPartidosCompleta.forEach(p => {
-        // No sobrescribir si el partido ya tiene resultado de la API
+        // No sobrescribir si el partido ya tiene resultado real de la API
         if (p.isStarted && p.s1 !== null && p.s2 !== null) return;
         
         const [diaStr, mesStr] = p.fechaArg.split('/');
@@ -49,57 +42,14 @@ function simularPartidosFicticios() {
         const diffMinutes = Math.floor(diffMs / 60000);
         
         if (diffMinutes >= 0) {
-            p.isStarted = true;
-            
-            // Si el partido está en vivo o finalizado y no tiene goles, generamos goles realistas
-            if (p.s1 === null || p.s2 === null) {
-                if (p.fifaHome && p.fifaAway) {
-                    const pred = calcularPrediccion(p.fifaHome, p.fifaAway);
-                    const hash = hashSimple(p.fifaHome + p.fifaAway + p.fechaArg);
-                    const rnd = hash % 100;
-                    
-                    if (rnd < pred.home) {
-                        p.s1 = 1 + (hash % 3);
-                        p.s2 = (hash % 2);
-                        if (p.s1 <= p.s2) p.s1 = p.s2 + 1;
-                    } else if (rnd < pred.home + pred.draw) {
-                        p.s1 = (hash % 3);
-                        p.s2 = p.s1;
-                    } else {
-                        p.s2 = 1 + (hash % 3);
-                        p.s1 = (hash % 2);
-                        if (p.s2 <= p.s1) p.s2 = p.s1 + 1;
-                    }
-                } else {
-                    p.s1 = 0;
-                    p.s2 = 0;
-                }
-            }
-            
-            // Sincronizar con el estado global para que se actualice la vista de grupos
-            if (p.type === "group" && p.id.startsWith("local-")) {
-                const parts = p.id.split("-");
-                const letra = parts[1];
-                const idx = parts[2];
-                partidosGoles[`${letra}-${idx}-1`] = p.s1;
-                partidosGoles[`${letra}-${idx}-2`] = p.s2;
-            } else if (p.type === "playoff") {
-                partidosPlayoffsGoles[p.id] = { s1: p.s1, s2: p.s2 };
-            }
-            
-            if (diffMinutes > 115) {
-                p.finished = "TRUE";
-                p.time_elapsed = "finished";
-            } else {
-                p.finished = "FALSE";
-                let minMostrar = diffMinutes;
-                if (diffMinutes > 45 && diffMinutes < 60) {
-                    minMostrar = "MT";
-                } else if (diffMinutes >= 60) {
-                    minMostrar = diffMinutes - 15;
-                }
-                p.time_elapsed = minMostrar === "MT" ? minMostrar : minMostrar + "'";
-            }
+            // El partido ya debería haber empezado según el reloj
+            // Pero NO TENEMOS DATOS REALES de la API.
+            // Por exigencia del usuario, NO INVENTAMOS GOLES (ni 0-0 ni random).
+            p.isStarted = true; // Se considera iniciado para UI, pero sin goles
+            p.s1 = null;
+            p.s2 = null;
+            p.finished = "FALSE";
+            p.time_elapsed = "Actualizando..."; // Mensaje de "Actualizando..."
         }
     });
 }
