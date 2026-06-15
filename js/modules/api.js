@@ -334,6 +334,12 @@ function procesarPartidoESPN(ev) {
                         detail: player
                     };
                 });
+            }
+            
+            listaPartidosCompleta.push(nuevoPartido);
+        }
+    }
+}
 
 /**
  * Obtiene el plantel completo y el estado actual de un equipo especifico
