@@ -5,7 +5,7 @@ import { abrirPlayerCard } from './ui-player-card.js';
 let isTeamsRendered = false;
 
 // Convertir código FIFA local a ID de equipo de ESPN
-const fifaToEspnId = {
+export const fifaToEspnId = {
     "ARG": "202", "MEX": "203", "USA": "660", "CAN": "1840", "BRA": "205", 
     "URU": "214", "COL": "208", "FRA": "478", "GER": "481", "ENG": "468",
     "ESP": "483", "POR": "482", "ITA": "108", "NED": "449", "CRO": "477",

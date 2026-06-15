@@ -59,16 +59,16 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
         
         <div class="player-card-body" style="border-top-color: ${bgColor}">
             <h3 class="player-card-name">${jugador.displayName || jugador.fullName}</h3>
-            <div class="player-card-position-text">${positionName}</div>
+            <div class="player-card-position-text" id="pc-pos">${positionName}</div>
             
             <div class="player-card-stats">
                 <div class="player-stat-box">
                     <span class="player-stat-label">Edad</span>
-                    <span class="player-stat-value">${age}</span>
+                    <span class="player-stat-value" id="pc-age">${age}</span>
                 </div>
                 <div class="player-stat-box">
                     <span class="player-stat-label">Altura</span>
-                    <span class="player-stat-value">${height}</span>
+                    <span class="player-stat-value" id="pc-height">${height}</span>
                 </div>
             </div>
             
@@ -91,6 +91,48 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     `;
     
     modal.classList.add('active');
+
+    // Fetch asíncrono para completar datos si faltan
+    if (age === '-' || height === '-') {
+        import('./ui-teams.js').then(({ fifaToEspnId }) => {
+            const espnTeamId = fifaToEspnId[fifaCode];
+            if (!espnTeamId) return;
+
+            import('./api.js').then(({ fetchTeamRoster }) => {
+                fetchTeamRoster(espnTeamId).then(({ roster }) => {
+                    const fullPlayer = roster.find(p => 
+                        p.id === jugador.id || 
+                        p.displayName === jugador.displayName || 
+                        p.shortName === jugador.shortName
+                    );
+
+                    if (fullPlayer && document.getElementById('player-card-modal').classList.contains('active')) {
+                        // Actualizar DOM
+                        if (fullPlayer.age) {
+                            const ageEl = document.getElementById('pc-age');
+                            if (ageEl) ageEl.textContent = fullPlayer.age;
+                        }
+                        
+                        let newHeight = '-';
+                        if (fullPlayer.height) newHeight = Math.round(fullPlayer.height * 2.54) + ' cm';
+                        else if (fullPlayer.displayHeight) newHeight = fullPlayer.displayHeight;
+                        if (newHeight !== '-') {
+                            const heightEl = document.getElementById('pc-height');
+                            if (heightEl) heightEl.textContent = newHeight;
+                        }
+                        
+                        if (fullPlayer.position) {
+                            const posName = fullPlayer.position.abbreviation || fullPlayer.position.name;
+                            if (posName) {
+                                const posEl = document.getElementById('pc-pos');
+                                if (posEl) posEl.textContent = posName;
+                            }
+                        }
+                    }
+                }).catch(e => console.error("Error al enriquecer jugador:", e));
+            });
+        });
+    }
 }
 
 window.cerrarPlayerCard = function() {
