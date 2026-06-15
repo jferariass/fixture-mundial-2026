@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -224,6 +224,27 @@
                 </div>
             </div>
         </div>
+            <!-- PÁGINA EQUIPOS Y PLANTELES -->
+        <div class="print-page" id="tab-page-teams">
+            <div class="print-page-title">👥 EQUIPOS Y PLANTELES</div>
+            
+            <div id="teams-list-view">
+                <div class="teams-list-header">Selecciona una Selección para ver su plantel</div>
+                <div id="teams-grid" class="teams-grid">
+                    <!-- Se llena con JS -->
+                </div>
+            </div>
+
+            <div id="team-detail-view" style="display: none;">
+                <button class="back-to-teams-btn" onclick="volverAEquipos()"><i class="fa-solid fa-arrow-left"></i> Volver a Selecciones</button>
+                <div id="team-detail-header" class="team-detail-header">
+                    <!-- Info del equipo -->
+                </div>
+                <div id="team-roster-grid" class="team-roster-grid">
+                    <!-- Jugadores -->
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Sección de Donación (Monetización) -->
@@ -311,3 +332,4 @@
     </div>
 </body>
 </html>
+
