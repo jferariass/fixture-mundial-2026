@@ -17,6 +17,7 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     const goles = podioStats.goles[playerId] ? podioStats.goles[playerId].count : 0;
     const amarillas = podioStats.amarillas[playerId] ? podioStats.amarillas[playerId].count : 0;
     const rojas = podioStats.rojas[playerId] ? podioStats.rojas[playerId].count : 0;
+    const enContra = podioStats.enContra[playerId] ? podioStats.enContra[playerId].count : 0;
     
     // Buscar la bandera del país
     const flagUrl = `banderas/${fifaCode.toLowerCase()}.png`;
@@ -78,6 +79,12 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
                     <span class="player-tourney-label">Goles Anotados</span>
                     <span class="player-tourney-val" style="color: ${goles > 0 ? '#fbbf24' : '#fff'}">${goles}</span>
                 </div>
+                ${enContra > 0 ? `
+                <div class="player-tourney-row">
+                    <span class="player-tourney-label">Goles en Contra</span>
+                    <span class="player-tourney-val" style="color: #ef4444">${enContra}</span>
+                </div>
+                ` : ''}
                 <div class="player-tourney-row">
                     <span class="player-tourney-label">Tarjetas Amarillas</span>
                     <span class="player-tourney-val" style="color: ${amarillas > 0 ? '#facc15' : '#fff'}">${amarillas}</span>

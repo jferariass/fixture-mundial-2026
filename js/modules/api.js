@@ -265,10 +265,16 @@ function procesarPartidoESPN(ev) {
                     // Extraer incidencias reales (goles, tarjetas, sustituciones)
                     if (comp.details && comp.details.length > 0) {
                         partidoGuardado.incidenciasReales = comp.details.map(d => {
-                            let teamStr = "home";
-                            if (d.team && d.team.id === awayTeamData.team.id) {
-                                teamStr = "away";
-                            }
+                              let targetTeamId = null;
+                              if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
+                                  targetTeamId = d.athletesInvolved[0].team.id;
+                              } else if (d.team) {
+                                  targetTeamId = d.team.id;
+                              }
+                              let teamStr = "home";
+                              if (targetTeamId === awayTeamData.team.id) {
+                                  teamStr = "away";
+                              }
                             
                             let player = "";
                             if (d.athletesInvolved && d.athletesInvolved.length > 0) {
@@ -323,10 +329,16 @@ function procesarPartidoESPN(ev) {
             // Extraer incidencias reales (goles, tarjetas, sustituciones)
             if (comp.details && comp.details.length > 0) {
                 nuevoPartido.incidenciasReales = comp.details.map(d => {
-                    let teamStr = "home";
-                    if (d.team && d.team.id === awayTeamData.team.id) {
-                        teamStr = "away";
-                    }
+                      let targetTeamId = null;
+                      if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
+                          targetTeamId = d.athletesInvolved[0].team.id;
+                      } else if (d.team) {
+                          targetTeamId = d.team.id;
+                      }
+                      let teamStr = "home";
+                      if (targetTeamId === awayTeamData.team.id) {
+                          teamStr = "away";
+                      }
                     
                     let player = "";
                     if (d.athletesInvolved && d.athletesInvolved.length > 0) {
