@@ -12,6 +12,53 @@ import {
 } from './estado.js';
 import { actualizarInterfaz } from './ui.js';
 
+// Función para simular el estado en vivo de partidos ficticios (ya que ESPN no los tiene)
+function simularPartidosFicticios() {
+    const d = new Date();
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const offsetArg = -3;
+    const now = new Date(utc + (3600000 * offsetArg));
+    
+    listaPartidosCompleta.forEach(p => {
+        // No sobrescribir si el partido ya tiene resultado de la API
+        if (p.isStarted && p.s1 !== null && p.s2 !== null) return;
+        
+        const [diaStr, mesStr] = p.fechaArg.split('/');
+        if (!diaStr || !mesStr || diaStr === '--') return;
+        
+        const dia = parseInt(diaStr);
+        const mes = parseInt(mesStr) - 1;
+        const matchDate = new Date(now.getFullYear(), mes, dia);
+        
+        const [horaStr, minStr] = p.horaArg.split(':');
+        if (!horaStr || !minStr || horaStr === '--') return;
+        matchDate.setHours(parseInt(horaStr), parseInt(minStr), 0, 0);
+        
+        const diffMs = now.getTime() - matchDate.getTime();
+        const diffMinutes = Math.floor(diffMs / 60000);
+        
+        if (diffMinutes >= 0) {
+            p.isStarted = true;
+            if (p.s1 === null) p.s1 = 0;
+            if (p.s2 === null) p.s2 = 0;
+            
+            if (diffMinutes > 115) {
+                p.finished = "TRUE";
+                p.time_elapsed = "finished";
+            } else {
+                p.finished = "FALSE";
+                let minMostrar = diffMinutes;
+                if (diffMinutes > 45 && diffMinutes < 60) {
+                    minMostrar = "MT";
+                } else if (diffMinutes >= 60) {
+                    minMostrar = diffMinutes - 15;
+                }
+                p.time_elapsed = minMostrar === "MT" ? minMostrar : minMostrar + "'";
+            }
+        }
+    });
+}
+
 // ESPN API no requiere API KEY, es súper rápida, confiable y soporta CORS
 const URL_GAMES = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 
@@ -121,15 +168,18 @@ export function cargarResultados() {
             const events = JSON.parse(juegosCache);
             poblarListaPartidosLocal(); // Llenar primero la lista base
             events.forEach(ev => procesarPartidoESPN(ev)); // Actualizar con datos de ESPN
+            simularPartidosFicticios(); // Simular ficticios en vivo
             actualizarInterfaz();
             ocultarLoader();
         } catch (e) {
             console.warn("Error leyendo caché, usando respaldo:", e.message);
             poblarListaPartidosLocal();
+            simularPartidosFicticios();
             actualizarInterfaz();
         }
     } else {
         poblarListaPartidosLocal();
+        simularPartidosFicticios();
         actualizarInterfaz();
     }
 
@@ -146,6 +196,7 @@ export function cargarResultados() {
                 // Volvemos a poblar la lista base para no duplicar y luego pisamos con los datos en vivo
                 poblarListaPartidosLocal();
                 data.events.forEach(ev => procesarPartidoESPN(ev));
+                simularPartidosFicticios();
                 actualizarInterfaz();
             }
         })

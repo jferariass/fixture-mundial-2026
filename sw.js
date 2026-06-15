@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v21";
+const CACHE_NAME = "fixture-mundial-2026-v22";
 const ASSETS = [
     "./",
     "./styles.css",
@@ -64,22 +64,21 @@ self.addEventListener("activate", e => {
 });
 
 // Estrategia de Cacheo:
-// 1. Network First para llamadas a la API (worldcup26.ir) -> siempre actual, pero disponible offline.
+// 1. Network First para llamadas a la API (worldcup26.ir, api.espn.com) -> siempre actual.
 // 2. Cache First para recursos estáticos (imágenes, banderas, fuentes, etc.) -> carga instantánea.
 self.addEventListener("fetch", e => {
-    // Solo interceptar y cachear peticiones con método GET (POST, PUT, DELETE no son soportados por la Cache API)
+    // Solo interceptar y cachear peticiones con método GET
     if (e.request.method !== "GET") {
         return;
     }
 
     const url = new URL(e.request.url);
     
-    // Ignorar esquemas que no sean HTTP o HTTPS (ej. extensiones de navegador chrome-extension://)
     if (url.protocol !== "http:" && url.protocol !== "https:") {
         return;
     }
     
-    if (url.hostname.includes("worldcup26.ir")) {
+    if (url.hostname.includes("worldcup26.ir") || url.hostname.includes("api.espn.com")) {
         // Petición a la API: Network First
         e.respondWith(
             fetch(e.request)
@@ -101,7 +100,6 @@ self.addEventListener("fetch", e => {
                 if (cachedResponse) return cachedResponse;
                 
                 return fetch(e.request).then(response => {
-                    // Cachear dinámicamente recursos nuevos (ej. banderas)
                     if (response && response.status === 200) {
                         const resClone = response.clone();
                         caches.open(CACHE_NAME).then(cache => {
@@ -110,7 +108,6 @@ self.addEventListener("fetch", e => {
                     }
                     return response;
                 }).catch(err => {
-                    // Si falla la red y el usuario pide navegar o index.html, retornar el index local cacheado ('./')
                     if (e.request.mode === 'navigate' || e.request.url.includes('index.html')) {
                         return caches.match('./').then(res => res || new Response("Offline", { status: 503 }));
                     }
