@@ -53,21 +53,23 @@ export function renderizarPodio() {
                 
                 const playerId = `${player} (${fifaCode})`;
 
+                const typeLower = type.toLowerCase();
+
                 // Analizar el tipo de incidencia
-                if (type.includes("Goal") && type !== "Own Goal") {
+                if (typeLower.includes("goal") && !typeLower.includes("own goal")) {
                     addStat(stats.goles, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.golesPorPais, fifaCode, 1);
-                } else if (type === "Penalty - Scored") {
+                } else if (typeLower.includes("penalty - scored") || typeLower === "penalty") {
                     addStat(stats.goles, playerId, player, fifaCode, flagUrl, 1); // El penal también es un gol
                     addStat(stats.penales, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.golesPorPais, fifaCode, 1);
-                } else if (type === "Yellow Card") {
+                } else if (typeLower.includes("yellow")) {
                     addStat(stats.amarillas, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.tarjetasPorPais, fifaCode, 1);
-                } else if (type === "Red Card") {
+                } else if (typeLower.includes("red") && !typeLower.includes("yellow")) {
                     addStat(stats.rojas, playerId, player, fifaCode, flagUrl, 1);
                     addCountryStat(stats.tarjetasPorPais, fifaCode, 1); // Asumimos que la roja suma a la indisciplina
-                } else if (type === "Own Goal") {
+                } else if (typeLower.includes("own goal")) {
                     addStat(stats.enContra, playerId, player, fifaCode, flagUrl, 1);
                     // Los goles en contra se los anotan al país RIVAL
                     const rivalCode = incidencia.team === "home" ? partido.fifaAway : partido.fifaHome;
