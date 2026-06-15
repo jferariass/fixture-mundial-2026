@@ -9,7 +9,7 @@ const fifaToEspnId = {
     "ARG": "202", "MEX": "203", "USA": "660", "CAN": "1840", "BRA": "205", 
     "URU": "214", "COL": "208", "FRA": "478", "GER": "481", "ENG": "468",
     "ESP": "483", "POR": "482", "ITA": "108", "NED": "449", "CRO": "477",
-    "BEL": "474", "JPN": "624", "KOR": "626", "MAR": "644", "SEN": "656",
+    "BEL": "474", "JPN": "624", "KOR": "626", "MAR": "644", "SEN": "656", "EGY": "2620",
     // Agregaremos más de forma genérica si es necesario, pero la mayoría
     // en este torneo los tenemos en PAISES. Para simplificar, la API
     // a veces requiere el ID. Buscaremos la forma de machearlos o usar el abbreviation.
