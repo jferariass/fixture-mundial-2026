@@ -339,6 +339,9 @@ function construirModalDetalles(p, container) {
             <div class="timeline-container">
     `;
     
+    // Almacenamiento global para los atletas clickeables del timeline
+    window._timelineAthletes = window._timelineAthletes || {};
+    
     if (todasIncidencias.length === 0) {
         html += `
             <div class="timeline-empty">
@@ -361,13 +364,23 @@ function construirModalDetalles(p, container) {
                 icon = '<i class="fa-solid fa-arrows-rotate"></i>';
             }
             
+            let athleteClickHtml = ``;
+            if (evt.athlete) {
+                const uniqueId = `athlete_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+                window._timelineAthletes[uniqueId] = {
+                    athlete: evt.athlete,
+                    fifaCode: evt.team === "home" ? p.fifaHome : p.fifaAway
+                };
+                athleteClickHtml = `onclick="if(window.abrirPlayerCard) window.abrirPlayerCard(window._timelineAthletes['${uniqueId}'].athlete, window._timelineAthletes['${uniqueId}'].fifaCode, '#333')" style="cursor: pointer; color: var(--color-primary); text-decoration: underline;"`;
+            }
+            
             html += `
                 <div class="timeline-item">
                     <div class="timeline-badge ${badgeClass}">${icon}</div>
                     <div class="timeline-info">
                         <span class="timeline-time">${evt.minLabel}</span>
                         <div class="timeline-text">${evt.text}</div>
-                        <span class="timeline-detail">${evt.detail}</span>
+                        <span class="timeline-detail" ${athleteClickHtml}>${evt.detail}</span>
                     </div>
                 </div>
             `;

@@ -1,6 +1,7 @@
 import { PAISES } from '../data/paises.js';
 import { podioStats } from './ui-podium.js';
 
+window.abrirPlayerCard = abrirPlayerCard;
 export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     const modal = document.getElementById('player-card-modal');
     const content = document.getElementById('player-card-content');
