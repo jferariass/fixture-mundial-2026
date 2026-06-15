@@ -17,7 +17,12 @@ export function abrirPlayerCard(jugador, fifaCode, teamColor) {
     const photoUrl = jugador.id ? `https://a.espncdn.com/i/headshots/soccer/players/full/${jugador.id}.png` : 'https://a.espncdn.com/i/headshots/soccer/players/full/fallback.png';
     
     const age = jugador.age || '-';
-    const height = jugador.displayHeight || '-';
+    let height = '-';
+    if (jugador.height) {
+        height = Math.round(jugador.height * 2.54) + ' cm';
+    } else if (jugador.displayHeight) {
+        height = jugador.displayHeight;
+    }
     const weight = jugador.displayWeight || '-';
     const positionName = jugador.position ? jugador.position.name : 'Unknown';
     const jersey = jugador.jersey || '#';
