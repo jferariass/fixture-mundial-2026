@@ -12,8 +12,59 @@ import {
 } from './estado.js';
 import { actualizarInterfaz } from './ui.js';
 
-const URL_TEAMS = "https://worldcup26.ir/get/teams";
-const URL_GAMES = "https://worldcup26.ir/get/games";
+// ESPN API no requiere API KEY, es súper rápida, confiable y soporta CORS
+const URL_GAMES = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
+
+// Mapa para corregir abreviaturas de ESPN si difieren de las nuestras
+const ESPN_A_FIFA = {
+    "ZAF": "RSA", // Sudáfrica
+    "KOR": "KOR",
+    "CZE": "CZE",
+    "CAN": "CAN",
+    "BIH": "BIH",
+    "QAT": "QAT",
+    "SUI": "SUI",
+    "BRA": "BRA",
+    "MAR": "MAR",
+    "HAI": "HAI",
+    "SCO": "SCO",
+    "USA": "USA",
+    "PAR": "PAR",
+    "AUS": "AUS",
+    "TUR": "TUR",
+    "GER": "GER",
+    "CUW": "CUW",
+    "CIV": "CIV",
+    "ECU": "ECU",
+    "NED": "NED",
+    "JPN": "JPN",
+    "SWE": "SWE",
+    "TUN": "TUN",
+    "BEL": "BEL",
+    "EGY": "EGY",
+    "IRN": "IRN",
+    "NZL": "NZL",
+    "ESP": "ESP",
+    "CPV": "CPV",
+    "KSA": "KSA",
+    "URU": "URU",
+    "FRA": "FRA",
+    "SEN": "SEN",
+    "IRQ": "IRQ",
+    "NOR": "NOR",
+    "ARG": "ARG",
+    "ALG": "ALG",
+    "AUT": "AUT",
+    "JOR": "JOR",
+    "POR": "POR",
+    "COD": "COD",
+    "UZB": "UZB",
+    "COL": "COL",
+    "ENG": "ENG",
+    "CRO": "CRO",
+    "GHA": "GHA",
+    "PAN": "PAN"
+};
 
 /**
  * Carga los marcadores (primero datos locales estáticos de respaldo, luego realiza fetch a la API)
@@ -27,7 +78,7 @@ export function cargarResultados() {
         });
     });
 
-    // Función de fallback local si la API falla
+    // Función de fallback local
     const poblarListaPartidosLocal = () => {
         limpiarListaPartidosCompleta();
         Object.keys(PARTIDOS).forEach(letra => {
@@ -57,202 +108,143 @@ export function cargarResultados() {
         });
     };
 
-    // Intentar descargar de la API con fallback encadenado a proxies CORS y timeouts adaptativos
-    const fetchConProxy = (url, proxyIdx = 0) => {
-        const rutaProxyLocal = url.includes("games") ? "/api-proxy/games" : "/api-proxy/teams";
-        
-        const proxies = [
-            rutaProxyLocal, // 1. Proxy local / Vercel rewrite (sin CORS, rápido y de confianza)
-            url,            // 2. Intento directo original
-            `https://corsproxy.io/?${encodeURIComponent(url)}`,
-            `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
-        ];
-        
-        if (proxyIdx >= proxies.length) {
-            return Promise.reject(new Error("Todos los intentos (directo y proxies CORS) fallaron."));
-        }
-        
-        // Timeout de 15 segundos para el proxy local/Vercel (por lentitud del servidor remoto), 5 segundos para proxies públicos
-        const timeouts = [15000, 5000, 5000, 5000];
-        const timeoutMs = timeouts[proxyIdx] || 5000;
-        
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-        
-        return fetch(proxies[proxyIdx], { signal: controller.signal })
-            .then(res => {
-                clearTimeout(timeoutId);
-                if (!res.ok) throw new Error(`Status ${res.status}`);
-                
-                // AllOrigins devuelve la respuesta en una propiedad "contents" como string JSON si se consulta directo
-                if (proxies[proxyIdx].includes("allorigins")) {
-                    return res.json().then(json => {
-                        if (json && json.contents) {
-                            return JSON.parse(json.contents);
-                        }
-                        return json;
-                    });
-                }
-                return res.json();
-            })
-            .catch(err => {
-                clearTimeout(timeoutId);
-                const isTimeout = err.name === 'AbortError';
-                const msg = isTimeout ? 'Timeout superado' : err.message;
-                console.warn(`Intento ${proxyIdx + 1} fallido para ${url} (${msg}). Probando alternativa...`);
-                return fetchConProxy(url, proxyIdx + 1);
-            });
-    };
-
-    // Función para ocultar el loader global
     const ocultarLoader = () => {
         const loader = document.getElementById('global-loader');
         if (loader) loader.classList.add('hidden');
     };
 
-    // Intentar cargar datos cacheados de la API en localStorage para mostrar resultados en vivo de visitas previas al instante
-    const juegosCache = localStorage.getItem('cached_worldcup_games');
+    // Intentar cargar caché inicial
+    const juegosCache = localStorage.getItem('cached_espn_games');
     if (juegosCache) {
         try {
-            console.log("Cargando marcadores en vivo cacheados de localStorage...");
-            const games = JSON.parse(juegosCache);
-            limpiarListaPartidosCompleta();
-            games.forEach(match => {
-                procesarPartidoAPI(match);
-            });
+            console.log("Cargando marcadores cacheados...");
+            const events = JSON.parse(juegosCache);
+            poblarListaPartidosLocal(); // Llenar primero la lista base
+            events.forEach(ev => procesarPartidoESPN(ev)); // Actualizar con datos de ESPN
             actualizarInterfaz();
-            ocultarLoader(); // Ocultar si cargó de caché
+            ocultarLoader();
         } catch (e) {
-            console.warn("Error leyendo caché de localStorage, usando respaldo estático:", e.message);
+            console.warn("Error leyendo caché, usando respaldo:", e.message);
             poblarListaPartidosLocal();
             actualizarInterfaz();
         }
     } else {
-        // Fallback local estático inicial
         poblarListaPartidosLocal();
         actualizarInterfaz();
     }
 
-    // Consultar la API de partidos en segundo plano (con timeouts adaptativos de hasta 15 segundos)
-    fetchConProxy(URL_GAMES)
+    // Consultar ESPN API directamente (tiene CORS habilitado)
+    fetch(URL_GAMES)
+        .then(res => {
+            if (!res.ok) throw new Error("Error HTTP " + res.status);
+            return res.json();
+        })
         .then(data => {
-            console.log("Carga de API exitosa:", data);
-            if (data && data.games) {
-                // Guardar los datos frescos en la caché de localStorage
-                localStorage.setItem('cached_worldcup_games', JSON.stringify(data.games));
-                
-                limpiarListaPartidosCompleta();
-                data.games.forEach(match => {
-                    procesarPartidoAPI(match);
-                });
+            console.log("Carga de ESPN API exitosa:", data);
+            if (data && data.events) {
+                localStorage.setItem('cached_espn_games', JSON.stringify(data.events));
+                // Volvemos a poblar la lista base para no duplicar y luego pisamos con los datos en vivo
+                poblarListaPartidosLocal();
+                data.events.forEach(ev => procesarPartidoESPN(ev));
                 actualizarInterfaz();
             }
         })
         .catch(err => {
-            console.warn("API de partidos no disponible en vivo (se muestran datos cacheados o estáticos):", err.message);
+            console.warn("API de ESPN no disponible:", err.message);
         })
         .finally(() => {
-            ocultarLoader(); // Ocultar cuando la API termine (éxito o error)
+            ocultarLoader();
         });
 }
 
 /**
- * Procesa un partido devuelto por la API y lo formatea/guarda en el estado global
+ * Procesa un partido devuelto por la API de ESPN y actualiza nuestra lista base
  */
-function procesarPartidoAPI(match) {
-    const id = match.id.toString();
-    const type = match.type;
+function procesarPartidoESPN(ev) {
+    if (!ev.competitions || ev.competitions.length === 0) return;
     
-    const idHome = match.home_team_id ? match.home_team_id.toString() : "0";
-    const idAway = match.away_team_id ? match.away_team_id.toString() : "0";
+    const comp = ev.competitions[0];
+    if (!comp.competitors || comp.competitors.length < 2) return;
+
+    // Identificar local y visitante según la API de ESPN
+    const homeTeamData = comp.competitors.find(c => c.homeAway === 'home');
+    const awayTeamData = comp.competitors.find(c => c.homeAway === 'away');
+
+    if (!homeTeamData || !awayTeamData) return;
+
+    const espnHome = homeTeamData.team.abbreviation;
+    const espnAway = awayTeamData.team.abbreviation;
+
+    const fifaHome = ESPN_A_FIFA[espnHome] || espnHome;
+    const fifaAway = ESPN_A_FIFA[espnAway] || espnAway;
+
+    // Determinar si ya empezó o terminó
+    const state = ev.status.type.state; // "pre", "in", "post"
+    const isStarted = state === "in" || state === "post";
+    const isFinished = state === "post";
     
-    const fifaHome = (idHome !== "0" && mapaEquiposIdACodigo[idHome]) ? mapaEquiposIdACodigo[idHome] : "";
-    const fifaAway = (idAway !== "0" && mapaEquiposIdACodigo[idAway]) ? mapaEquiposIdACodigo[idAway] : "";
-    
-    const timeElap = match.time_elapsed ? match.time_elapsed.toLowerCase().replace("_", "").trim() : "";
-    const isStarted = match.finished === "TRUE" || (timeElap && timeElap !== "notstarted" && timeElap !== "finished" && timeElap !== "not_started" && timeElap !== "null");
-    
-    const g1 = (isStarted && match.home_score !== null && match.home_score !== undefined && match.home_score !== "") ? parseInt(match.home_score) : null;
-    const g2 = (isStarted && match.away_score !== null && match.away_score !== undefined && match.away_score !== "") ? parseInt(match.away_score) : null;
-    
-    const argentinaInfo = obtenerFechaHoraArgentina(match.local_date, match.stadium_id);
-    let finalFechaArg = argentinaInfo.fecha;
-    let finalHoraArg = argentinaInfo.hora;
-    
-    if (type === "group") {
-        if (fifaHome && fifaAway) {
-            Object.keys(PARTIDOS).forEach(letra => {
-                PARTIDOS[letra].forEach((p, idx) => {
-                    if (p.l1 === fifaHome && p.l2 === fifaAway) {
-                        // Sincronización estricta: usar fecha/hora local perfecta en vez de la API para evitar desajustes
-                        finalFechaArg = p.fecha;
-                        finalHoraArg = p.hora;
-                        
-                        if (g1 !== null && g2 !== null) {
-                            partidosGoles[`${letra}-${idx}-1`] = g1;
-                            partidosGoles[`${letra}-${idx}-2`] = g2;
-                        }
-                    }
-                });
+    const g1 = isStarted ? parseInt(homeTeamData.score) : null;
+    const g2 = isStarted ? parseInt(awayTeamData.score) : null;
+
+    let time_elapsed = state === "pre" ? "notstarted" : (state === "post" ? "finished" : ev.status.displayClock);
+
+    // Buscar si existe en la fase de grupos local
+    let encontradoGrupos = false;
+    Object.keys(PARTIDOS).forEach(letra => {
+        PARTIDOS[letra].forEach((p, idx) => {
+            if (p.l1 === fifaHome && p.l2 === fifaAway) {
+                encontradoGrupos = true;
+                
+                // Actualizar goles si el partido arrancó
+                if (g1 !== null && g2 !== null) {
+                    partidosGoles[`${letra}-${idx}-1`] = g1;
+                    partidosGoles[`${letra}-${idx}-2`] = g2;
+                }
+                
+                // Actualizar el partido en la lista completa
+                const idLocal = `local-${letra}-${idx}`;
+                const partidoGuardado = listaPartidosCompleta.find(item => item.id === idLocal);
+                if (partidoGuardado) {
+                    partidoGuardado.isStarted = isStarted;
+                    partidoGuardado.finished = isFinished ? "TRUE" : "FALSE";
+                    partidoGuardado.time_elapsed = time_elapsed;
+                    if (g1 !== null) partidoGuardado.s1 = g1;
+                    if (g2 !== null) partidoGuardado.s2 = g2;
+                }
+            }
+        });
+    });
+
+    // Si no es de grupos, asumimos que es de Playoffs
+    if (!encontradoGrupos) {
+        // Generamos un ID provisorio usando los equipos
+        const playOffId = `playoff-${fifaHome}-${fifaAway}`;
+        
+        partidosPlayoffsEquipos[playOffId] = { t1: fifaHome, t2: fifaAway };
+        if (g1 !== null && g2 !== null && isFinished) {
+            partidosPlayoffsGoles[playOffId] = { s1: g1, s2: g2 };
+        }
+        
+        // Agregar a la lista si no existe
+        const existePlayoff = listaPartidosCompleta.find(item => item.id === playOffId);
+        if (!existePlayoff) {
+            listaPartidosCompleta.push({
+                id: playOffId,
+                type: "playoff",
+                group: "",
+                matchday: 4, // provisorio
+                finished: isFinished ? "TRUE" : "FALSE",
+                time_elapsed: time_elapsed,
+                isStarted: isStarted,
+                fifaHome: fifaHome,
+                fifaAway: fifaAway,
+                nombreHome: fifaHome ? PAISES[fifaHome].nombre : homeTeamData.team.displayName,
+                nombreAway: fifaAway ? PAISES[fifaAway].nombre : awayTeamData.team.displayName,
+                fechaArg: "--/--", // No tenemos fecha local para playoffs aún en este demo
+                horaArg: "--:--",
+                s1: g1,
+                s2: g2
             });
         }
-    } else {
-        partidosPlayoffsEquipos[id] = { t1: fifaHome, t2: fifaAway };
-        if (g1 !== null && g2 !== null && match.finished === "TRUE") {
-            partidosPlayoffsGoles[id] = { s1: g1, s2: g2 };
-        }
-    }
-    
-    listaPartidosCompleta.push({
-        id: id,
-        type: type,
-        group: match.group,
-        matchday: match.matchday,
-        finished: match.finished,
-        time_elapsed: match.time_elapsed,
-        isStarted: isStarted,
-        fifaHome: fifaHome,
-        fifaAway: fifaAway,
-        nombreHome: fifaHome ? PAISES[fifaHome].nombre : (match.home_team_name_en || "Pendiente"),
-        nombreAway: fifaAway ? PAISES[fifaAway].nombre : (match.away_team_name_en || "Pendiente"),
-        fechaArg: finalFechaArg,
-        horaArg: finalHoraArg,
-        s1: g1,
-        s2: g2
-    });
-}
-
-/**
- * Convierte la fecha y hora del estadio de la API a horario de Argentina
- */
-function obtenerFechaHoraArgentina(localDateStr, stadiumId) {
-    if (!localDateStr) return { fecha: "--/--", hora: "--:--" };
-    try {
-        const parts = localDateStr.split(" ");
-        const dateParts = parts[0].split("/");
-        const timeParts = parts[1].split(":");
-        
-        const mes = parseInt(dateParts[0]) - 1;
-        const dia = parseInt(dateParts[1]);
-        const anio = parseInt(dateParts[2]);
-        const hora = parseInt(timeParts[0]);
-        const min = parseInt(timeParts[1]);
-        
-        const fechaEstadio = new Date(anio, mes, dia, hora, min);
-        const diffHoras = DIFERENCIA_HORAS_ESTADIO[stadiumId] || 1;
-        const fechaArg = new Date(fechaEstadio.getTime() + (diffHoras * 3600000));
-        
-        const diaStr = String(fechaArg.getDate()).padStart(2, '0');
-        const mesStr = String(fechaArg.getMonth() + 1).padStart(2, '0');
-        const horaStr = String(fechaArg.getHours()).padStart(2, '0');
-        const minStr = String(fechaArg.getMinutes()).padStart(2, '0');
-        
-        return {
-            fecha: `${diaStr}/${mesStr}`,
-            hora: `${horaStr}:${minStr}`
-        };
-    } catch (e) {
-        console.warn("Error formateando fecha de API:", localDateStr, e.message);
-        return { fecha: "--/--", hora: "--:--" };
     }
 }
