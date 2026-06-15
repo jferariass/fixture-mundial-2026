@@ -226,77 +226,39 @@ function construirModalDetalles(p, container) {
     const alineacionHome = obtenerAlineacionPais(p.fifaHome || "ARG");
     const alineacionAway = obtenerAlineacionPais(p.fifaAway || "CAN");
     
-    const goles = [];
-    if (tieneGoles) {
-        const tHome = alineacionHome.titulares.filter(x => x.pos === "fw" || x.pos === "mf");
-        const tAway = alineacionAway.titulares.filter(x => x.pos === "fw" || x.pos === "mf");
-        
-        let minUtilizados = new Set();
-        
-        for (let i = 0; i < p.s1; i++) {
-            let min = Math.floor(Math.random() * 85) + 5;
-            while (minUtilizados.has(min)) min = Math.floor(Math.random() * 85) + 5;
-            minUtilizados.add(min);
-            const jugador = tHome[Math.floor((p.id.charCodeAt(0) + min + i) % tHome.length)].name;
-            goles.push({ min: min, team: "home", type: "gol", text: `¡GOL de ${p.nombreHome}!`, detail: `${jugador}` });
-        }
-        
-        for (let i = 0; i < p.s2; i++) {
-            let min = Math.floor(Math.random() * 85) + 5;
-            while (minUtilizados.has(min)) min = Math.floor(Math.random() * 85) + 5;
-            minUtilizados.add(min);
-            const jugador = tAway[Math.floor((p.id.charCodeAt(0) + min + i + 12) % tAway.length)].name;
-            goles.push({ min: min, team: "away", type: "gol", text: `¡GOL de ${p.nombreAway}!`, detail: `${jugador}` });
-        }
-        
-        goles.sort((a, b) => a.min - b.min);
-    }
+    let todasIncidencias = [];
     
-    const incidenciasAdicionales = [];
-    if (p.isStarted) {
-        const tHome = alineacionHome.titulares.filter(x => x.pos === "df" || x.pos === "mf");
-        const tAway = alineacionAway.titulares.filter(x => x.pos === "df" || x.pos === "mf");
-        
-        const cantAmarillas = (p.id.charCodeAt(1) % 3) + 1;
-        for (let i = 0; i < cantAmarillas; i++) {
-            const min = Math.floor(Math.random() * 80) + 10;
-            const esHome = (min % 2 === 0);
-            const plantilla = esHome ? tHome : tAway;
-            const jugador = plantilla[Math.floor((min + i) % plantilla.length)].name;
-            incidenciasAdicionales.push({
-                min: min,
-                team: esHome ? "home" : "away",
-                type: "tarjeta-amarilla",
-                text: "Tarjeta Amarilla",
-                detail: jugador
-            });
-        }
-        
-        const minCambio1 = Math.floor(Math.random() * 20) + 55;
-        const jSaleHome = alineacionHome.titulares[5].name;
-        const jEntraHome = alineacionHome.suplentes[0];
-        incidenciasAdicionales.push({
-            min: minCambio1,
-            team: "home",
-            type: "cambio",
-            text: "Sustitución",
-            detail: `Entra: ${jEntraHome} • Sale: ${jSaleHome}`
+    if (p.incidenciasReales && p.incidenciasReales.length > 0) {
+        todasIncidencias = p.incidenciasReales.map(evt => {
+            // Mapear los tipos de ESPN a los de nuestra UI
+            let tipoUI = "desconocido";
+            let texto = evt.type;
+            
+            if (evt.type.includes("Goal")) {
+                tipoUI = "gol";
+                texto = `¡GOL de ${evt.team === "home" ? p.nombreHome : p.nombreAway}!`;
+            } else if (evt.type.includes("Yellow Card")) {
+                tipoUI = "tarjeta-amarilla";
+                texto = "Tarjeta Amarilla";
+            } else if (evt.type.includes("Red Card")) {
+                tipoUI = "tarjeta-roja";
+                texto = "Tarjeta Roja";
+            } else if (evt.type.includes("Substitution")) {
+                tipoUI = "cambio";
+                texto = "Sustitución";
+            }
+            
+            return {
+                min: parseInt(evt.min.replace(/\D/g, '')) || 0,
+                minLabel: evt.min,
+                team: evt.team,
+                type: tipoUI,
+                text: texto,
+                detail: evt.detail || "Jugador"
+            };
         });
-        
-        const minCambio2 = Math.floor(Math.random() * 20) + 58;
-        const jSaleAway = alineacionAway.titulares[5].name;
-        const jEntraAway = alineacionAway.suplentes[0];
-        incidenciasAdicionales.push({
-            min: minCambio2,
-            team: "away",
-            type: "cambio",
-            text: "Sustitución",
-            detail: `Entra: ${jEntraAway} • Sale: ${jSaleAway}`
-        });
+        todasIncidencias.sort((a, b) => a.min - b.min);
     }
-    
-    const todasIncidencias = [...goles, ...incidenciasAdicionales];
-    todasIncidencias.sort((a, b) => a.min - b.min);
     
     let stats = {
         posesionHome: 50,
@@ -403,7 +365,7 @@ function construirModalDetalles(p, container) {
                 <div class="timeline-item">
                     <div class="timeline-badge ${badgeClass}">${icon}</div>
                     <div class="timeline-info">
-                        <span class="timeline-time">${evt.min}'</span>
+                        <span class="timeline-time">${evt.minLabel}</span>
                         <div class="timeline-text">${evt.text}</div>
                         <span class="timeline-detail">${evt.detail}</span>
                     </div>

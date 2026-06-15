@@ -55,7 +55,7 @@ function simularPartidosFicticios() {
 }
 
 // ESPN API no requiere API KEY, es súper rápida, confiable y soporta CORS
-const URL_GAMES = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
+const URL_GAMES = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260611-20260719&limit=150";
 
 // Mapa para corregir abreviaturas de ESPN si difieren de las nuestras
 const ESPN_A_FIFA = {
@@ -256,6 +256,28 @@ function procesarPartidoESPN(ev) {
                     partidoGuardado.time_elapsed = time_elapsed;
                     if (g1 !== null) partidoGuardado.s1 = g1;
                     if (g2 !== null) partidoGuardado.s2 = g2;
+                    
+                    // Extraer incidencias reales (goles, tarjetas, sustituciones)
+                    if (comp.details && comp.details.length > 0) {
+                        partidoGuardado.incidenciasReales = comp.details.map(d => {
+                            let teamStr = "home";
+                            if (d.team && d.team.id === awayTeamData.team.id) {
+                                teamStr = "away";
+                            }
+                            
+                            let player = "";
+                            if (d.athletesInvolved && d.athletesInvolved.length > 0) {
+                                player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
+                            }
+                            
+                            return {
+                                type: d.type ? d.type.text : "Unknown",
+                                min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
+                                team: teamStr,
+                                detail: player
+                            };
+                        });
+                    }
                 }
             }
         });
@@ -290,7 +312,31 @@ function procesarPartidoESPN(ev) {
                 horaArg: "--:--",
                 s1: g1,
                 s2: g2
-            });
+            };
+            
+            // Extraer incidencias reales (goles, tarjetas, sustituciones)
+            if (comp.details && comp.details.length > 0) {
+                nuevoPartido.incidenciasReales = comp.details.map(d => {
+                    let teamStr = "home";
+                    if (d.team && d.team.id === awayTeamData.team.id) {
+                        teamStr = "away";
+                    }
+                    
+                    let player = "";
+                    if (d.athletesInvolved && d.athletesInvolved.length > 0) {
+                        player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
+                    }
+                    
+                    return {
+                        type: d.type ? d.type.text : "Unknown",
+                        min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
+                        team: teamStr,
+                        detail: player
+                    };
+                });
+            }
+            
+            listaPartidosCompleta.push(nuevoPartido);
         }
     }
 }

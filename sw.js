@@ -1,4 +1,4 @@
-const CACHE_NAME = "fixture-mundial-2026-v25";
+const CACHE_NAME = "fixture-mundial-2026-v26";
 const ASSETS = [
     "./",
     "./styles.css",
