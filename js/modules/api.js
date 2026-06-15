@@ -340,3 +340,29 @@ function procesarPartidoESPN(ev) {
         }
     }
 }
+
+/**
+ * Obtiene el plantel completo y el estado actual de un equipo específico
+ * @param {string} teamId El ID del equipo en ESPN
+ */
+export async function fetchTeamRoster(teamId) {
+    try {
+        const url = \https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/\/roster\;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Error fetching team roster");
+        const data = await response.json();
+        
+        // También traemos el resumen del equipo para el récord
+        const teamUrl = \https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams/\\;
+        const teamResponse = await fetch(teamUrl);
+        const teamData = teamResponse.ok ? await teamResponse.json() : null;
+
+        return {
+            roster: data.athletes || [],
+            team: teamData ? teamData.team : null
+        };
+    } catch (error) {
+        console.error("Error al obtener el plantel:", error);
+        return { roster: [], team: null };
+    }
+}
