@@ -11,6 +11,17 @@ import {
     limpiarListaPartidosCompleta 
 } from './estado.js';
 import { actualizarInterfaz } from './ui.js';
+import { calcularPrediccion } from './calculations.js';
+
+// Generador pseudoaleatorio simple basado en string
+function hashSimple(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return Math.abs(hash);
+}
 
 // Función para simular el estado en vivo de partidos ficticios (ya que ESPN no los tiene)
 function simularPartidosFicticios() {
@@ -39,8 +50,31 @@ function simularPartidosFicticios() {
         
         if (diffMinutes >= 0) {
             p.isStarted = true;
-            if (p.s1 === null) p.s1 = 0;
-            if (p.s2 === null) p.s2 = 0;
+            
+            // Si el partido está en vivo o finalizado y no tiene goles, generamos goles realistas
+            if (p.s1 === null || p.s2 === null) {
+                if (p.fifaHome && p.fifaAway) {
+                    const pred = calcularPrediccion(p.fifaHome, p.fifaAway);
+                    const hash = hashSimple(p.fifaHome + p.fifaAway + p.fechaArg);
+                    const rnd = hash % 100;
+                    
+                    if (rnd < pred.home) {
+                        p.s1 = 1 + (hash % 3);
+                        p.s2 = (hash % 2);
+                        if (p.s1 <= p.s2) p.s1 = p.s2 + 1;
+                    } else if (rnd < pred.home + pred.draw) {
+                        p.s1 = (hash % 3);
+                        p.s2 = p.s1;
+                    } else {
+                        p.s2 = 1 + (hash % 3);
+                        p.s1 = (hash % 2);
+                        if (p.s2 <= p.s1) p.s2 = p.s1 + 1;
+                    }
+                } else {
+                    p.s1 = 0;
+                    p.s2 = 0;
+                }
+            }
             
             // Sincronizar con el estado global para que se actualice la vista de grupos
             if (p.type === "group" && p.id.startsWith("local-")) {
