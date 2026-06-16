@@ -5,15 +5,8 @@ import { abrirPlayerCard } from './ui-player-card.js';
 let isTeamsRendered = false;
 
 // Convertir código FIFA local a ID de equipo de ESPN
-export const fifaToEspnId = {
-    "ARG": "202", "MEX": "203", "USA": "660", "CAN": "1840", "BRA": "205", 
-    "URU": "214", "COL": "208", "FRA": "478", "GER": "481", "ENG": "468",
-    "ESP": "483", "POR": "482", "ITA": "108", "NED": "449", "CRO": "477",
-    "BEL": "474", "JPN": "624", "KOR": "626", "MAR": "644", "SEN": "656", "EGY": "2620",
-    // Agregaremos más de forma genérica si es necesario, pero la mayoría
-    // en este torneo los tenemos en PAISES. Para simplificar, la API
-    // a veces requiere el ID. Buscaremos la forma de machearlos o usar el abbreviation.
-};
+// Convertir código FIFA local a ID de equipo de ESPN
+export const fifaToEspnId = {"ALG":"624","ARG":"202","AUS":"628","AUT":"474","BEL":"459","BIH":"452","BRA":"205","CAN":"206","CPV":"2597","COL":"208","COD":"2850","CRO":"477","CUW":"11678","CZE":"450","ECU":"209","EGY":"2620","ENG":"448","FRA":"478","GER":"481","GHA":"4469","HAI":"2654","IRN":"469","IRQ":"4375","CIV":"4789","JPN":"627","JOR":"2917","MEX":"203","MAR":"2869","NED":"449","NZL":"2666","NOR":"464","PAN":"2659","PAR":"210","POR":"482","QAT":"4398","KSA":"655","SCO":"580","SEN":"654","RSA":"467","KOR":"451","ESP":"164","SWE":"466","SUI":"475","TUN":"659","TUR":"465","USA":"660","URU":"212","UZB":"2570"};
 
 export function renderizarEquiposInicial() {
     if (isTeamsRendered) return;
