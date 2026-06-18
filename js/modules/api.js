@@ -2,7 +2,7 @@
 
 // 🔖 Versión de la app - cambiar este valor en cada deploy para forzar
 //    la invalidación del caché de ESPN en todos los clientes.
-const APP_VERSION = "2026-06-18-v2";
+const APP_VERSION = "2026-06-18-v3";
 const APP_VERSION_KEY = "app_version";
 const ESPN_CACHE_KEY = "cached_espn_games";
 
