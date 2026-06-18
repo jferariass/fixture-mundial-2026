@@ -1,4 +1,23 @@
-// SincronizaciÃ³n en tiempo real y consumo de API
+// Sincronización en tiempo real y consumo de API
+
+// 🔖 Versión de la app - cambiar este valor en cada deploy para forzar
+//    la invalidación del caché de ESPN en todos los clientes.
+const APP_VERSION = "2026-06-18-v2";
+const APP_VERSION_KEY = "app_version";
+const ESPN_CACHE_KEY = "cached_espn_games";
+
+/**
+ * Compara la versión almacenada con la actual.
+ * Si son distintas, limpia el caché de ESPN y actualiza la versión guardada.
+ */
+function invalidarCacheSiNuevaVersion() {
+    const versionGuardada = localStorage.getItem(APP_VERSION_KEY);
+    if (versionGuardada !== APP_VERSION) {
+        console.log(`🔄 Nueva versión detectada (${versionGuardada} → ${APP_VERSION}). Limpiando caché ESPN...`);
+        localStorage.removeItem(ESPN_CACHE_KEY);
+        localStorage.setItem(APP_VERSION_KEY, APP_VERSION);
+    }
+}
 
 import { PARTIDOS, DIFERENCIA_HORAS_ESTADIO } from '../data/partidos.js';
 import { PAISES, mapaEquiposIdACodigo } from '../data/paises.js';
@@ -160,8 +179,11 @@ export function cargarResultados() {
         if (loader) loader.classList.add('hidden');
     };
 
-    // Intentar cargar cachÃ© inicial
-    const juegosCache = localStorage.getItem('cached_espn_games');
+    // Invalidar caché si la versión de la app cambió
+    invalidarCacheSiNuevaVersion();
+
+    // Intentar cargar caché inicial
+    const juegosCache = localStorage.getItem(ESPN_CACHE_KEY);
     if (juegosCache) {
         try {
             console.log("Cargando marcadores cacheados...");
@@ -192,7 +214,7 @@ export function cargarResultados() {
         .then(data => {
             console.log("Carga de ESPN API exitosa:", data);
             if (data && data.events) {
-                localStorage.setItem('cached_espn_games', JSON.stringify(data.events));
+                localStorage.setItem(ESPN_CACHE_KEY, JSON.stringify(data.events));
                 // Volvemos a poblar la lista base para no duplicar y luego pisamos con los datos en vivo
                 poblarListaPartidosLocal();
                 data.events.forEach(ev => procesarPartidoESPN(ev));
