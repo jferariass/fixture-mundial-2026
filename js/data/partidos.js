@@ -83,7 +83,7 @@ export const PARTIDOS = {
     ],
     "K": [
         {fecha: "17/06", hora: "14:00", l1: "POR", l2: "COD"},
-        {fecha: "17/06", hora: "20:00", l1: "UZB", l2: "COL"},
+        {fecha: "17/06", hora: "22:00", l1: "UZB", l2: "COL"},
         {fecha: "23/06", hora: "13:00", l1: "POR", l2: "UZB"},
         {fecha: "23/06", hora: "16:00", l1: "COL", l2: "COD"},
         {fecha: "27/06", hora: "19:00", l1: "COL", l2: "POR"},
