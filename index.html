@@ -104,14 +104,21 @@
     <main class="main-content">
         <!-- PÁGINA 0: PARTIDOS DE HOY -->
         <div class="print-page active" id="tab-page-0">
-            <div class="print-page-title">PARTIDOS DE HOY (HORARIO ARGENTINA)</div>
+            <div class="print-page-title">PARTIDOS POR FECHA (HORARIO ARGENTINA)</div>
+            
+            <div class="date-selector-container no-print" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button id="btn-prev-date" class="btn" style="padding: 10px 15px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s ease;"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                <input type="date" id="match-date-selector" style="padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: var(--white); border: 1px solid var(--accent); font-family: 'Montserrat', sans-serif; cursor: pointer; color-scheme: dark; font-size: 1rem; font-weight: 600;">
+                <button id="btn-next-date" class="btn" style="padding: 10px 15px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s ease;">Siguiente <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
             <div class="hoy-container" id="hoy-matches-list">
                 <!-- Loader de reloj para espera activa -->
                 <div class="hoy-loading-loader">
                     <div class="clock-spinner">
                         <i class="fa-solid fa-clock"></i>
                     </div>
-                    <p class="hoy-loading-text">Espere, estamos cargando los partidos de hoy...</p>
+                    <p class="hoy-loading-text">Espere, estamos cargando los partidos de la fecha...</p>
                 </div>
             </div>
         </div>

@@ -7,7 +7,8 @@ import {
     abrirDetallesPartido, 
     cerrarDetallesPartido, 
     switchModalTab,
-    inicializarEventosModal
+    inicializarEventosModal,
+    inicializarSelectorFecha
 } from './js/modules/ui.js';
 import { cargarResultados } from './js/modules/api.js';
 import { inicializarInstalacionPWA } from './js/modules/pwa.js';
@@ -59,6 +60,7 @@ window.onload = () => {
         });
     }
 
+    inicializarSelectorFecha();
     renderizarGrupos();
     renderizarBracket();
     cargarResultados();

@@ -12,7 +12,7 @@ export { switchTab } from './navigation.js';
 export { renderizarGrupos } from './ui-groups.js';
 export { renderizarBracket, actualizarPlayoffsAutomatico } from './ui-bracket.js';
 export { abrirDetallesPartido, cerrarDetallesPartido, switchModalTab, inicializarEventosModal } from './ui-modal.js';
-export { actualizarPartidosDeHoy, getFechaArgentinaHoy } from './ui-matches-today.js';
+export { actualizarPartidosDeHoy, getFechaArgentinaHoy, inicializarSelectorFecha } from './ui-matches-today.js';
 export { renderizarPodio } from './ui-podium.js';
 export { renderizarEquiposInicial, cargarDetalleEquipo } from './ui-teams.js';
 

@@ -3,22 +3,93 @@
 import { listaPartidosCompleta } from './estado.js';
 import { calcularPrediccion } from './calculations.js';
 
-/**
- * Obtiene la fecha actual en Argentina ajustada a GMT-3
- */
-export function getFechaArgentinaHoy() {
+let currentSelectedDate = null;
+
+function getTodayDate() {
     const d = new Date();
     const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
     const offsetArg = -3;
-    const fechaArg = new Date(utc + (3600000 * offsetArg));
+    return new Date(utc + (3600000 * offsetArg));
+}
+
+export function inicializarSelectorFecha() {
+    const inputDate = document.getElementById('match-date-selector');
+    const btnPrev = document.getElementById('btn-prev-date');
+    const btnNext = document.getElementById('btn-next-date');
     
-    const dia = String(fechaArg.getDate()).padStart(2, '0');
-    const mes = String(fechaArg.getMonth() + 1).padStart(2, '0');
-    return `${dia}/${mes}`;
+    if (!inputDate) return;
+
+    if (!currentSelectedDate) {
+        currentSelectedDate = getTodayDate();
+    }
+    
+    const updateInputFromDate = (date) => {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        inputDate.value = `${yyyy}-${mm}-${dd}`;
+    };
+
+    updateInputFromDate(currentSelectedDate);
+
+    inputDate.addEventListener('change', (e) => {
+        if (e.target.value) {
+            const [y, m, d] = e.target.value.split('-');
+            currentSelectedDate = new Date(y, m - 1, d);
+            actualizarPartidosDeHoy();
+        }
+    });
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            currentSelectedDate.setDate(currentSelectedDate.getDate() - 1);
+            updateInputFromDate(currentSelectedDate);
+            actualizarPartidosDeHoy();
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            currentSelectedDate.setDate(currentSelectedDate.getDate() + 1);
+            updateInputFromDate(currentSelectedDate);
+            actualizarPartidosDeHoy();
+        });
+    }
 }
 
 /**
- * Actualiza la lista visual de partidos de hoy
+ * Obtiene la fecha actualmente seleccionada ajustada a GMT-3
+ */
+export function getFechaArgentinaHoy() {
+    if (!currentSelectedDate) {
+        currentSelectedDate = getTodayDate();
+    }
+    const dia = String(currentSelectedDate.getDate()).padStart(2, '0');
+    const mes = String(currentSelectedDate.getMonth() + 1).padStart(2, '0');
+    return `${dia}/${mes}`;
+}
+
+export function formatFriendlyDate(dateStr) {
+    const today = getTodayDate();
+    const t_dia = String(today.getDate()).padStart(2, '0');
+    const t_mes = String(today.getMonth() + 1).padStart(2, '0');
+    
+    today.setDate(today.getDate() - 1);
+    const y_dia = String(today.getDate()).padStart(2, '0');
+    const y_mes = String(today.getMonth() + 1).padStart(2, '0');
+    
+    today.setDate(today.getDate() + 2); // get to tomorrow
+    const tm_dia = String(today.getDate()).padStart(2, '0');
+    const tm_mes = String(today.getMonth() + 1).padStart(2, '0');
+    
+    if (dateStr === `${t_dia}/${t_mes}`) return "Hoy";
+    if (dateStr === `${y_dia}/${y_mes}`) return "Ayer";
+    if (dateStr === `${tm_dia}/${tm_mes}`) return "Mañana";
+    return dateStr;
+}
+
+/**
+ * Actualiza la lista visual de partidos de la fecha seleccionada
  */
 export function actualizarPartidosDeHoy() {
     const contenedor = document.getElementById("hoy-matches-list");
@@ -29,11 +100,13 @@ export function actualizarPartidosDeHoy() {
     
     partidosDeHoy.sort((a, b) => a.horaArg.localeCompare(b.horaArg));
     
+    const friendlyName = formatFriendlyDate(hoyArg);
+    
     if (partidosDeHoy.length === 0) {
         contenedor.innerHTML = `
             <div class="hoy-no-matches">
                 <i class="fa-regular fa-calendar-xmark"></i>
-                <p>No hay partidos programados para hoy (${hoyArg}) en horario de Argentina.</p>
+                <p>No hay partidos programados para ${friendlyName.toLowerCase()} (${hoyArg}) en horario de Argentina.</p>
             </div>
         `;
         return;
