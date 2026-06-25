@@ -281,13 +281,16 @@ function procesarPartidoESPN(ev) {
     let encontradoGrupos = false;
     Object.keys(PARTIDOS).forEach(letra => {
         PARTIDOS[letra].forEach((p, idx) => {
-            if (p.l1 === fifaHome && p.l2 === fifaAway) {
+            if ((p.l1 === fifaHome && p.l2 === fifaAway) || (p.l1 === fifaAway && p.l2 === fifaHome)) {
                 encontradoGrupos = true;
                 
                 // Actualizar goles si el partido arrancÃ³
                 if (g1 !== null && g2 !== null) {
-                    partidosGoles[`${letra}-${idx}-1`] = g1;
-                    partidosGoles[`${letra}-${idx}-2`] = g2;
+                    // Si el orden estÃ¡ invertido en nuestro archivo vs la API, invertir goles
+                    let goalL1 = (p.l1 === fifaHome) ? g1 : g2;
+                    let goalL2 = (p.l2 === fifaAway) ? g2 : g1;
+                    partidosGoles[`${letra}-${idx}-1`] = goalL1;
+                    partidosGoles[`${letra}-${idx}-2`] = goalL2;
                 }
                 
                 // Actualizar el partido en la lista completa
@@ -297,8 +300,10 @@ function procesarPartidoESPN(ev) {
                     partidoGuardado.isStarted = isStarted;
                     partidoGuardado.finished = isFinished ? "TRUE" : "FALSE";
                     partidoGuardado.time_elapsed = time_elapsed;
-                    if (g1 !== null) partidoGuardado.s1 = g1;
-                    if (g2 !== null) partidoGuardado.s2 = g2;
+                    if (g1 !== null) {
+                        partidoGuardado.s1 = (p.l1 === fifaHome) ? g1 : g2;
+                        partidoGuardado.s2 = (p.l2 === fifaAway) ? g2 : g1;
+                    }
                     if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
                     if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
                     
