@@ -82,6 +82,12 @@ window.onload = () => {
         navigator.serviceWorker.register("./sw.js")
             .then(reg => {
                 console.log("Service Worker registrado con éxito:", reg.scope);
+                
+                // Forzar comprobación de actualizaciones de la PWA cada 60 segundos
+                setInterval(() => {
+                    reg.update();
+                }, 60000);
+
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     if (installingWorker) {
