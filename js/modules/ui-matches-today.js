@@ -101,6 +101,20 @@ export function actualizarPartidosDeHoy() {
     partidosDeHoy.sort((a, b) => a.horaArg.localeCompare(b.horaArg));
     
     const friendlyName = formatFriendlyDate(hoyArg);
+    const tabName = `📅 ${friendlyName.toUpperCase()} (${hoyArg})`;
+    
+    // Update navigation texts
+    const mobileDropdownItem = document.querySelector('.mobile-dropdown-item[data-value="tab-page-0"]');
+    if (mobileDropdownItem) mobileDropdownItem.textContent = tabName;
+    
+    const desktopTabBtn = document.querySelector('.tab-btn[onclick*="tab-page-0"]');
+    if (desktopTabBtn) desktopTabBtn.innerHTML = `<i class="fa-solid fa-calendar-day"></i> ${friendlyName.toUpperCase()}`;
+
+    const activeTab = document.querySelector(".print-page.active");
+    const mobileDropdownBtnText = document.getElementById("mobile-dropdown-current");
+    if (activeTab && activeTab.id === "tab-page-0" && mobileDropdownBtnText) {
+        mobileDropdownBtnText.textContent = tabName;
+    }
     
     if (partidosDeHoy.length === 0) {
         contenedor.innerHTML = `
