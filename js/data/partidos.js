@@ -11,7 +11,7 @@ export const PARTIDOS = {
     ],
     "B": [
         {fecha: "12/06", hora: "16:00", l1: "CAN", l2: "BIH"},
-        {fecha: "13/06", hora: "13:00", l1: "QAT", l2: "SUI"},
+        {fecha: "13/06", hora: "16:00", l1: "QAT", l2: "SUI"},
         {fecha: "18/06", hora: "16:00", l1: "SUI", l2: "BIH"},
         {fecha: "18/06", hora: "19:00", l1: "CAN", l2: "QAT"},
         {fecha: "24/06", hora: "16:00", l1: "SUI", l2: "CAN"},
@@ -30,24 +30,24 @@ export const PARTIDOS = {
         {fecha: "14/06", hora: "01:00", l1: "AUS", l2: "TUR"},
         {fecha: "19/06", hora: "16:00", l1: "USA", l2: "AUS"},
         {fecha: "20/06", hora: "00:00", l1: "TUR", l2: "PAR"},
-        {fecha: "25/06", hora: "20:00", l1: "TUR", l2: "USA"},
-        {fecha: "25/06", hora: "20:00", l1: "PAR", l2: "AUS"}
+        {fecha: "25/06", hora: "23:00", l1: "TUR", l2: "USA"},
+        {fecha: "25/06", hora: "23:00", l1: "PAR", l2: "AUS"}
     ],
     "E": [
         {fecha: "14/06", hora: "14:00", l1: "GER", l2: "CUW"},
         {fecha: "14/06", hora: "20:00", l1: "CIV", l2: "ECU"},
         {fecha: "20/06", hora: "17:00", l1: "GER", l2: "CIV"},
         {fecha: "20/06", hora: "21:00", l1: "ECU", l2: "CUW"},
-        {fecha: "25/06", hora: "14:00", l1: "ECU", l2: "GER"},
-        {fecha: "25/06", hora: "14:00", l1: "CUW", l2: "CIV"}
+        {fecha: "25/06", hora: "17:00", l1: "ECU", l2: "GER"},
+        {fecha: "25/06", hora: "17:00", l1: "CUW", l2: "CIV"}
     ],
     "F": [
         {fecha: "14/06", hora: "17:00", l1: "NED", l2: "JPN"},
         {fecha: "14/06", hora: "23:00", l1: "SWE", l2: "TUN"},
         {fecha: "20/06", hora: "14:00", l1: "NED", l2: "SWE"},
         {fecha: "21/06", hora: "01:00", l1: "TUN", l2: "JPN"},
-        {fecha: "25/06", hora: "17:00", l1: "TUN", l2: "NED"},
-        {fecha: "25/06", hora: "17:00", l1: "JPN", l2: "SWE"}
+        {fecha: "25/06", hora: "20:00", l1: "TUN", l2: "NED"},
+        {fecha: "25/06", hora: "20:00", l1: "JPN", l2: "SWE"}
     ],
     "G": [
         {fecha: "15/06", hora: "16:00", l1: "BEL", l2: "EGY"},
@@ -78,20 +78,20 @@ export const PARTIDOS = {
         {fecha: "17/06", hora: "01:00", l1: "AUT", l2: "JOR"},
         {fecha: "22/06", hora: "14:00", l1: "ARG", l2: "AUT"},
         {fecha: "23/06", hora: "00:00", l1: "JOR", l2: "ALG"},
-        {fecha: "27/06", hora: "20:00", l1: "ARG", l2: "JOR"},
-        {fecha: "27/06", hora: "20:00", l1: "ALG", l2: "AUT"}
+        {fecha: "27/06", hora: "23:00", l1: "ARG", l2: "JOR"},
+        {fecha: "27/06", hora: "23:00", l1: "ALG", l2: "AUT"}
     ],
     "K": [
         {fecha: "17/06", hora: "14:00", l1: "POR", l2: "COD"},
-        {fecha: "17/06", hora: "22:00", l1: "UZB", l2: "COL"},
+        {fecha: "17/06", hora: "23:00", l1: "UZB", l2: "COL"},
         {fecha: "23/06", hora: "14:00", l1: "POR", l2: "UZB"},
         {fecha: "23/06", hora: "23:00", l1: "COL", l2: "COD"},
-        {fecha: "27/06", hora: "19:00", l1: "COL", l2: "POR"},
-        {fecha: "27/06", hora: "19:00", l1: "COD", l2: "UZB"}
+        {fecha: "27/06", hora: "20:30", l1: "COL", l2: "POR"},
+        {fecha: "27/06", hora: "20:30", l1: "COD", l2: "UZB"}
     ],
     "L": [
         {fecha: "17/06", hora: "17:00", l1: "ENG", l2: "CRO"},
-        {fecha: "17/06", hora: "21:00", l1: "GHA", l2: "PAN"},
+        {fecha: "17/06", hora: "20:00", l1: "GHA", l2: "PAN"},
         {fecha: "23/06", hora: "17:00", l1: "ENG", l2: "GHA"},
         {fecha: "23/06", hora: "20:00", l1: "PAN", l2: "CRO"},
         {fecha: "27/06", hora: "18:00", l1: "PAN", l2: "ENG"},
