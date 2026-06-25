@@ -106,10 +106,10 @@
         <div class="print-page active" id="tab-page-0">
             <div class="print-page-title">PARTIDOS POR FECHA (HORARIO ARGENTINA)</div>
             
-            <div class="date-selector-container no-print" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button id="btn-prev-date" class="btn" style="padding: 10px 15px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s ease;"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-                <input type="date" id="match-date-selector" style="padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: var(--white); border: 1px solid var(--accent); font-family: 'Montserrat', sans-serif; cursor: pointer; color-scheme: dark; font-size: 1rem; font-weight: 600;">
-                <button id="btn-next-date" class="btn" style="padding: 10px 15px; border-radius: 8px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s ease;">Siguiente <i class="fa-solid fa-chevron-right"></i></button>
+            <div class="date-selector-container no-print">
+                <button id="btn-prev-date" class="btn-date"><i class="fa-solid fa-chevron-left"></i><span class="date-btn-text">Anterior</span></button>
+                <input type="date" id="match-date-selector" class="match-date-selector">
+                <button id="btn-next-date" class="btn-date"><span class="date-btn-text">Siguiente</span><i class="fa-solid fa-chevron-right"></i></button>
             </div>
 
             <div class="hoy-container" id="hoy-matches-list">
