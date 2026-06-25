@@ -261,6 +261,22 @@ function procesarPartidoESPN(ev) {
 
     let time_elapsed = state === "pre" ? "notstarted" : (state === "post" ? "finished" : ev.status.displayClock);
 
+    let realFechaArg = null;
+    let realHoraArg = null;
+    if (ev.date) {
+        const d = new Date(ev.date);
+        const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        const argDate = new Date(utc - (3 * 3600000));
+        
+        const day = argDate.getDate().toString().padStart(2, '0');
+        const month = (argDate.getMonth() + 1).toString().padStart(2, '0');
+        realFechaArg = `${day}/${month}`;
+        
+        const hours = argDate.getHours().toString().padStart(2, '0');
+        const mins = argDate.getMinutes().toString().padStart(2, '0');
+        realHoraArg = `${hours}:${mins}`;
+    }
+
     // Buscar si existe en la fase de grupos local
     let encontradoGrupos = false;
     Object.keys(PARTIDOS).forEach(letra => {
@@ -283,6 +299,8 @@ function procesarPartidoESPN(ev) {
                     partidoGuardado.time_elapsed = time_elapsed;
                     if (g1 !== null) partidoGuardado.s1 = g1;
                     if (g2 !== null) partidoGuardado.s2 = g2;
+                    if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
+                    if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
                     
                     // Extraer incidencias reales (goles, tarjetas, sustituciones)
                     if (comp.details && comp.details.length > 0) {
@@ -342,8 +360,8 @@ function procesarPartidoESPN(ev) {
                 fifaAway: fifaAway,
                 nombreHome: (fifaHome && PAISES[fifaHome]) ? PAISES[fifaHome].nombre : (homeTeamData.team.displayName || fifaHome),
                 nombreAway: (fifaAway && PAISES[fifaAway]) ? PAISES[fifaAway].nombre : (awayTeamData.team.displayName || fifaAway),
-                fechaArg: "--/--", // No tenemos fecha local para playoffs aÃºn en este demo
-                horaArg: "--:--",
+                fechaArg: realFechaArg || "--/--",
+                horaArg: realHoraArg || "--:--",
                 s1: g1,
                 s2: g2
             };
