@@ -99,6 +99,113 @@
     border-color: var(--gold);
 }
 
+/* --- BANDERAS Y CONTENEDOR DE NOMBRES --- */
+.team-name-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.bracket-flag {
+    width: 18px;
+    height: 13px;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* --- ESTADOS: GANADOR Y PERDEDOR --- */
+.match-team-row.winner {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%);
+    border-radius: 4px;
+    padding-left: 2px;
+}
+
+.match-team-row.winner .team-name {
+    color: var(--gold);
+    font-weight: 800;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.match-team-row.loser {
+    opacity: 0.4;
+    filter: grayscale(80%);
+}
+
+.match-team-row.loser .team-name {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* --- INDICADORES EN VIVO --- */
+.match-card.is-live {
+    border-color: #ff3b3b !important;
+    box-shadow: 0 0 15px rgba(255, 59, 59, 0.3);
+    animation: live-pulse 2s infinite;
+}
+
+@keyframes live-pulse {
+    0% { box-shadow: 0 0 10px rgba(255, 59, 59, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(255, 59, 59, 0.6); }
+    100% { box-shadow: 0 0 10px rgba(255, 59, 59, 0.2); }
+}
+
+.match-status-bracket {
+    font-size: 0.55rem;
+    color: #ff3b3b;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    animation: blink 1.5s infinite;
+}
+
+.live-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background-color: #ff3b3b;
+    border-radius: 50%;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* --- LINEAS CONECTORAS (ÁRBOL DE TORNEO) --- */
+.match-card {
+    position: relative; /* Para poder posicionar pseudo-elementos */
+}
+
+.bracket-stage[class*="-izq"] .match-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -10px;
+    width: 10px;
+    border-top: 1.5px solid rgba(255,215,0, 0.2);
+    z-index: -1;
+}
+
+.bracket-stage[class*="-der"] .match-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    width: 10px;
+    border-top: 1.5px solid rgba(255,215,0, 0.2);
+    z-index: -1;
+}
+
+.stage-2-izq .match-card::after,
+.stage-2-der .match-card::before {
+    display: none; /* No conectamos directo a la final por el padding de la copa */
+}
+
 /* Centro: Finales */
 .bracket-center {
     grid-column: 5;

@@ -345,9 +345,33 @@ function procesarPartidoESPN(ev) {
         // Generamos un ID provisorio usando los equipos
         const playOffId = `playoff-${fifaHome}-${fifaAway}`;
         
+        let pen1 = null;
+        let pen2 = null;
+        if (homeTeamData.shootoutScore !== undefined) pen1 = parseInt(homeTeamData.shootoutScore);
+        if (awayTeamData.shootoutScore !== undefined) pen2 = parseInt(awayTeamData.shootoutScore);
+
+        // Determinar ganador para los playoffs
+        let winner = null;
+        if (isFinished) {
+            if (g1 > g2) winner = fifaHome;
+            else if (g2 > g1) winner = fifaAway;
+            else if (pen1 !== null && pen2 !== null) {
+                if (pen1 > pen2) winner = fifaHome;
+                else if (pen2 > pen1) winner = fifaAway;
+            }
+        }
+
         partidosPlayoffsEquipos[playOffId] = { t1: fifaHome, t2: fifaAway };
-        if (g1 !== null && g2 !== null && isFinished) {
-            partidosPlayoffsGoles[playOffId] = { s1: g1, s2: g2 };
+        if (g1 !== null && g2 !== null) { // Guardamos goles incluso si está en vivo
+            partidosPlayoffsGoles[playOffId] = { 
+                s1: g1, 
+                s2: g2, 
+                pen1: pen1, 
+                pen2: pen2, 
+                winner: winner,
+                isLive: (state === "in"),
+                timeStr: time_elapsed
+            };
         }
         
         // Agregar a la lista si no existe
@@ -368,7 +392,10 @@ function procesarPartidoESPN(ev) {
                 fechaArg: realFechaArg || "--/--",
                 horaArg: realHoraArg || "--:--",
                 s1: g1,
-                s2: g2
+                s2: g2,
+                pen1: pen1,
+                pen2: pen2,
+                winner: winner
             };
             
             // Extraer incidencias reales (goles, tarjetas, sustituciones)

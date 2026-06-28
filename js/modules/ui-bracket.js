@@ -82,21 +82,59 @@ export function actualizarPlayoffsAutomatico() {
         const s1El = document.getElementById(`${idPrefijo}-s1`);
         const s2El = document.getElementById(`${idPrefijo}-s2`);
         
-        if (t1El) {
-            t1El.innerText = t1 ? (PAISES[t1] ? PAISES[t1].nombre : t1) : "___________";
+        const f1El = document.getElementById(`${idPrefijo}-f1`);
+        const f2El = document.getElementById(`${idPrefijo}-f2`);
+        const row1El = document.getElementById(`${idPrefijo}-row1`);
+        const row2El = document.getElementById(`${idPrefijo}-row2`);
+        const statusEl = document.getElementById(`${idPrefijo}-status`);
+        const cardEl = document.getElementById(`card-${idPrefijo}`);
+
+        if (t1El) t1El.innerText = t1 ? (PAISES[t1] ? PAISES[t1].nombre : t1) : "___________";
+        if (t2El) t2El.innerText = t2 ? (PAISES[t2] ? PAISES[t2].nombre : t2) : "___________";
+        
+        if (f1El) {
+            if (t1) { f1El.src = `banderas/${t1.toLowerCase()}.png`; f1El.style.display = 'inline-block'; }
+            else { f1El.style.display = 'none'; }
         }
-        if (t2El) {
-            t2El.innerText = t2 ? (PAISES[t2] ? PAISES[t2].nombre : t2) : "___________";
+        if (f2El) {
+            if (t2) { f2El.src = `banderas/${t2.toLowerCase()}.png`; f2El.style.display = 'inline-block'; }
+            else { f2El.style.display = 'none'; }
         }
         
+        // Reset classes
+        if (row1El) { row1El.classList.remove('winner', 'loser'); }
+        if (row2El) { row2El.classList.remove('winner', 'loser'); }
+        if (cardEl) { cardEl.classList.remove('is-live'); }
+        if (statusEl) { statusEl.innerHTML = ""; statusEl.style.display = 'none'; }
+        
         if (partidosPlayoffsGoles[partidoId] !== undefined) {
-            const s1 = partidosPlayoffsGoles[partidoId].s1;
-            const s2 = partidosPlayoffsGoles[partidoId].s2;
+            const data = partidosPlayoffsGoles[partidoId];
+            const s1 = data.s1;
+            const s2 = data.s2;
+            const pen1 = data.pen1;
+            const pen2 = data.pen2;
+            
             if (s1El && s2El) {
-                s1El.innerText = s1;
+                s1El.innerText = pen1 !== null ? `${s1} (${pen1})` : s1;
                 s1El.classList.add("has-score");
-                s2El.innerText = s2;
+                s2El.innerText = pen2 !== null ? `${s2} (${pen2})` : s2;
                 s2El.classList.add("has-score");
+            }
+
+            if (data.isLive) {
+                if (cardEl) cardEl.classList.add("is-live");
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="live-dot"></span> EN VIVO: ${data.timeStr}`;
+                    statusEl.style.display = 'block';
+                }
+            } else if (data.winner) {
+                if (data.winner === t1 && row1El && row2El) {
+                    row1El.classList.add('winner');
+                    row2El.classList.add('loser');
+                } else if (data.winner === t2 && row1El && row2El) {
+                    row2El.classList.add('winner');
+                    row1El.classList.add('loser');
+                }
             }
         } else {
             if (s1El && s2El) {
@@ -108,9 +146,9 @@ export function actualizarPlayoffsAutomatico() {
         }
         
         if (t1El) {
-            const cardEl = t1El.closest(".match-card");
-            if (cardEl) {
-                cardEl.setAttribute("onclick", `abrirDetallesPartido('${partidoId}')`);
+            const cEl = t1El.closest(".match-card");
+            if (cEl) {
+                cEl.setAttribute("onclick", `abrirDetallesPartido('${partidoId}')`);
             }
         }
     });
@@ -187,16 +225,24 @@ export function renderizarBracket() {
 function crearCardBracket(titulo, idPrefijo) {
     const card = document.createElement("div");
     card.className = "match-card";
+    card.id = `card-${idPrefijo}`;
     card.innerHTML = `
-        <div class="match-title">${titulo}</div>
-        <div class="match-team-row">
-            <span class="team-name" id="${idPrefijo}-t1">___________</span>
+        <div class="match-title" id="${idPrefijo}-title">${titulo}</div>
+        <div class="match-team-row" id="${idPrefijo}-row1">
+            <div class="team-name-container">
+                <img src="" class="bracket-flag" id="${idPrefijo}-f1" style="display:none;" />
+                <span class="team-name" id="${idPrefijo}-t1">___________</span>
+            </div>
             <span class="score-display-bracket" id="${idPrefijo}-s1">-</span>
         </div>
-        <div class="match-team-row">
-            <span class="team-name" id="${idPrefijo}-t2">___________</span>
+        <div class="match-team-row" id="${idPrefijo}-row2">
+            <div class="team-name-container">
+                <img src="" class="bracket-flag" id="${idPrefijo}-f2" style="display:none;" />
+                <span class="team-name" id="${idPrefijo}-t2">___________</span>
+            </div>
             <span class="score-display-bracket" id="${idPrefijo}-s2">-</span>
         </div>
+        <div class="match-status-bracket" id="${idPrefijo}-status"></div>
     `;
     return card;
 }
