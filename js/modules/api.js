@@ -189,7 +189,7 @@ export function cargarResultados() {
             console.log("Cargando marcadores cacheados...");
             const events = JSON.parse(juegosCache);
             poblarListaPartidosLocal(); // Llenar primero la lista base
-            events.forEach(ev => procesarPartidoESPN(ev)); // Actualizar con datos de ESPN
+            procesarPartidosESPNList(events); // Actualizar con datos de ESPN y playoffs
             simularPartidosFicticios(); // Simular ficticios en vivo
             actualizarInterfaz();
             ocultarLoader();
@@ -217,7 +217,7 @@ export function cargarResultados() {
                 localStorage.setItem(ESPN_CACHE_KEY, JSON.stringify(data.events));
                 // Volvemos a poblar la lista base para no duplicar y luego pisamos con los datos en vivo
                 poblarListaPartidosLocal();
-                data.events.forEach(ev => procesarPartidoESPN(ev));
+                procesarPartidosESPNList(data.events);
                 simularPartidosFicticios();
                 actualizarInterfaz();
             }
@@ -230,127 +230,122 @@ export function cargarResultados() {
         });
 }
 
-/**
- * Procesa un partido devuelto por la API de ESPN y actualiza nuestra lista base
- */
-function procesarPartidoESPN(ev) {
-    if (!ev.competitions || ev.competitions.length === 0) return;
-    
-    const comp = ev.competitions[0];
-    if (!comp.competitors || comp.competitors.length < 2) return;
+function procesarPartidosESPNList(events) {
+    let playoffEvents = [];
 
-    // Identificar local y visitante segÃºn la API de ESPN
-    const homeTeamData = comp.competitors.find(c => c.homeAway === 'home');
-    const awayTeamData = comp.competitors.find(c => c.homeAway === 'away');
+    events.forEach(ev => {
+        if (!ev.competitions || ev.competitions.length === 0) return;
+        const comp = ev.competitions[0];
+        if (!comp.competitors || comp.competitors.length < 2) return;
 
-    if (!homeTeamData || !awayTeamData) return;
+        const homeTeamData = comp.competitors.find(c => c.homeAway === 'home');
+        const awayTeamData = comp.competitors.find(c => c.homeAway === 'away');
+        if (!homeTeamData || !awayTeamData) return;
 
-    const espnHome = homeTeamData.team.abbreviation;
-    const espnAway = awayTeamData.team.abbreviation;
+        const espnHome = homeTeamData.team.abbreviation;
+        const espnAway = awayTeamData.team.abbreviation;
 
-    const fifaHome = ESPN_A_FIFA[espnHome] || espnHome;
-    const fifaAway = ESPN_A_FIFA[espnAway] || espnAway;
+        const fifaHome = ESPN_A_FIFA[espnHome] || espnHome;
+        const fifaAway = ESPN_A_FIFA[espnAway] || espnAway;
 
-    // Determinar si ya empezÃ³ o terminÃ³
-    const state = ev.status.type.state; // "pre", "in", "post"
-    const isStarted = state === "in" || state === "post";
-    const isFinished = state === "post";
-    
-    const g1 = isStarted ? parseInt(homeTeamData.score) : null;
-    const g2 = isStarted ? parseInt(awayTeamData.score) : null;
-
-    let time_elapsed = state === "pre" ? "notstarted" : (state === "post" ? "finished" : ev.status.displayClock);
-
-    let realFechaArg = null;
-    let realHoraArg = null;
-    if (ev.date) {
-        const d = new Date(ev.date);
-        const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-        const argDate = new Date(utc - (3 * 3600000));
+        const state = ev.status.type.state; 
+        const isStarted = state === "in" || state === "post";
+        const isFinished = state === "post";
         
-        const day = argDate.getDate().toString().padStart(2, '0');
-        const month = (argDate.getMonth() + 1).toString().padStart(2, '0');
-        realFechaArg = `${day}/${month}`;
-        
-        const hours = argDate.getHours().toString().padStart(2, '0');
-        const mins = argDate.getMinutes().toString().padStart(2, '0');
-        realHoraArg = `${hours}:${mins}`;
-    }
+        const g1 = isStarted ? parseInt(homeTeamData.score) : null;
+        const g2 = isStarted ? parseInt(awayTeamData.score) : null;
+        let time_elapsed = state === "pre" ? "notstarted" : (state === "post" ? "finished" : ev.status.displayClock);
 
-    // Buscar si existe en la fase de grupos local
-    let encontradoGrupos = false;
-    Object.keys(PARTIDOS).forEach(letra => {
-        PARTIDOS[letra].forEach((p, idx) => {
-            if ((p.l1 === fifaHome && p.l2 === fifaAway) || (p.l1 === fifaAway && p.l2 === fifaHome)) {
-                encontradoGrupos = true;
-                
-                // Actualizar goles si el partido arrancÃ³
-                if (g1 !== null && g2 !== null) {
-                    // Si el orden estÃ¡ invertido en nuestro archivo vs la API, invertir goles
-                    let goalL1 = (p.l1 === fifaHome) ? g1 : g2;
-                    let goalL2 = (p.l2 === fifaAway) ? g2 : g1;
-                    partidosGoles[`${letra}-${idx}-1`] = goalL1;
-                    partidosGoles[`${letra}-${idx}-2`] = goalL2;
-                }
-                
-                // Actualizar el partido en la lista completa
-                const idLocal = `local-${letra}-${idx}`;
-                const partidoGuardado = listaPartidosCompleta.find(item => item.id === idLocal);
-                if (partidoGuardado) {
-                    partidoGuardado.isStarted = isStarted;
-                    partidoGuardado.finished = isFinished ? "TRUE" : "FALSE";
-                    partidoGuardado.time_elapsed = time_elapsed;
-                    if (g1 !== null) {
-                        partidoGuardado.s1 = (p.l1 === fifaHome) ? g1 : g2;
-                        partidoGuardado.s2 = (p.l2 === fifaAway) ? g2 : g1;
+        let realFechaArg = null;
+        let realHoraArg = null;
+        if (ev.date) {
+            const d = new Date(ev.date);
+            const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+            const argDate = new Date(utc - (3 * 3600000));
+            
+            const day = argDate.getDate().toString().padStart(2, '0');
+            const month = (argDate.getMonth() + 1).toString().padStart(2, '0');
+            realFechaArg = `${day}/${month}`;
+            
+            const hours = argDate.getHours().toString().padStart(2, '0');
+            const mins = argDate.getMinutes().toString().padStart(2, '0');
+            realHoraArg = `${hours}:${mins}`;
+        }
+
+        let encontradoGrupos = false;
+        Object.keys(PARTIDOS).forEach(letra => {
+            PARTIDOS[letra].forEach((p, idx) => {
+                if ((p.l1 === fifaHome && p.l2 === fifaAway) || (p.l1 === fifaAway && p.l2 === fifaHome)) {
+                    encontradoGrupos = true;
+                    if (g1 !== null && g2 !== null) {
+                        let goalL1 = (p.l1 === fifaHome) ? g1 : g2;
+                        let goalL2 = (p.l2 === fifaAway) ? g2 : g1;
+                        partidosGoles[`${letra}-${idx}-1`] = goalL1;
+                        partidosGoles[`${letra}-${idx}-2`] = goalL2;
                     }
-                    if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
-                    if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
                     
-                    // Extraer incidencias reales (goles, tarjetas, sustituciones)
-                    if (comp.details && comp.details.length > 0) {
-                        partidoGuardado.incidenciasReales = comp.details.map(d => {
-                              let targetTeamId = null;
-                              if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
-                                  targetTeamId = d.athletesInvolved[0].team.id;
-                              } else if (d.team) {
-                                  targetTeamId = d.team.id;
-                              }
-                              let teamStr = "home";
-                              if (targetTeamId === awayTeamData.team.id) {
-                                  teamStr = "away";
-                              }
-                            
-                            let player = "";
-                            if (d.athletesInvolved && d.athletesInvolved.length > 0) {
-                                player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
-                            }
-                            
-                            return {
-                                type: d.type ? d.type.text : "Unknown",
-                                min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
-                                team: teamStr,
-                                detail: player,
-                                athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
-                            };
-                        });
+                    const idLocal = `local-${letra}-${idx}`;
+                    const partidoGuardado = listaPartidosCompleta.find(item => item.id === idLocal);
+                    if (partidoGuardado) {
+                        partidoGuardado.isStarted = isStarted;
+                        partidoGuardado.finished = isFinished ? "TRUE" : "FALSE";
+                        partidoGuardado.time_elapsed = time_elapsed;
+                        if (g1 !== null) {
+                            partidoGuardado.s1 = (p.l1 === fifaHome) ? g1 : g2;
+                            partidoGuardado.s2 = (p.l2 === fifaAway) ? g2 : g1;
+                        }
+                        if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
+                        if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
+                        
+                        if (comp.details && comp.details.length > 0) {
+                            partidoGuardado.incidenciasReales = comp.details.map(d => {
+                                  let targetTeamId = null;
+                                  if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
+                                      targetTeamId = d.athletesInvolved[0].team.id;
+                                  } else if (d.team) {
+                                      targetTeamId = d.team.id;
+                                  }
+                                  let teamStr = "home";
+                                  if (targetTeamId === awayTeamData.team.id) {
+                                      teamStr = "away";
+                                  }
+                                
+                                let player = "";
+                                if (d.athletesInvolved && d.athletesInvolved.length > 0) {
+                                    player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
+                                }
+                                
+                                return {
+                                    type: d.type ? d.type.text : "Unknown",
+                                    min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
+                                    team: teamStr,
+                                    detail: player,
+                                    athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
+                                };
+                            });
+                        }
                     }
                 }
-            }
+            });
         });
+
+        if (!encontradoGrupos) {
+            playoffEvents.push({ ev, fifaHome, fifaAway, g1, g2, isStarted, isFinished, time_elapsed, realFechaArg, realHoraArg, homeTeamData, awayTeamData, comp });
+        }
     });
 
-    // Si no es de grupos, asumimos que es de Playoffs
-    if (!encontradoGrupos) {
-        // Generamos un ID provisorio usando los equipos
-        const playOffId = `playoff-${fifaHome}-${fifaAway}`;
-        
+    // Ordenar los playoffs cronológicamente y asignar IDs 73-104
+    playoffEvents.sort((a, b) => new Date(a.ev.date) - new Date(b.ev.date));
+    
+    playoffEvents.forEach((pData, i) => {
+        const { ev, fifaHome, fifaAway, g1, g2, isStarted, isFinished, time_elapsed, realFechaArg, realHoraArg, homeTeamData, awayTeamData, comp } = pData;
+        const playOffId = (73 + i).toString(); // ID Oficial FIFA (73 a 104)
+
         let pen1 = null;
         let pen2 = null;
         if (homeTeamData.shootoutScore !== undefined) pen1 = parseInt(homeTeamData.shootoutScore);
         if (awayTeamData.shootoutScore !== undefined) pen2 = parseInt(awayTeamData.shootoutScore);
 
-        // Determinar ganador para los playoffs
         let winner = null;
         if (isFinished) {
             if (g1 > g2) winner = fifaHome;
@@ -362,26 +357,26 @@ function procesarPartidoESPN(ev) {
         }
 
         partidosPlayoffsEquipos[playOffId] = { t1: fifaHome, t2: fifaAway };
-        if (g1 !== null && g2 !== null) { // Guardamos goles incluso si está en vivo
-            partidosPlayoffsGoles[playOffId] = { 
-                s1: g1, 
-                s2: g2, 
-                pen1: pen1, 
-                pen2: pen2, 
-                winner: winner,
-                isLive: (state === "in"),
-                timeStr: time_elapsed
-            };
-        }
+        // Guardar metadata en goles (para que lo lea UI bracket)
+        partidosPlayoffsGoles[playOffId] = { 
+            s1: g1 !== null ? g1 : null, 
+            s2: g2 !== null ? g2 : null, 
+            pen1: pen1, 
+            pen2: pen2, 
+            winner: winner,
+            isLive: (ev.status.type.state === "in"),
+            timeStr: time_elapsed,
+            fechaArg: realFechaArg,
+            horaArg: realHoraArg
+        };
         
-        // Agregar a la lista si no existe
         const existePlayoff = listaPartidosCompleta.find(item => item.id === playOffId);
         if (!existePlayoff) {
             const nuevoPartido = {
                 id: playOffId,
                 type: "playoff",
                 group: "",
-                matchday: 4, // provisorio
+                matchday: 4, 
                 finished: isFinished ? "TRUE" : "FALSE",
                 time_elapsed: time_elapsed,
                 isStarted: isStarted,
@@ -398,7 +393,6 @@ function procesarPartidoESPN(ev) {
                 winner: winner
             };
             
-            // Extraer incidencias reales (goles, tarjetas, sustituciones)
             if (comp.details && comp.details.length > 0) {
                 nuevoPartido.incidenciasReales = comp.details.map(d => {
                       let targetTeamId = null;
@@ -411,12 +405,7 @@ function procesarPartidoESPN(ev) {
                       if (targetTeamId === awayTeamData.team.id) {
                           teamStr = "away";
                       }
-                    
-                    let player = "";
-                    if (d.athletesInvolved && d.athletesInvolved.length > 0) {
-                        player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
-                    }
-                    
+                    let player = d.athletesInvolved && d.athletesInvolved.length > 0 ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName) : "";
                     return {
                         type: d.type ? d.type.text : "Unknown",
                         min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
@@ -426,10 +415,9 @@ function procesarPartidoESPN(ev) {
                     };
                 });
             }
-            
             listaPartidosCompleta.push(nuevoPartido);
         }
-    }
+    });
 }
 
 /**

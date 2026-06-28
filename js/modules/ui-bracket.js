@@ -36,45 +36,15 @@ export function actualizarPlayoffsAutomatico() {
         return a.grupo.localeCompare(b.grupo);
     });
     
-    let mejoresTerceros = terceros.slice(0, 8).map(t => t.id);
-    while (mejoresTerceros.length < 8) {
-        mejoresTerceros.push("");
-    }
-    
-    const crucesTeoricos = {
-        "73": { t1: ganadores["A"], t2: mejoresTerceros[0] },
-        "74": { t1: segundos["B"], t2: segundos["C"] },
-        "75": { t1: ganadores["C"], t2: mejoresTerceros[1] },
-        "76": { t1: segundos["D"], t2: segundos["E"] },
-        "77": { t1: ganadores["E"], t2: mejoresTerceros[2] },
-        "78": { t1: segundos["F"], t2: segundos["G"] },
-        "79": { t1: ganadores["G"], t2: mejoresTerceros[3] },
-        "80": { t1: segundos["H"], t2: segundos["I"] },
-        "81": { t1: ganadores["I"], t2: mejoresTerceros[4] },
-        "82": { t1: segundos["J"], t2: segundos["K"] },
-        "83": { t1: ganadores["K"], t2: mejoresTerceros[5] },
-        "84": { t1: segundos["L"], t2: segundos["A"] },
-        "85": { t1: ganadores["B"], t2: mejoresTerceros[6] },
-        "86": { t1: ganadores["D"], t2: mejoresTerceros[7] },
-        "87": { t1: ganadores["F"], t2: ganadores["H"] },
-        "88": { t1: ganadores["J"], t2: ganadores["L"] }
-    };
-
+    // Extraer de partidosPlayoffsEquipos (alimentado por la API con el bracket real)
     Object.keys(MAPA_PLAYOFFS).forEach(partidoId => {
         const idPrefijo = MAPA_PLAYOFFS[partidoId];
-        
-        let t1 = "";
-        let t2 = "";
+        let t1 = null;
+        let t2 = null;
         
         if (partidosPlayoffsEquipos[partidoId]) {
             t1 = partidosPlayoffsEquipos[partidoId].t1;
             t2 = partidosPlayoffsEquipos[partidoId].t2;
-        }
-        
-        const pIdInt = parseInt(partidoId);
-        if (!t1 && !t2 && pIdInt >= 73 && pIdInt <= 88 && crucesTeoricos[partidoId]) {
-            t1 = crucesTeoricos[partidoId].t1;
-            t2 = crucesTeoricos[partidoId].t2;
         }
         
         const t1El = document.getElementById(`${idPrefijo}-t1`);
@@ -87,6 +57,7 @@ export function actualizarPlayoffsAutomatico() {
         const row1El = document.getElementById(`${idPrefijo}-row1`);
         const row2El = document.getElementById(`${idPrefijo}-row2`);
         const statusEl = document.getElementById(`${idPrefijo}-status`);
+        const timeEl = document.getElementById(`${idPrefijo}-time`);
         const cardEl = document.getElementById(`card-${idPrefijo}`);
 
         if (t1El) t1El.innerText = t1 ? (PAISES[t1] ? PAISES[t1].nombre : t1) : "___________";
@@ -106,6 +77,7 @@ export function actualizarPlayoffsAutomatico() {
         if (row2El) { row2El.classList.remove('winner', 'loser'); }
         if (cardEl) { cardEl.classList.remove('is-live'); }
         if (statusEl) { statusEl.innerHTML = ""; statusEl.style.display = 'none'; }
+        if (timeEl) { timeEl.innerText = ""; }
         
         if (partidosPlayoffsGoles[partidoId] !== undefined) {
             const data = partidosPlayoffsGoles[partidoId];
@@ -113,6 +85,10 @@ export function actualizarPlayoffsAutomatico() {
             const s2 = data.s2;
             const pen1 = data.pen1;
             const pen2 = data.pen2;
+            
+            if (timeEl && data.fechaArg && data.horaArg) {
+                timeEl.innerText = `${data.fechaArg} - ${data.horaArg}`;
+            }
             
             if (s1El && s2El) {
                 s1El.innerText = pen1 !== null ? `${s1} (${pen1})` : s1;
@@ -228,6 +204,7 @@ function crearCardBracket(titulo, idPrefijo) {
     card.id = `card-${idPrefijo}`;
     card.innerHTML = `
         <div class="match-title" id="${idPrefijo}-title">${titulo}</div>
+        <div class="match-datetime" id="${idPrefijo}-time"></div>
         <div class="match-team-row" id="${idPrefijo}-row1">
             <div class="team-name-container">
                 <img src="" class="bracket-flag" id="${idPrefijo}-f1" style="display:none;" />
