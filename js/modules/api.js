@@ -363,22 +363,27 @@ function procesarPartidosESPNList(events) {
             return R32_INDEX_TO_DOM[matchIndex];
         }
         
-        // Si es un partido futuro, buscamos a qué nodo pertenece basándonos en los equipos o placeholders
+        // Determinar la ronda basada en el orden cronológico
+        let round = "";
+        if (matchIndex < 24) round = "R16";
+        else if (matchIndex < 28) round = "QF";
+        else if (matchIndex < 30) round = "SF";
+        else if (matchIndex === 30) return "bronze";
+        else return "final";
+
         const hName = pData.homeTeamData.team.displayName || "";
         const aName = pData.awayTeamData.team.displayName || "";
         const hAbbr = pData.homeTeamData.team.abbreviation || "";
         const aAbbr = pData.awayTeamData.team.abbreviation || "";
 
-        // Buscamos los índices de R32 de los que provienen estos equipos
         function getSourceIndex(name, abbr) {
             let m = name.match(/Round of 32 (\d+)/);
             if (m) return parseInt(m[1]) - 1;
             
-            // Buscar por equipo real en r32Matches
             for (let i = 0; i < r32Matches.length; i++) {
                 const r32 = r32Matches[i];
-                if (r32.homeTeamData.team.abbreviation === abbr || r32.awayTeamData.team.abbreviation === abbr || 
-                    r32.homeTeamData.team.displayName === name || r32.awayTeamData.team.displayName === name) {
+                if ((abbr && r32.homeTeamData.team.abbreviation === abbr) || (abbr && r32.awayTeamData.team.abbreviation === abbr) || 
+                    (name && r32.homeTeamData.team.displayName === name) || (name && r32.awayTeamData.team.displayName === name)) {
                     return i;
                 }
             }
@@ -388,56 +393,50 @@ function procesarPartidosESPNList(events) {
         const hSrcIdx = getSourceIndex(hName, hAbbr);
         const aSrcIdx = getSourceIndex(aName, aAbbr);
 
-        // Si logramos rastrear ambos orígenes a la Ronda de 32:
-        if (hSrcIdx !== -1 && aSrcIdx !== -1) {
-            const dom1 = R32_INDEX_TO_DOM[hSrcIdx];
-            const dom2 = R32_INDEX_TO_DOM[aSrcIdx];
-            
-            // Ver si forman un par de R16
-            let pair = `${dom1}_${dom2}`;
-            let revPair = `${dom2}_${dom1}`;
-            if (R16_PAIRS_TO_DOM[pair]) return R16_PAIRS_TO_DOM[pair];
-            if (R16_PAIRS_TO_DOM[revPair]) return R16_PAIRS_TO_DOM[revPair];
-            
-            // Si no son de R16, buscamos recursivamente de qué QF vienen...
-            // Es más fácil identificar la ronda por la cantidad de equipos o fechas, 
-            // pero si rastreamos los R32 base, sabemos de qué cuadrante vienen!
-            
-            // Cuadrante 1: d16-i-1 a d16-i-4 -> o8-i-1 y o8-i-2 -> c4-i-1
-            const isQFi1 = ["d16-i-1", "d16-i-2", "d16-i-3", "d16-i-4"].includes(dom1) && ["d16-i-1", "d16-i-2", "d16-i-3", "d16-i-4"].includes(dom2);
-            if (isQFi1) return "c4-i-1";
-            
-            const isQFi2 = ["d16-i-5", "d16-i-6", "d16-i-7", "d16-i-8"].includes(dom1) && ["d16-i-5", "d16-i-6", "d16-i-7", "d16-i-8"].includes(dom2);
-            if (isQFi2) return "c4-i-2";
-            
-            const isQFd3 = ["d16-d-9", "d16-d-10", "d16-d-11", "d16-d-12"].includes(dom1) && ["d16-d-9", "d16-d-10", "d16-d-11", "d16-d-12"].includes(dom2);
-            if (isQFd3) return "c4-d-3";
-            
-            const isQFd4 = ["d16-d-13", "d16-d-14", "d16-d-15", "d16-d-16"].includes(dom1) && ["d16-d-13", "d16-d-14", "d16-d-15", "d16-d-16"].includes(dom2);
-            if (isQFd4) return "c4-d-4";
-            
-            // Semifinales
-            const isSFi1 = dom1.includes("i-") && dom2.includes("i-");
-            if (isSFi1) return "semi-i-1";
-            
-            const isSFd2 = dom1.includes("d-") && dom2.includes("d-");
-            if (isSFd2) return "semi-d-2";
-            
-            // Finales
-            if ((dom1.includes("i-") && dom2.includes("d-")) || (dom1.includes("d-") && dom2.includes("i-"))) {
-                // Chequear nombre para saber si es 3er puesto
-                if (pData.ev.name && pData.ev.name.includes("3rd")) return "bronze";
-                return "final";
+        // Si tenemos AL MENOS UN equipo conocido, podemos trazar su ruta exacta en el árbol
+        let knownR32Dom = null;
+        if (hSrcIdx !== -1) knownR32Dom = R32_INDEX_TO_DOM[hSrcIdx];
+        else if (aSrcIdx !== -1) knownR32Dom = R32_INDEX_TO_DOM[aSrcIdx];
+
+        if (round === "R16") {
+            if (knownR32Dom) {
+                for (let pair in R16_PAIRS_TO_DOM) {
+                    if (pair.includes(knownR32Dom)) return R16_PAIRS_TO_DOM[pair];
+                }
             }
+            return Object.values(R16_PAIRS_TO_DOM)[matchIndex - 16];
+        }
+
+        if (round === "QF") {
+            if (knownR32Dom) {
+                let r16Dom = null;
+                for (let pair in R16_PAIRS_TO_DOM) {
+                    if (pair.includes(knownR32Dom)) r16Dom = R16_PAIRS_TO_DOM[pair];
+                }
+                for (let pair in QF_PAIRS_TO_DOM) {
+                    if (pair.includes(r16Dom)) return QF_PAIRS_TO_DOM[pair];
+                }
+            }
+            return Object.values(QF_PAIRS_TO_DOM)[matchIndex - 24];
+        }
+
+        if (round === "SF") {
+            if (knownR32Dom) {
+                let r16Dom = null;
+                for (let pair in R16_PAIRS_TO_DOM) {
+                    if (pair.includes(knownR32Dom)) r16Dom = R16_PAIRS_TO_DOM[pair];
+                }
+                let qfDom = null;
+                for (let pair in QF_PAIRS_TO_DOM) {
+                    if (pair.includes(r16Dom)) qfDom = QF_PAIRS_TO_DOM[pair];
+                }
+                for (let pair in SF_PAIRS_TO_DOM) {
+                    if (pair.includes(qfDom)) return SF_PAIRS_TO_DOM[pair];
+                }
+            }
+            return matchIndex === 28 ? "semi-i-1" : "semi-d-2";
         }
         
-        // Fallback cronológico si falla el rastreo (solo para QF en adelante por si ESPN falla)
-        if (matchIndex >= 24 && matchIndex <= 27) return Object.values(QF_PAIRS_TO_DOM)[matchIndex - 24];
-        if (matchIndex === 28) return "semi-i-1";
-        if (matchIndex === 29) return "semi-d-2";
-        if (matchIndex === 30) return "bronze";
-        if (matchIndex === 31) return "final";
-
         return null;
     }
 

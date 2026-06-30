@@ -305,40 +305,57 @@
 }
 
 /* Adaptación del Bracket de Fase Final */
-@media screen and (max-width: 1024px) {
+@media (max-width: 1100px) {
     .fase-final-bracket {
-        grid-template-columns: repeat(9, 140px);
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        gap: 10px;
-        padding: 20px 10px;
-        scrollbar-width: thin;
-        scrollbar-color: var(--gold) rgba(0,0,0,0.5);
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px;
+        min-height: auto;
+        padding: 15px;
+        overflow-x: hidden;
+    }
+
+    .bracket-stage {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+        gap: 15px;
+        position: static;
+        height: auto;
     }
     
-    .mobile-help-text {
-        display: flex;
+    .match-card {
+        max-width: 100%;
+        margin: 0;
     }
+
+    /* Títulos de sección para móvil generados por CSS */
+    #d16-izq::before { content: "16avos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #d16-der::before { content: "16avos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #o8-izq::before { content: "Octavos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #o8-der::before { content: "Octavos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #c4-izq::before { content: "Cuartos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #c4-der::before { content: "Cuartos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #semi-izq::before { content: "Semifinal (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+    #semi-der::before { content: "Semifinal (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
+
+    /* Ordenamiento vertical lógico (tira grande) */
+    #d16-izq { order: 1; margin-bottom: 15px; }
+    #d16-der { order: 2; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
     
-    /* Scrollbar estético para navegadores webkit */
-    .fase-final-bracket::-webkit-scrollbar {
-        height: 8px;
-    }
+    #o8-izq { order: 3; margin-bottom: 15px; }
+    #o8-der { order: 4; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
     
-    .fase-final-bracket::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 4px;
-    }
+    #c4-izq { order: 5; margin-bottom: 15px; }
+    #c4-der { order: 6; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
     
-    .fase-final-bracket::-webkit-scrollbar-thumb {
-        background: var(--gold);
-        border-radius: 4px;
-        border: 1px solid var(--bg-dark);
-    }
+    #semi-izq { order: 7; margin-bottom: 15px; }
+    #semi-der { order: 8; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
     
-    .copa-decoracion {
-        width: 200px;
-        height: 350px;
+    .final-col { order: 9; }
+    
+    /* Ocultar lineas conectoras en modo lista */
+    .bracket-stage::before, .bracket-stage::after, .card-connector, .copa-decoracion {
+        display: none !important;
     }
 }
 
