@@ -475,6 +475,54 @@ function procesarPartidosESPNList(events) {
             fechaArg: realFechaArg,
             horaArg: realHoraArg
         };
+
+        const existePlayoff = listaPartidosCompleta.find(item => item.id === domNode);
+        if (!existePlayoff) {
+            const nuevoPartido = {
+                id: domNode,
+                type: "playoff",
+                group: "",
+                matchday: 4, 
+                finished: isFinished ? "TRUE" : "FALSE",
+                time_elapsed: time_elapsed,
+                isStarted: isStarted,
+                fifaHome: fifaHome,
+                fifaAway: fifaAway,
+                nombreHome: (fifaHome && PAISES[fifaHome]) ? PAISES[fifaHome].nombre : (homeTeamData.team.displayName || fifaHome),
+                nombreAway: (fifaAway && PAISES[fifaAway]) ? PAISES[fifaAway].nombre : (awayTeamData.team.displayName || fifaAway),
+                fechaArg: realFechaArg || "--/--",
+                horaArg: realHoraArg || "--:--",
+                s1: g1,
+                s2: g2,
+                pen1: pen1,
+                pen2: pen2,
+                winner: winner
+            };
+            
+            if (pData.comp && pData.comp.details && pData.comp.details.length > 0) {
+                nuevoPartido.incidenciasReales = pData.comp.details.map(d => {
+                      let targetTeamId = null;
+                      if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
+                          targetTeamId = d.athletesInvolved[0].team.id;
+                      } else if (d.team) {
+                          targetTeamId = d.team.id;
+                      }
+                      let teamStr = "home";
+                      if (targetTeamId === awayTeamData.team.id) {
+                          teamStr = "away";
+                      }
+                    let player = d.athletesInvolved && d.athletesInvolved.length > 0 ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName) : "";
+                    return {
+                        type: d.type ? d.type.text : "Unknown",
+                        min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
+                        team: teamStr,
+                        detail: player,
+                        athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
+                    };
+                });
+            }
+            listaPartidosCompleta.push(nuevoPartido);
+        }
     });
 }
 
