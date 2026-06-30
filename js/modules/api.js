@@ -333,14 +333,14 @@ function procesarPartidosESPNList(events) {
 
     // Y definimos qué nodo de R16 corresponde a cada par de DOM de R32
     const R16_PAIRS_TO_DOM = {
-        "r32-1_r32-3": "r16-1",
-        "r32-2_r32-4": "r16-2",
-        "r32-5_r32-7": "r16-3",
-        "r32-6_r32-8": "r16-4",
-        "r32-9_r32-11": "r16-5",
-        "r32-10_r32-12": "r16-6",
-        "r32-13_r32-15": "r16-7",
-        "r32-14_r32-16": "r16-8"
+        "r32-1_r32-2": "r16-1",
+        "r32-3_r32-4": "r16-2",
+        "r32-5_r32-6": "r16-3",
+        "r32-7_r32-8": "r16-4",
+        "r32-9_r32-10": "r16-5",
+        "r32-11_r32-12": "r16-6",
+        "r32-13_r32-14": "r16-7",
+        "r32-15_r32-16": "r16-8"
     };
 
     const QF_PAIRS_TO_DOM = {
