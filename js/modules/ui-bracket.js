@@ -73,8 +73,8 @@ export function actualizarPlayoffsAutomatico() {
         if (statusEl) { statusEl.innerHTML = ""; statusEl.style.display = 'none'; }
         if (timeEl) { timeEl.innerText = ""; }
         
-        if (partidosPlayoffsGoles[partidoId] !== undefined) {
-            const data = partidosPlayoffsGoles[partidoId];
+        if (partidosPlayoffsGoles[idPrefijo] !== undefined) {
+            const data = partidosPlayoffsGoles[idPrefijo];
             const s1 = data.s1;
             const s2 = data.s2;
             const pen1 = data.pen1;
