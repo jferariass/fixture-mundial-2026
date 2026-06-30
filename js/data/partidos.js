@@ -119,16 +119,50 @@ export const DIFERENCIA_HORAS_ESTADIO = {
     "16": 4  // Lumen Field (Seattle) -> GMT-7 a GMT-3 (+4)
 };
 
-// Mapeo de IDs de partidos de Playoffs de la API con los elementos DOM
+// Mapeo de IDs de partidos de Playoffs de la API (cronológicos 73 a 104) con los elementos DOM
+// Este mapeo garantiza que los ganadores se crucen visualmente de forma correcta
 export const MAPA_PLAYOFFS = {
-    "73": "d16-i-1", "74": "d16-i-2", "75": "d16-i-3", "76": "d16-i-4",
-    "77": "d16-i-5", "78": "d16-i-6", "79": "d16-i-7", "80": "d16-i-8",
-    "81": "d16-d-9", "82": "d16-d-10", "83": "d16-d-11", "84": "d16-d-12",
-    "85": "d16-d-13", "86": "d16-d-14", "87": "d16-d-15", "88": "d16-d-16",
-    "89": "o8-i-1", "90": "o8-i-2", "91": "o8-i-3", "92": "o8-i-4",
-    "93": "o8-d-5", "94": "o8-d-6", "95": "o8-d-7", "96": "o8-d-8",
-    "97": "c4-i-1", "98": "c4-i-2", "99": "c4-d-3", "100": "c4-d-4",
-    "101": "semi-i-1", "102": "semi-d-2",
+    // 1/16 Final
+    "73": "d16-i-1",  // W1 (RSA vs CAN)
+    "75": "d16-i-2",  // W3 (GER vs PAR)
+    "74": "d16-i-3",  // W2 (BRA vs JPN)
+    "77": "d16-i-4",  // W5 (CIV vs NOR)
+    "83": "d16-i-5",  // W11 (ESP vs AUT)
+    "84": "d16-i-6",  // W12 (POR vs CRO)
+    "81": "d16-i-7",  // W9 (BEL vs SEN)
+    "82": "d16-i-8",  // W10 (USA vs BIH)
+
+    "76": "d16-d-9",  // W4 (NED vs MAR)
+    "78": "d16-d-10", // W6 (FRA vs SWE)
+    "79": "d16-d-11", // W7 (MEX vs ECU)
+    "80": "d16-d-12", // W8 (ENG vs COD)
+    "86": "d16-d-13", // W14 (AUS vs EGY)
+    "88": "d16-d-14", // W16 (COL vs GHA)
+    "85": "d16-d-15", // W13 (SUI vs ALG)
+    "87": "d16-d-16", // W15 (ARG vs CPV)
+
+    // 1/8 Final
+    "89": "o8-i-1",   // QF1
+    "90": "o8-i-2",   // QF2
+    "93": "o8-i-3",   // QF5
+    "94": "o8-i-4",   // QF6
+
+    "91": "o8-d-5",   // QF3
+    "92": "o8-d-6",   // QF4
+    "95": "o8-d-7",   // QF7
+    "96": "o8-d-8",   // QF8
+
+    // 1/4 Final
+    "97": "c4-i-1",
+    "98": "c4-i-2",
+    "99": "c4-d-3",
+    "100": "c4-d-4",
+
+    // Semifinal
+    "101": "semi-i-1",
+    "102": "semi-d-2",
+
+    // 3er Puesto y Final
     "103": "bronze",
     "104": "final"
 };
