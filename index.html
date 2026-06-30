@@ -139,74 +139,34 @@
         <div class="print-page" id="tab-page-4">
             <div class="print-page-title">FASE DE ELIMINACIÓN DIRECTA (PLAYOFFS)</div>
             <div class="mobile-help-text no-print">
-                <i class="fa-solid fa-arrows-left-right"></i> Desliza hacia los lados para explorar el cuadro completo
+                <i class="fa-solid fa-arrows-left-right"></i> Desliza hacia los lados para explorar las siguientes rondas
             </div>
-            <section class="fase-final-bracket">
-                <div class="copa-decoracion"></div>
-                
-                <div class="bracket-stage stage-16-izq" id="d16-izq">
-                    <!-- Dieciseisavos Izquierda -->
+            <div class="google-bracket-container">
+                <div class="bracket-col" id="col-r32">
+                    <div class="col-title">16avos de final</div>
+                    <div class="col-content" id="r32-container"></div>
                 </div>
                 
-                <div class="bracket-stage stage-8-izq" id="o8-izq">
-                    <!-- Octavos Izquierda -->
+                <div class="bracket-col" id="col-r16">
+                    <div class="col-title">Octavos de final</div>
+                    <div class="col-content" id="r16-container"></div>
                 </div>
                 
-                <div class="bracket-stage stage-4-izq" id="c4-izq">
-                    <!-- Cuartos Izquierda -->
+                <div class="bracket-col" id="col-qf">
+                    <div class="col-title">Cuartos de final</div>
+                    <div class="col-content" id="qf-container"></div>
                 </div>
                 
-                <div class="bracket-stage stage-2-izq" id="semi-izq">
-                    <!-- Semi Izquierda -->
+                <div class="bracket-col" id="col-sf">
+                    <div class="col-title">Semifinales</div>
+                    <div class="col-content" id="sf-container"></div>
                 </div>
                 
-                <!-- Centro: Gran Final & 3er Puesto -->
-                <div class="bracket-center">
-                    <div class="campeon-crown">
-                        <i class="fa-solid fa-trophy gold-trophy"></i>
-                    </div>
-                    
-                    <div class="match-card match-final">
-                        <div class="match-title">FINAL</div>
-                        <div class="match-team-row">
-                            <span class="team-name" id="final-t1">SEMIFINALISTA 1</span>
-                            <span class="score-display-bracket" id="final-s1">-</span>
-                        </div>
-                        <div class="match-team-row">
-                            <span class="team-name" id="final-t2">SEMIFINALISTA 2</span>
-                            <span class="score-display-bracket" id="final-s2">-</span>
-                        </div>
-                    </div>
-
-                    <div class="match-card match-bronze">
-                        <div class="match-title">TERCER PUESTO</div>
-                        <div class="match-team-row">
-                            <span class="team-name" id="bronze-t1">PERDEDOR SEMI 1</span>
-                            <span class="score-display-bracket" id="bronze-s1">-</span>
-                        </div>
-                        <div class="match-team-row">
-                            <span class="team-name" id="bronze-t2">PERDEDOR SEMI 2</span>
-                            <span class="score-display-bracket" id="bronze-s2">-</span>
-                        </div>
-                    </div>
+                <div class="bracket-col" id="col-final">
+                    <div class="col-title">Finales</div>
+                    <div class="col-content" id="final-container"></div>
                 </div>
-
-                <div class="bracket-stage stage-2-der" id="semi-der">
-                    <!-- Semi Derecha -->
-                </div>
-
-                <div class="bracket-stage stage-4-der" id="c4-der">
-                    <!-- Cuartos Derecha -->
-                </div>
-
-                <div class="bracket-stage stage-8-der" id="o8-der">
-                    <!-- Octavos Derecha -->
-                </div>
-
-                <div class="bracket-stage stage-16-der" id="d16-der">
-                    <!-- Dieciseisavos Derecha -->
-                </div>
-            </section>
+            </div>
         </div>
 
         <!-- PÁGINA PODIO: ESTADÍSTICAS GLOBALES -->

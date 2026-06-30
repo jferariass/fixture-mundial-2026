@@ -310,93 +310,83 @@ function procesarPartidosESPNList(events) {
     // Algoritmo de Ensamblaje de Bracket Dinámico (Hardcodeado a la ESTRUCTURA EXACTA FIFA 2026 para asegurar flujo visual)
     playoffEvents.sort((a, b) => new Date(a.ev.date) - new Date(b.ev.date));
     
-    // Mapeo Maestro Estructural FIFA 2026 (Indices cronológicos de la fase de 32 a sus respectivos nodos visuales)
-    // Sabemos exactamente qué partido de 1/16 juega contra cuál.
-    const r32Matches = playoffEvents.slice(0, 16);
-    
-    // MAPA FIFA: El partido 1 cronológico de R32 (Match 73) juega contra el partido 3 (Match 75).
-    // El partido 2 (Match 74) juega contra el partido 5 (Match 77)...
-    // Asignamos directamente los nodos DOM a los índices cronológicos de los 32vos:
-    const R32_INDEX_TO_DOM = {
-        0: "d16-i-3",  2: "d16-i-4",   // W73 y W75 -> o8-i-2
-        1: "d16-i-1",  4: "d16-i-2",   // W74 y W77 -> o8-i-1
-        3: "d16-d-9",  5: "d16-d-10",  // W76 y W78 -> o8-d-5
-        6: "d16-i-5",  7: "d16-i-6",   // W79 y W80 -> o8-i-3
-        8: "d16-d-11", 10: "d16-d-12", // W81 y W83 -> o8-d-6
-        9: "d16-i-7",  12: "d16-i-8",  // W82 y W85 -> o8-i-4
-        11: "d16-d-13", 14: "d16-d-14",// W84 y W87 -> o8-d-7
-        13: "d16-d-15", 15: "d16-d-16" // W86 y W88 -> o8-d-8
+    // Mapeo Maestro Estructural FIFA 2026 -> Lineal (Google Style)
+    // Asignamos directamente cada país a su slot 1-16 de la primera ronda.
+    const R32_TEAM_SLOTS = {
+        "RSA": "r32-1", "CAN": "r32-1",
+        "NED": "r32-2", "MAR": "r32-2",
+        "GER": "r32-3", "PAR": "r32-3",
+        "FRA": "r32-4", "SWE": "r32-4",
+        "BEL": "r32-5", "SEN": "r32-5",
+        "USA": "r32-6", "BIH": "r32-6",
+        "ESP": "r32-7", "AUT": "r32-7",
+        "POR": "r32-8", "CRO": "r32-8",
+        "BRA": "r32-9", "JPN": "r32-9",
+        "CIV": "r32-10", "NOR": "r32-10",
+        "MEX": "r32-11", "ECU": "r32-11",
+        "ENG": "r32-12", "COD": "r32-12",
+        "SUI": "r32-13", "ALG": "r32-13",
+        "COL": "r32-14", "GHA": "r32-14",
+        "AUS": "r32-15", "EGY": "r32-15",
+        "ARG": "r32-16", "CPV": "r32-16"
     };
 
     // Y definimos qué nodo de R16 corresponde a cada par de DOM de R32
     const R16_PAIRS_TO_DOM = {
-        "d16-i-1_d16-i-2": "o8-i-1",
-        "d16-i-3_d16-i-4": "o8-i-2",
-        "d16-i-5_d16-i-6": "o8-i-3",
-        "d16-i-7_d16-i-8": "o8-i-4",
-        "d16-d-9_d16-d-10": "o8-d-5",
-        "d16-d-11_d16-d-12": "o8-d-6",
-        "d16-d-13_d16-d-14": "o8-d-7",
-        "d16-d-15_d16-d-16": "o8-d-8"
+        "r32-1_r32-3": "r16-1",
+        "r32-2_r32-4": "r16-2",
+        "r32-5_r32-7": "r16-3",
+        "r32-6_r32-8": "r16-4",
+        "r32-9_r32-11": "r16-5",
+        "r32-10_r32-12": "r16-6",
+        "r32-13_r32-15": "r16-7",
+        "r32-14_r32-16": "r16-8"
     };
 
-    // QF
     const QF_PAIRS_TO_DOM = {
-        "o8-i-1_o8-i-2": "c4-i-1",
-        "o8-i-3_o8-i-4": "c4-i-2",
-        "o8-d-5_o8-d-6": "c4-d-3",
-        "o8-d-7_o8-d-8": "c4-d-4"
+        "r16-1_r16-2": "qf-1",
+        "r16-3_r16-4": "qf-2",
+        "r16-5_r16-6": "qf-3",
+        "r16-7_r16-8": "qf-4"
     };
 
-    // SF
     const SF_PAIRS_TO_DOM = {
-        "c4-i-1_c4-i-2": "semi-i-1",
-        "c4-d-3_c4-d-4": "semi-d-2"
+        "qf-1_qf-2": "sf-1",
+        "qf-3_qf-4": "sf-2"
     };
-
-    const finalMatchDOM = "final";
-    const bronzeMatchDOM = "bronze";
 
     // Función auxiliar para saber a qué DOM Node pertenece un partido, analizando quiénes juegan
     function findDOMNodeForMatch(pData, matchIndex) {
-        if (matchIndex < 16) {
-            return R32_INDEX_TO_DOM[matchIndex];
-        }
-        
         // Determinar la ronda basada en el orden cronológico
         let round = "";
-        if (matchIndex < 24) round = "R16";
+        if (matchIndex < 16) round = "R32";
+        else if (matchIndex < 24) round = "R16";
         else if (matchIndex < 28) round = "QF";
         else if (matchIndex < 30) round = "SF";
         else if (matchIndex === 30) return "bronze";
         else return "final";
 
-        const hName = pData.homeTeamData.team.displayName || "";
-        const aName = pData.awayTeamData.team.displayName || "";
         const hAbbr = pData.homeTeamData.team.abbreviation || "";
         const aAbbr = pData.awayTeamData.team.abbreviation || "";
+        const hName = pData.homeTeamData.team.displayName || "";
+        const aName = pData.awayTeamData.team.displayName || "";
 
-        function getSourceIndex(name, abbr) {
-            let m = name.match(/Round of 32 (\d+)/);
-            if (m) return parseInt(m[1]) - 1;
-            
-            for (let i = 0; i < r32Matches.length; i++) {
-                const r32 = r32Matches[i];
-                if ((abbr && r32.homeTeamData.team.abbreviation === abbr) || (abbr && r32.awayTeamData.team.abbreviation === abbr) || 
-                    (name && r32.homeTeamData.team.displayName === name) || (name && r32.awayTeamData.team.displayName === name)) {
-                    return i;
-                }
+        // Trazar orígenes
+        let knownR32Dom = null;
+        if (hAbbr && R32_TEAM_SLOTS[hAbbr]) knownR32Dom = R32_TEAM_SLOTS[hAbbr];
+        else if (aAbbr && R32_TEAM_SLOTS[aAbbr]) knownR32Dom = R32_TEAM_SLOTS[aAbbr];
+        // En caso de que el abbreviation falle y tengamos que usar el dict inverso de PAISES
+        if (!knownR32Dom) {
+            for (let code in PAISES) {
+                if (PAISES[code].nombre === hName && R32_TEAM_SLOTS[code]) knownR32Dom = R32_TEAM_SLOTS[code];
+                if (PAISES[code].nombre === aName && R32_TEAM_SLOTS[code]) knownR32Dom = R32_TEAM_SLOTS[code];
             }
-            return -1;
         }
 
-        const hSrcIdx = getSourceIndex(hName, hAbbr);
-        const aSrcIdx = getSourceIndex(aName, aAbbr);
-
-        // Si tenemos AL MENOS UN equipo conocido, podemos trazar su ruta exacta en el árbol
-        let knownR32Dom = null;
-        if (hSrcIdx !== -1) knownR32Dom = R32_INDEX_TO_DOM[hSrcIdx];
-        else if (aSrcIdx !== -1) knownR32Dom = R32_INDEX_TO_DOM[aSrcIdx];
+        if (round === "R32") {
+            if (knownR32Dom) return knownR32Dom;
+            return `r32-${matchIndex + 1}`;
+        }
 
         if (round === "R16") {
             if (knownR32Dom) {
@@ -404,7 +394,7 @@ function procesarPartidosESPNList(events) {
                     if (pair.includes(knownR32Dom)) return R16_PAIRS_TO_DOM[pair];
                 }
             }
-            return Object.values(R16_PAIRS_TO_DOM)[matchIndex - 16];
+            return `r16-${matchIndex - 15}`;
         }
 
         if (round === "QF") {
@@ -417,7 +407,7 @@ function procesarPartidosESPNList(events) {
                     if (pair.includes(r16Dom)) return QF_PAIRS_TO_DOM[pair];
                 }
             }
-            return Object.values(QF_PAIRS_TO_DOM)[matchIndex - 24];
+            return `qf-${matchIndex - 23}`;
         }
 
         if (round === "SF") {
@@ -434,7 +424,7 @@ function procesarPartidosESPNList(events) {
                     if (pair.includes(qfDom)) return SF_PAIRS_TO_DOM[pair];
                 }
             }
-            return matchIndex === 28 ? "semi-i-1" : "semi-d-2";
+            return matchIndex === 28 ? "sf-1" : "sf-2";
         }
         
         return null;

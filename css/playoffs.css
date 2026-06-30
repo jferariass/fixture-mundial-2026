@@ -1,397 +1,189 @@
-/* Cuadros de playoffs, llaves de eliminación directa y trofeo */
-
-/* --- SECCIÓN CENTRAL: BRACKET DE FASE FINAL (PAGINA 4) --- */
-.fase-final-bracket {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    gap: 12px;
+/* --- SECCIÓN CENTRAL: BRACKET LINEAL (TIPO GOOGLE) --- */
+.google-bracket-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 30px;
+    padding: 20px;
     background-color: rgba(12, 45, 15, 0.4);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
-    padding: 15px;
     box-shadow: inset 0 0 50px rgba(0,0,0,0.6);
-    overflow: hidden;
-    align-items: center;
-    min-height: 520px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(0,0,0,0.5);
+    min-height: 80vh;
 }
 
-.copa-decoracion {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    height: 500px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/FIFA_World_Cup_Trophy.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 0;
+.google-bracket-container::-webkit-scrollbar {
+    height: 8px;
+}
+.google-bracket-container::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 4px;
+}
+.google-bracket-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
 }
 
-.bracket-stage {
+.bracket-col {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    justify-content: space-around;
-    z-index: 1;
+    min-width: 220px;
 }
 
-/* Estilo de Llaves */
+.col-title {
+    color: var(--gold);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.col-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    gap: 15px;
+}
+
+/* Rediseño de las tarjetas para este formato */
 .match-card {
     background-color: rgba(10, 36, 12, 0.96);
     border: 1.5px solid var(--gold);
     border-radius: 6px;
-    padding: 6px 8px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    padding: 10px 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     width: 100%;
-    max-width: 140px;
+    max-width: 200px;
     margin: 0 auto;
-    position: relative;
-    /* FIJAR ALTURA para garantizar alineación matemática perfecta en Flexbox */
-    height: 92px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.match-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 215, 0, 0.2);
+    border-color: #fff;
 }
 
 .match-title {
-    color: var(--gold);
-    font-weight: 800;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 700;
     text-align: center;
-    font-size: 0.55rem;
-    margin-bottom: 2px;
+    font-size: 0.6rem;
+    margin-bottom: 8px;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,215,0,0.25);
-    padding-bottom: 2px;
-    font-family: 'Archivo Black', sans-serif;
-    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
 }
 
 .match-datetime {
-    font-size: 0.55rem;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.8);
     text-align: center;
     margin-top: 0;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
     font-weight: 600;
+    background: rgba(0,0,0,0.4);
+    border-radius: 4px;
+    padding: 2px 0;
 }
 
 .match-team-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 2px 0;
+    margin: 4px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.match-team-row:last-child,
+.match-card > .match-team-row:nth-last-child(2) {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .team-name {
     font-weight: 700;
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 85px;
-}
-
-.score-display-bracket {
-    width: auto;
-    min-width: 18px;
-    padding: 0 4px;
-    height: 18px;
-    background-color: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 3px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-weight: 800;
-    font-size: 0.7rem;
-    white-space: nowrap; /* PREVIENE QUE LOS PENALES HAGAN SALTO DE LINEA */
-}
-
-.score-display-bracket.has-score {
-    color: var(--gold);
-    border-color: var(--gold);
-    background-color: rgba(255, 215, 0, 0.1);
-}
-
-/* --- BANDERAS Y CONTENEDOR DE NOMBRES --- */
-.team-name-container {
     display: flex;
     align-items: center;
-    gap: 6px;
-    overflow: hidden;
+    gap: 8px;
 }
 
 .bracket-flag {
     width: 18px;
-    height: 13px;
-    object-fit: cover;
+    height: 14px;
     border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* --- ESTADOS: GANADOR Y PERDEDOR --- */
-.match-team-row.winner {
-    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, transparent 100%);
-    border-radius: 4px;
-    padding-left: 2px;
-}
-
-.match-team-row.winner .team-name {
-    color: var(--gold);
-    font-weight: 800;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-.match-team-row.loser {
-    opacity: 0.4;
-    filter: grayscale(80%);
-}
-
-.match-team-row.loser .team-name {
-    text-decoration: line-through;
-    color: #888;
-}
-
-/* --- INDICADORES EN VIVO --- */
-.match-card.is-live {
-    border-color: #ff3b3b !important;
-    box-shadow: 0 0 15px rgba(255, 59, 59, 0.3);
-    animation: live-pulse 2s infinite;
-}
-
-@keyframes live-pulse {
-    0% { box-shadow: 0 0 10px rgba(255, 59, 59, 0.2); }
-    50% { box-shadow: 0 0 20px rgba(255, 59, 59, 0.6); }
-    100% { box-shadow: 0 0 10px rgba(255, 59, 59, 0.2); }
-}
-
-.match-status-bracket {
-    font-size: 0.55rem;
-    color: #ff3b3b;
-    text-align: center;
-    font-weight: 800;
-    text-transform: uppercase;
-    animation: blink 1.5s infinite;
-    position: absolute;
-    bottom: -15px;
-    left: 0;
-    right: 0;
-    text-shadow: 0 0 5px rgba(255,59,59,0.5);
-}
-
-.live-dot {
-    display: inline-block;
-    width: 5px;
-    height: 5px;
-    background-color: #ff3b3b;
-    border-radius: 50%;
-    margin-right: 3px;
-    vertical-align: middle;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* --- LINEAS CONECTORAS (ÁRBOL DE TORNEO) --- */
-.bracket-stage[class*="-izq"] .match-card::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -15px;
-    width: 15px;
-    border-top: 2px solid rgba(255,215,0, 0.35);
-    z-index: -1;
-}
-
-.bracket-stage[class*="-der"] .match-card::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -15px;
-    width: 15px;
-    border-top: 2px solid rgba(255,215,0, 0.35);
-    z-index: -1;
-}
-
-.stage-2-izq .match-card::after,
-.stage-2-der .match-card::before {
-    display: none; /* No conectamos directo a la final por el padding de la copa */
-}
-
-/* Centro: Finales */
-.bracket-center {
-    grid-column: 5;
+.score-display-bracket {
+    width: auto;
+    min-width: 22px;
+    height: 22px;
+    background-color: #fff;
+    color: #000;
     display: flex;
-    flex-direction: column;
-    gap: 30px;
     align-items: center;
     justify-content: center;
-    z-index: 2;
-}
-
-.gold-trophy {
-    font-size: 3rem;
-    color: var(--gold);
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7));
-    animation: pulse 2.5s infinite;
-}
-
-.match-final {
-    max-width: 170px;
-    background: linear-gradient(135deg, #184c1c 0%, #0c2b10 100%);
-    border: 2px solid var(--gold);
-    box-shadow: 0 0 20px var(--gold-glow);
-    padding: 8px 12px;
-}
-
-.match-final .match-title {
-    font-size: 0.75rem;
-    color: #fff;
-    border-bottom-color: rgba(255,255,255,0.3);
-}
-
-.match-final .score-display-bracket {
-    width: 24px;
-    height: 20px;
+    border-radius: 4px;
+    font-weight: 900;
     font-size: 0.85rem;
-    background-color: rgba(255,255,255,0.15);
+    padding: 0 4px;
 }
 
-.match-bronze {
-    max-width: 160px;
-    border-color: #cd7f32;
-}
-
-.match-bronze .match-title {
-    color: #cd7f32;
-}
-
-/* Texto instructivo para móviles (desplazamiento horizontal) */
-.mobile-help-text {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.72rem;
-    font-weight: 700;
+.match-penalties {
+    font-size: 0.65rem;
     color: var(--gold);
-    background-color: rgba(12, 45, 15, 0.85);
-    border: 1px dashed var(--gold);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 700;
 }
 
-/* Hover e interactividad en tarjetas */
-.match-card {
-    cursor: pointer !important;
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.match-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 215, 0, 0.15);
+/* Modificadores Finales */
+.match-final {
     border-color: var(--gold) !important;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(50, 40, 0, 0.9)) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3) !important;
+}
+.match-tercer {
+    border-color: #cd7f32 !important;
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(60, 40, 20, 0.9)) !important;
 }
 
-/* Adaptación del Bracket de Fase Final */
+/* Quitar CSS viejo */
 @media (max-width: 1100px) {
-    .fase-final-bracket {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 20px;
-        min-height: auto;
-        padding: 15px;
-        overflow-x: hidden;
-    }
-
-    .bracket-stage {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    .google-bracket-container {
+        padding: 10px;
         gap: 15px;
-        position: static;
-        height: auto;
     }
-    
-    .match-card {
-        max-width: 100%;
-        margin: 0;
-    }
-
-    /* Títulos de sección para móvil generados por CSS */
-    #d16-izq::before { content: "16avos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #d16-der::before { content: "16avos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #o8-izq::before { content: "Octavos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #o8-der::before { content: "Octavos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #c4-izq::before { content: "Cuartos de Final (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #c4-der::before { content: "Cuartos de Final (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #semi-izq::before { content: "Semifinal (Lado Izquierdo)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-    #semi-der::before { content: "Semifinal (Lado Derecho)"; display: block; grid-column: 1 / -1; color: var(--gold); font-weight: bold; text-align: center; margin-bottom: 5px; font-family: 'Archivo Black', sans-serif; font-size: 0.8rem; }
-
-    /* Ordenamiento vertical lógico (tira grande) */
-    #d16-izq { order: 1; margin-bottom: 15px; }
-    #d16-der { order: 2; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
-    
-    #o8-izq { order: 3; margin-bottom: 15px; }
-    #o8-der { order: 4; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
-    
-    #c4-izq { order: 5; margin-bottom: 15px; }
-    #c4-der { order: 6; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
-    
-    #semi-izq { order: 7; margin-bottom: 15px; }
-    #semi-der { order: 8; margin-bottom: 30px; border-bottom: 2px dashed rgba(255,215,0,0.3); padding-bottom: 30px; }
-    
-    .final-col { order: 9; }
-    
-    /* Ocultar lineas conectoras en modo lista */
-    .bracket-stage::before, .bracket-stage::after, .card-connector, .copa-decoracion {
-        display: none !important;
+    .bracket-col {
+        min-width: 160px;
     }
 }
-
-/* --- ESTILOS DE IMPRESIÓN --- */
 @media print {
-    .fase-final-bracket {
-        background-color: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        height: 180mm !important;
-        min-height: auto !important;
-        grid-template-columns: repeat(9, 1fr) !important;
-        gap: 1mm !important;
+    .google-bracket-container {
+        overflow: visible;
+        background: none;
+        border: none;
+        box-shadow: none;
+        gap: 5px;
     }
-    
-    .match-card {
-        border-color: #ffd700 !important;
-        background-color: rgb(10, 36, 12) !important;
-        box-shadow: none !important;
-        padding: 1.5mm 2mm !important;
-        max-width: 25mm !important;
-    }
-    
-    .match-title {
-        font-size: 4.8pt !important;
-    }
-    
-    .team-name {
-        font-size: 6pt !important;
-        max-width: 18mm !important;
-    }
-    
-    .score-display-bracket {
-        background-color: transparent !important;
-        border: 1px solid rgba(255,255,255,0.4) !important;
-        color: #fff !important;
+    .bracket-col {
+        min-width: auto;
     }
 }

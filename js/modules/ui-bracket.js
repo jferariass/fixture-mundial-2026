@@ -128,64 +128,23 @@ export function actualizarPlayoffsAutomatico() {
  * Renderiza el árbol visual de eliminación directa (Brackets)
  */
 export function renderizarBracket() {
-    const d16Izq = document.getElementById("d16-izq");
-    if (d16Izq) {
-        d16Izq.innerHTML = "";
-        for(let i=1; i<=8; i++) {
-            d16Izq.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-i-${i}`));
-        }
-    }
+    const r32C = document.getElementById("r32-container");
+    if (r32C) { r32C.innerHTML = ""; for(let i=1; i<=16; i++) r32C.appendChild(crearCardBracket(`1/16 - #${i}`, `r32-${i}`)); }
     
-    const d16Der = document.getElementById("d16-der");
-    if (d16Der) {
-        d16Der.innerHTML = "";
-        for(let i=9; i<=16; i++) {
-            d16Der.appendChild(crearCardBracket(`1/16 - #${i}`, `d16-d-${i}`));
-        }
-    }
+    const r16C = document.getElementById("r16-container");
+    if (r16C) { r16C.innerHTML = ""; for(let i=1; i<=8; i++) r16C.appendChild(crearCardBracket(`1/8 - #${i}`, `r16-${i}`)); }
     
-    const o8Izq = document.getElementById("o8-izq");
-    if (o8Izq) {
-        o8Izq.innerHTML = "";
-        for(let i=1; i<=4; i++) {
-            o8Izq.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-i-${i}`));
-        }
-    }
+    const qfC = document.getElementById("qf-container");
+    if (qfC) { qfC.innerHTML = ""; for(let i=1; i<=4; i++) qfC.appendChild(crearCardBracket(`1/4 - #${i}`, `qf-${i}`)); }
     
-    const o8Der = document.getElementById("o8-der");
-    if (o8Der) {
-        o8Der.innerHTML = "";
-        for(let i=5; i<=8; i++) {
-            o8Der.appendChild(crearCardBracket(`1/8 - #${i}`, `o8-d-${i}`));
-        }
-    }
+    const sfC = document.getElementById("sf-container");
+    if (sfC) { sfC.innerHTML = ""; for(let i=1; i<=2; i++) sfC.appendChild(crearCardBracket(`SEMIFINAL ${i}`, `sf-${i}`)); }
     
-    const c4Izq = document.getElementById("c4-izq");
-    if (c4Izq) {
-        c4Izq.innerHTML = "";
-        for(let i=1; i<=2; i++) {
-            c4Izq.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-i-${i}`));
-        }
-    }
-    
-    const c4Der = document.getElementById("c4-der");
-    if (c4Der) {
-        c4Der.innerHTML = "";
-        for(let i=3; i<=4; i++) {
-            c4Der.appendChild(crearCardBracket(`1/4 - #${i}`, `c4-d-${i}`));
-        }
-    }
-    
-    const semiIzq = document.getElementById("semi-izq");
-    if (semiIzq) {
-        semiIzq.innerHTML = "";
-        semiIzq.appendChild(crearCardBracket("SEMIFINAL 1", "semi-i-1"));
-    }
-    
-    const semiDer = document.getElementById("semi-der");
-    if (semiDer) {
-        semiDer.innerHTML = "";
-        semiDer.appendChild(crearCardBracket("SEMIFINAL 2", "semi-d-2"));
+    const finalC = document.getElementById("final-container");
+    if (finalC) { 
+        finalC.innerHTML = ""; 
+        finalC.appendChild(crearCardBracket("FINAL", "final"));
+        finalC.appendChild(crearCardBracket("3ER PUESTO", "bronze"));
     }
 }
 
