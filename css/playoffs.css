@@ -5,7 +5,7 @@
     position: relative;
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    gap: 6px;
+    gap: 12px;
     background-color: rgba(12, 45, 15, 0.4);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
@@ -50,34 +50,41 @@
     width: 100%;
     max-width: 140px;
     margin: 0 auto;
+    position: relative;
+    /* FIJAR ALTURA para garantizar alineación matemática perfecta en Flexbox */
+    height: 92px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .match-title {
     color: var(--gold);
     font-weight: 800;
     text-align: center;
-    font-size: 0.6rem;
-    margin-bottom: 5px;
+    font-size: 0.55rem;
+    margin-bottom: 2px;
     text-transform: uppercase;
     border-bottom: 1px solid rgba(255,215,0,0.25);
-    padding-bottom: 3px;
+    padding-bottom: 2px;
     font-family: 'Archivo Black', sans-serif;
+    white-space: nowrap;
 }
 
 .match-datetime {
-    font-size: 0.6rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.6);
     text-align: center;
-    margin-top: -3px;
-    margin-bottom: 5px;
-    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 4px;
+    font-weight: 600;
 }
 
 .match-team-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .team-name {
@@ -86,11 +93,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 90px;
+    max-width: 85px;
 }
 
 .score-display-bracket {
-    width: 20px;
+    width: auto;
+    min-width: 18px;
+    padding: 0 4px;
     height: 18px;
     background-color: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.25);
@@ -100,12 +109,14 @@
     align-items: center;
     color: white;
     font-weight: 800;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    white-space: nowrap; /* PREVIENE QUE LOS PENALES HAGAN SALTO DE LINEA */
 }
 
 .score-display-bracket.has-score {
     color: var(--gold);
     border-color: var(--gold);
+    background-color: rgba(255, 215, 0, 0.1);
 }
 
 /* --- BANDERAS Y CONTENEDOR DE NOMBRES --- */
@@ -164,10 +175,14 @@
     font-size: 0.55rem;
     color: #ff3b3b;
     text-align: center;
-    margin-top: 5px;
     font-weight: 800;
     text-transform: uppercase;
     animation: blink 1.5s infinite;
+    position: absolute;
+    bottom: -15px;
+    left: 0;
+    right: 0;
+    text-shadow: 0 0 5px rgba(255,59,59,0.5);
 }
 
 .live-dot {
@@ -186,17 +201,13 @@
 }
 
 /* --- LINEAS CONECTORAS (ÁRBOL DE TORNEO) --- */
-.match-card {
-    position: relative; /* Para poder posicionar pseudo-elementos */
-}
-
 .bracket-stage[class*="-izq"] .match-card::after {
     content: '';
     position: absolute;
     top: 50%;
-    right: -10px;
-    width: 10px;
-    border-top: 1.5px solid rgba(255,215,0, 0.2);
+    right: -15px;
+    width: 15px;
+    border-top: 2px solid rgba(255,215,0, 0.35);
     z-index: -1;
 }
 
@@ -204,9 +215,9 @@
     content: '';
     position: absolute;
     top: 50%;
-    left: -10px;
-    width: 10px;
-    border-top: 1.5px solid rgba(255,215,0, 0.2);
+    left: -15px;
+    width: 15px;
+    border-top: 2px solid rgba(255,215,0, 0.35);
     z-index: -1;
 }
 
