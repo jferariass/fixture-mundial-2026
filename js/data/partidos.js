@@ -120,49 +120,57 @@ export const DIFERENCIA_HORAS_ESTADIO = {
 };
 
 // Mapeo de IDs de partidos de Playoffs de la API (cronológicos 73 a 104) con los elementos DOM
-// Este mapeo garantiza que los ganadores se crucen visualmente de forma correcta
+// El orden no es cronológico, sino ESTRUCTURAL (las llaves correctas de la FIFA)
 export const MAPA_PLAYOFFS = {
-    // 1/16 Final
-    "73": "d16-i-1",  // W1 (RSA vs CAN)
-    "75": "d16-i-2",  // W3 (GER vs PAR)
-    "74": "d16-i-3",  // W2 (BRA vs JPN)
-    "77": "d16-i-4",  // W5 (CIV vs NOR)
-    "83": "d16-i-5",  // W11 (ESP vs AUT)
-    "84": "d16-i-6",  // W12 (POR vs CRO)
-    "81": "d16-i-7",  // W9 (BEL vs SEN)
-    "82": "d16-i-8",  // W10 (USA vs BIH)
+    // --- LADO IZQUIERDO ---
+    // 1/16 Final Izquierda (Llaves que desembocan en SF1)
+    "74": "d16-i-1",  // W74 vs W77 -> Match 89
+    "77": "d16-i-2",
+    "73": "d16-i-3",  // W73 vs W75 -> Match 90
+    "75": "d16-i-4",
+    "79": "d16-i-5",  // W79 vs W80 -> Match 93
+    "80": "d16-i-6",
+    "82": "d16-i-7",  // W82 vs W85 -> Match 94
+    "85": "d16-i-8",
 
-    "76": "d16-d-9",  // W4 (NED vs MAR)
-    "78": "d16-d-10", // W6 (FRA vs SWE)
-    "79": "d16-d-11", // W7 (MEX vs ECU)
-    "80": "d16-d-12", // W8 (ENG vs COD)
-    "86": "d16-d-13", // W14 (AUS vs EGY)
-    "88": "d16-d-14", // W16 (COL vs GHA)
-    "85": "d16-d-15", // W13 (SUI vs ALG)
-    "87": "d16-d-16", // W15 (ARG vs CPV)
+    // 1/8 Final Izquierda
+    "89": "o8-i-1",   // W89 vs W90 -> Match 97
+    "90": "o8-i-2",
+    "93": "o8-i-3",   // W93 vs W94 -> Match 98
+    "94": "o8-i-4",
 
-    // 1/8 Final
-    "89": "o8-i-1",   // QF1
-    "90": "o8-i-2",   // QF2
-    "93": "o8-i-3",   // QF5
-    "94": "o8-i-4",   // QF6
-
-    "91": "o8-d-5",   // QF3
-    "92": "o8-d-6",   // QF4
-    "95": "o8-d-7",   // QF7
-    "96": "o8-d-8",   // QF8
-
-    // 1/4 Final
-    "97": "c4-i-1",
+    // 1/4 Final Izquierda
+    "97": "c4-i-1",   // W97 vs W98 -> Match 101 (SF1)
     "98": "c4-i-2",
-    "99": "c4-d-3",
+
+    // Semifinal 1
+    "101": "semi-i-1",
+
+    // --- LADO DERECHO ---
+    // 1/16 Final Derecha (Llaves que desembocan en SF2)
+    "76": "d16-d-9",  // W76 vs W78 -> Match 91
+    "78": "d16-d-10",
+    "81": "d16-d-11", // W81 vs W83 -> Match 92
+    "83": "d16-d-12",
+    "84": "d16-d-13", // W84 vs W87 -> Match 95
+    "87": "d16-d-14",
+    "86": "d16-d-15", // W86 vs W88 -> Match 96
+    "88": "d16-d-16",
+
+    // 1/8 Final Derecha
+    "91": "o8-d-5",   // W91 vs W92 -> Match 99
+    "92": "o8-d-6",
+    "95": "o8-d-7",   // W95 vs W96 -> Match 100
+    "96": "o8-d-8",
+
+    // 1/4 Final Derecha
+    "99": "c4-d-3",   // W99 vs W100 -> Match 102 (SF2)
     "100": "c4-d-4",
 
-    // Semifinal
-    "101": "semi-i-1",
+    // Semifinal 2
     "102": "semi-d-2",
 
-    // 3er Puesto y Final
+    // --- FINALES ---
     "103": "bronze",
     "104": "final"
 };
