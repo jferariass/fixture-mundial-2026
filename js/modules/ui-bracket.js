@@ -118,7 +118,7 @@ export function actualizarPlayoffsAutomatico() {
         if (t1El) {
             const cEl = t1El.closest(".match-card");
             if (cEl) {
-                cEl.setAttribute("onclick", `abrirDetallesPartido('${partidoId}')`);
+                cEl.setAttribute("onclick", `abrirDetallesPartido('${idPrefijo}')`);
             }
         }
     });
