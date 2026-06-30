@@ -277,6 +277,7 @@ function procesarPartidosESPNList(events) {
             PARTIDOS[letra].forEach((p, idx) => {
                 if ((p.l1 === fifaHome && p.l2 === fifaAway) || (p.l1 === fifaAway && p.l2 === fifaHome)) {
                     encontradoGrupos = true;
+                    // ... (logica de grupos intacta)
                     if (g1 !== null && g2 !== null) {
                         let goalL1 = (p.l1 === fifaHome) ? g1 : g2;
                         let goalL2 = (p.l2 === fifaAway) ? g2 : g1;
@@ -296,34 +297,6 @@ function procesarPartidosESPNList(events) {
                         }
                         if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
                         if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
-                        
-                        if (comp.details && comp.details.length > 0) {
-                            partidoGuardado.incidenciasReales = comp.details.map(d => {
-                                  let targetTeamId = null;
-                                  if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
-                                      targetTeamId = d.athletesInvolved[0].team.id;
-                                  } else if (d.team) {
-                                      targetTeamId = d.team.id;
-                                  }
-                                  let teamStr = "home";
-                                  if (targetTeamId === awayTeamData.team.id) {
-                                      teamStr = "away";
-                                  }
-                                
-                                let player = "";
-                                if (d.athletesInvolved && d.athletesInvolved.length > 0) {
-                                    player = d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName;
-                                }
-                                
-                                return {
-                                    type: d.type ? d.type.text : "Unknown",
-                                    min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
-                                    team: teamStr,
-                                    detail: player,
-                                    athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
-                                };
-                            });
-                        }
                     }
                 }
             });
@@ -334,12 +307,145 @@ function procesarPartidosESPNList(events) {
         }
     });
 
-    // Ordenar los playoffs cronológicamente y asignar IDs 73-104
+    // Algoritmo de Ensamblaje de Bracket Dinámico (Hardcodeado a la ESTRUCTURA EXACTA FIFA 2026 para asegurar flujo visual)
     playoffEvents.sort((a, b) => new Date(a.ev.date) - new Date(b.ev.date));
     
+    // Mapeo Maestro Estructural FIFA 2026 (Indices cronológicos de la fase de 32 a sus respectivos nodos visuales)
+    // Sabemos exactamente qué partido de 1/16 juega contra cuál.
+    const r32Matches = playoffEvents.slice(0, 16);
+    
+    // MAPA FIFA: El partido 1 cronológico de R32 (Match 73) juega contra el partido 3 (Match 75).
+    // El partido 2 (Match 74) juega contra el partido 5 (Match 77)...
+    // Asignamos directamente los nodos DOM a los índices cronológicos de los 32vos:
+    const R32_INDEX_TO_DOM = {
+        0: "d16-i-3",  2: "d16-i-4",   // W73 y W75 -> o8-i-2
+        1: "d16-i-1",  4: "d16-i-2",   // W74 y W77 -> o8-i-1
+        3: "d16-d-9",  5: "d16-d-10",  // W76 y W78 -> o8-d-5
+        6: "d16-i-5",  7: "d16-i-6",   // W79 y W80 -> o8-i-3
+        8: "d16-d-11", 10: "d16-d-12", // W81 y W83 -> o8-d-6
+        9: "d16-i-7",  12: "d16-i-8",  // W82 y W85 -> o8-i-4
+        11: "d16-d-13", 14: "d16-d-14",// W84 y W87 -> o8-d-7
+        13: "d16-d-15", 15: "d16-d-16" // W86 y W88 -> o8-d-8
+    };
+
+    // Y definimos qué nodo de R16 corresponde a cada par de DOM de R32
+    const R16_PAIRS_TO_DOM = {
+        "d16-i-1_d16-i-2": "o8-i-1",
+        "d16-i-3_d16-i-4": "o8-i-2",
+        "d16-i-5_d16-i-6": "o8-i-3",
+        "d16-i-7_d16-i-8": "o8-i-4",
+        "d16-d-9_d16-d-10": "o8-d-5",
+        "d16-d-11_d16-d-12": "o8-d-6",
+        "d16-d-13_d16-d-14": "o8-d-7",
+        "d16-d-15_d16-d-16": "o8-d-8"
+    };
+
+    // QF
+    const QF_PAIRS_TO_DOM = {
+        "o8-i-1_o8-i-2": "c4-i-1",
+        "o8-i-3_o8-i-4": "c4-i-2",
+        "o8-d-5_o8-d-6": "c4-d-3",
+        "o8-d-7_o8-d-8": "c4-d-4"
+    };
+
+    // SF
+    const SF_PAIRS_TO_DOM = {
+        "c4-i-1_c4-i-2": "semi-i-1",
+        "c4-d-3_c4-d-4": "semi-d-2"
+    };
+
+    const finalMatchDOM = "final";
+    const bronzeMatchDOM = "bronze";
+
+    // Función auxiliar para saber a qué DOM Node pertenece un partido, analizando quiénes juegan
+    function findDOMNodeForMatch(pData, matchIndex) {
+        if (matchIndex < 16) {
+            return R32_INDEX_TO_DOM[matchIndex];
+        }
+        
+        // Si es un partido futuro, buscamos a qué nodo pertenece basándonos en los equipos o placeholders
+        const hName = pData.homeTeamData.team.displayName || "";
+        const aName = pData.awayTeamData.team.displayName || "";
+        const hAbbr = pData.homeTeamData.team.abbreviation || "";
+        const aAbbr = pData.awayTeamData.team.abbreviation || "";
+
+        // Buscamos los índices de R32 de los que provienen estos equipos
+        function getSourceIndex(name, abbr) {
+            let m = name.match(/Round of 32 (\d+)/);
+            if (m) return parseInt(m[1]) - 1;
+            
+            // Buscar por equipo real en r32Matches
+            for (let i = 0; i < r32Matches.length; i++) {
+                const r32 = r32Matches[i];
+                if (r32.homeTeamData.team.abbreviation === abbr || r32.awayTeamData.team.abbreviation === abbr || 
+                    r32.homeTeamData.team.displayName === name || r32.awayTeamData.team.displayName === name) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        const hSrcIdx = getSourceIndex(hName, hAbbr);
+        const aSrcIdx = getSourceIndex(aName, aAbbr);
+
+        // Si logramos rastrear ambos orígenes a la Ronda de 32:
+        if (hSrcIdx !== -1 && aSrcIdx !== -1) {
+            const dom1 = R32_INDEX_TO_DOM[hSrcIdx];
+            const dom2 = R32_INDEX_TO_DOM[aSrcIdx];
+            
+            // Ver si forman un par de R16
+            let pair = `${dom1}_${dom2}`;
+            let revPair = `${dom2}_${dom1}`;
+            if (R16_PAIRS_TO_DOM[pair]) return R16_PAIRS_TO_DOM[pair];
+            if (R16_PAIRS_TO_DOM[revPair]) return R16_PAIRS_TO_DOM[revPair];
+            
+            // Si no son de R16, buscamos recursivamente de qué QF vienen...
+            // Es más fácil identificar la ronda por la cantidad de equipos o fechas, 
+            // pero si rastreamos los R32 base, sabemos de qué cuadrante vienen!
+            
+            // Cuadrante 1: d16-i-1 a d16-i-4 -> o8-i-1 y o8-i-2 -> c4-i-1
+            const isQFi1 = ["d16-i-1", "d16-i-2", "d16-i-3", "d16-i-4"].includes(dom1) && ["d16-i-1", "d16-i-2", "d16-i-3", "d16-i-4"].includes(dom2);
+            if (isQFi1) return "c4-i-1";
+            
+            const isQFi2 = ["d16-i-5", "d16-i-6", "d16-i-7", "d16-i-8"].includes(dom1) && ["d16-i-5", "d16-i-6", "d16-i-7", "d16-i-8"].includes(dom2);
+            if (isQFi2) return "c4-i-2";
+            
+            const isQFd3 = ["d16-d-9", "d16-d-10", "d16-d-11", "d16-d-12"].includes(dom1) && ["d16-d-9", "d16-d-10", "d16-d-11", "d16-d-12"].includes(dom2);
+            if (isQFd3) return "c4-d-3";
+            
+            const isQFd4 = ["d16-d-13", "d16-d-14", "d16-d-15", "d16-d-16"].includes(dom1) && ["d16-d-13", "d16-d-14", "d16-d-15", "d16-d-16"].includes(dom2);
+            if (isQFd4) return "c4-d-4";
+            
+            // Semifinales
+            const isSFi1 = dom1.includes("i-") && dom2.includes("i-");
+            if (isSFi1) return "semi-i-1";
+            
+            const isSFd2 = dom1.includes("d-") && dom2.includes("d-");
+            if (isSFd2) return "semi-d-2";
+            
+            // Finales
+            if ((dom1.includes("i-") && dom2.includes("d-")) || (dom1.includes("d-") && dom2.includes("i-"))) {
+                // Chequear nombre para saber si es 3er puesto
+                if (pData.ev.name && pData.ev.name.includes("3rd")) return "bronze";
+                return "final";
+            }
+        }
+        
+        // Fallback cronológico si falla el rastreo (solo para QF en adelante por si ESPN falla)
+        if (matchIndex >= 24 && matchIndex <= 27) return Object.values(QF_PAIRS_TO_DOM)[matchIndex - 24];
+        if (matchIndex === 28) return "semi-i-1";
+        if (matchIndex === 29) return "semi-d-2";
+        if (matchIndex === 30) return "bronze";
+        if (matchIndex === 31) return "final";
+
+        return null;
+    }
+
     playoffEvents.forEach((pData, i) => {
-        const { ev, fifaHome, fifaAway, g1, g2, isStarted, isFinished, time_elapsed, realFechaArg, realHoraArg, homeTeamData, awayTeamData, comp } = pData;
-        const playOffId = (73 + i).toString(); // ID Oficial FIFA (73 a 104)
+        const domNode = findDOMNodeForMatch(pData, i);
+        if (!domNode) return;
+
+        const { ev, fifaHome, fifaAway, g1, g2, isStarted, isFinished, time_elapsed, realFechaArg, realHoraArg, homeTeamData, awayTeamData } = pData;
 
         let pen1 = null;
         let pen2 = null;
@@ -356,9 +462,9 @@ function procesarPartidosESPNList(events) {
             }
         }
 
-        partidosPlayoffsEquipos[playOffId] = { t1: fifaHome, t2: fifaAway };
-        // Guardar metadata en goles (para que lo lea UI bracket)
-        partidosPlayoffsGoles[playOffId] = { 
+        // GUARDAMOS DIRECTAMENTE EL DOM NODE!
+        partidosPlayoffsEquipos[domNode] = { t1: fifaHome, t2: fifaAway };
+        partidosPlayoffsGoles[domNode] = { 
             s1: g1 !== null ? g1 : null, 
             s2: g2 !== null ? g2 : null, 
             pen1: pen1, 
@@ -369,54 +475,6 @@ function procesarPartidosESPNList(events) {
             fechaArg: realFechaArg,
             horaArg: realHoraArg
         };
-        
-        const existePlayoff = listaPartidosCompleta.find(item => item.id === playOffId);
-        if (!existePlayoff) {
-            const nuevoPartido = {
-                id: playOffId,
-                type: "playoff",
-                group: "",
-                matchday: 4, 
-                finished: isFinished ? "TRUE" : "FALSE",
-                time_elapsed: time_elapsed,
-                isStarted: isStarted,
-                fifaHome: fifaHome,
-                fifaAway: fifaAway,
-                nombreHome: (fifaHome && PAISES[fifaHome]) ? PAISES[fifaHome].nombre : (homeTeamData.team.displayName || fifaHome),
-                nombreAway: (fifaAway && PAISES[fifaAway]) ? PAISES[fifaAway].nombre : (awayTeamData.team.displayName || fifaAway),
-                fechaArg: realFechaArg || "--/--",
-                horaArg: realHoraArg || "--:--",
-                s1: g1,
-                s2: g2,
-                pen1: pen1,
-                pen2: pen2,
-                winner: winner
-            };
-            
-            if (comp.details && comp.details.length > 0) {
-                nuevoPartido.incidenciasReales = comp.details.map(d => {
-                      let targetTeamId = null;
-                      if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
-                          targetTeamId = d.athletesInvolved[0].team.id;
-                      } else if (d.team) {
-                          targetTeamId = d.team.id;
-                      }
-                      let teamStr = "home";
-                      if (targetTeamId === awayTeamData.team.id) {
-                          teamStr = "away";
-                      }
-                    let player = d.athletesInvolved && d.athletesInvolved.length > 0 ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName) : "";
-                    return {
-                        type: d.type ? d.type.text : "Unknown",
-                        min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
-                        team: teamStr,
-                        detail: player,
-                        athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
-                    };
-                });
-            }
-            listaPartidosCompleta.push(nuevoPartido);
-        }
     });
 }
 

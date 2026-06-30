@@ -36,17 +36,11 @@ export function actualizarPlayoffsAutomatico() {
         return a.grupo.localeCompare(b.grupo);
     });
     
-    // Extraer de partidosPlayoffsEquipos (alimentado por la API con el bracket real)
-    Object.keys(MAPA_PLAYOFFS).forEach(partidoId => {
-        const idPrefijo = MAPA_PLAYOFFS[partidoId];
-        let t1 = null;
-        let t2 = null;
-        
-        if (partidosPlayoffsEquipos[partidoId]) {
-            t1 = partidosPlayoffsEquipos[partidoId].t1;
-            t2 = partidosPlayoffsEquipos[partidoId].t2;
-        }
-        
+    // Iterar sobre los nodos DOM guardados dinámicamente por api.js
+    Object.keys(partidosPlayoffsEquipos).forEach(idPrefijo => {
+        let t1 = partidosPlayoffsEquipos[idPrefijo].t1;
+        let t2 = partidosPlayoffsEquipos[idPrefijo].t2;
+        let pData = partidosPlayoffsGoles[idPrefijo] || {};
         const t1El = document.getElementById(`${idPrefijo}-t1`);
         const t2El = document.getElementById(`${idPrefijo}-t2`);
         const s1El = document.getElementById(`${idPrefijo}-s1`);
