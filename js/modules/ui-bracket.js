@@ -67,9 +67,9 @@ export function actualizarPlayoffsAutomatico() {
         }
         
         // Reset classes
-        if (row1El) { row1El.classList.remove('winner', 'loser'); }
-        if (row2El) { row2El.classList.remove('winner', 'loser'); }
-        if (cardEl) { cardEl.classList.remove('is-live'); }
+        if (row1El) { row1El.classList.remove('winner', 'loser', 'winner-team', 'loser-team'); }
+        if (row2El) { row2El.classList.remove('winner', 'loser', 'winner-team', 'loser-team'); }
+        if (cardEl) { cardEl.classList.remove('is-live', 'match-finished'); }
         if (statusEl) { statusEl.innerHTML = ""; statusEl.style.display = 'none'; }
         if (timeEl) { timeEl.innerText = ""; }
         
@@ -98,12 +98,13 @@ export function actualizarPlayoffsAutomatico() {
                     statusEl.style.display = 'block';
                 }
             } else if (data.winner) {
+                if (cardEl) cardEl.classList.add("match-finished");
                 if (data.winner === t1 && row1El && row2El) {
-                    row1El.classList.add('winner');
-                    row2El.classList.add('loser');
+                    row1El.classList.add('winner-team');
+                    row2El.classList.add('loser-team');
                 } else if (data.winner === t2 && row1El && row2El) {
-                    row2El.classList.add('winner');
-                    row1El.classList.add('loser');
+                    row2El.classList.add('winner-team');
+                    row1El.classList.add('loser-team');
                 }
             }
         } else {

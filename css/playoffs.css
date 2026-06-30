@@ -187,3 +187,44 @@
         min-width: auto;
     }
 }
+
+/* Estados de finalización y ganadores */
+.match-finished {
+    border-color: rgba(255, 215, 0, 0.8) !important;
+    background-color: rgba(5, 20, 5, 0.98) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+}
+
+.match-finished::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    width: 30px;
+    height: 2px;
+    background-color: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+    z-index: 1;
+}
+
+.bracket-col:last-child .match-finished::after {
+    display: none;
+}
+
+.winner-team {
+    color: var(--gold) !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.loser-team {
+    text-decoration: line-through;
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
+
+.score-display-bracket.loser-team {
+    background-color: #333 !important;
+    color: #888 !important;
+    text-decoration: none; /* Score box doesn't need strike, just dark */
+}
