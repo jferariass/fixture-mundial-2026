@@ -9,12 +9,20 @@
 @import url('css/pwa.css');
 @import url('css/teams.css');
 
-/* --- ESTILOS DEL PODIO ESTADÍSTICO --- */
+/* --- ESTILOS DEL PODIO ESTADï¿½STICO --- */
 .podium-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    column-count: 1;
+    column-gap: 20px;
     padding: 20px 0;
+}
+@media (min-width: 700px) {
+    .podium-grid { column-count: 2; }
+}
+@media (min-width: 1050px) {
+    .podium-grid { column-count: 3; }
+}
+@media (min-width: 1400px) {
+    .podium-grid { column-count: 4; }
 }
 
 .ranking-card {
@@ -23,6 +31,8 @@
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    break-inside: avoid;
+    margin-bottom: 20px;
 }
 
 .ranking-title {
@@ -101,7 +111,7 @@
     text-align: right;
 }
 
-/* --- PESTAÑA EQUIPOS Y PLANTELES --- */
+/* --- PESTAï¿½A EQUIPOS Y PLANTELES --- */
 .teams-list-header {
     text-align: center;
     color: var(--text-muted);
