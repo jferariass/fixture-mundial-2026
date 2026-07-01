@@ -8,6 +8,17 @@ import {
     partidosPlayoffsGoles 
 } from './estado.js';
 
+const BRACKET_TREE = {
+    "r16-1": ["r32-1", "r32-2"], "r16-2": ["r32-3", "r32-4"],
+    "r16-3": ["r32-5", "r32-6"], "r16-4": ["r32-7", "r32-8"],
+    "r16-5": ["r32-9", "r32-10"], "r16-6": ["r32-11", "r32-12"],
+    "r16-7": ["r32-13", "r32-14"], "r16-8": ["r32-15", "r32-16"],
+    "qf-1": ["r16-1", "r16-2"], "qf-2": ["r16-3", "r16-4"],
+    "qf-3": ["r16-5", "r16-6"], "qf-4": ["r16-7", "r16-8"],
+    "sf-1": ["qf-1", "qf-2"], "sf-2": ["qf-3", "qf-4"],
+    "final": ["sf-1", "sf-2"], "bronze": ["sf-1", "sf-2"]
+};
+
 /**
  * Recalcula y actualiza la llave de playoffs de forma automática en base a las posiciones de los grupos
  */
@@ -53,6 +64,25 @@ export function actualizarPlayoffsAutomatico() {
         const statusEl = document.getElementById(`${idPrefijo}-status`);
         const timeEl = document.getElementById(`${idPrefijo}-time`);
         const cardEl = document.getElementById(`card-${idPrefijo}`);
+
+        // FORZAR PROPAGACIÓN FRONTEND DE GANADORES SI ESTÁN DISPONIBLES
+        if (BRACKET_TREE[idPrefijo]) {
+            const [p1, p2] = BRACKET_TREE[idPrefijo];
+            if (partidosPlayoffsGoles[p1] && partidosPlayoffsGoles[p1].winner) {
+                if (idPrefijo === "bronze") {
+                    t1 = partidosPlayoffsEquipos[p1].t1 === partidosPlayoffsGoles[p1].winner ? partidosPlayoffsEquipos[p1].t2 : partidosPlayoffsEquipos[p1].t1;
+                } else {
+                    t1 = partidosPlayoffsGoles[p1].winner;
+                }
+            }
+            if (partidosPlayoffsGoles[p2] && partidosPlayoffsGoles[p2].winner) {
+                if (idPrefijo === "bronze") {
+                    t2 = partidosPlayoffsEquipos[p2].t1 === partidosPlayoffsGoles[p2].winner ? partidosPlayoffsEquipos[p2].t2 : partidosPlayoffsEquipos[p2].t1;
+                } else {
+                    t2 = partidosPlayoffsGoles[p2].winner;
+                }
+            }
+        }
 
         if (t1El) t1El.innerText = t1 ? (PAISES[t1] ? PAISES[t1].nombre : t1) : "___________";
         if (t2El) t2El.innerText = t2 ? (PAISES[t2] ? PAISES[t2].nombre : t2) : "___________";
