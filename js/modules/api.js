@@ -297,6 +297,29 @@ function procesarPartidosESPNList(events) {
                         }
                         if (realHoraArg) partidoGuardado.horaArg = realHoraArg;
                         if (realFechaArg) partidoGuardado.fechaArg = realFechaArg;
+                        
+                        if (comp && comp.details && comp.details.length > 0) {
+                            partidoGuardado.incidenciasReales = comp.details.map(d => {
+                                let targetTeamId = null;
+                                if (d.athletesInvolved && d.athletesInvolved.length > 0 && d.athletesInvolved[0].team) {
+                                    targetTeamId = d.athletesInvolved[0].team.id;
+                                } else if (d.team) {
+                                    targetTeamId = d.team.id;
+                                }
+                                let teamStr = "home";
+                                if (targetTeamId === awayTeamData.team.id) {
+                                    teamStr = "away";
+                                }
+                                let player = d.athletesInvolved && d.athletesInvolved.length > 0 ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName) : "";
+                                return {
+                                    type: d.type ? d.type.text : "Unknown",
+                                    min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
+                                    team: teamStr,
+                                    detail: player,
+                                    athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
+                                };
+                            });
+                        }
                     }
                 }
             });
