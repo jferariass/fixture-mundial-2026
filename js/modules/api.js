@@ -306,15 +306,23 @@ function procesarPartidosESPNList(events) {
                                 } else if (d.team) {
                                     targetTeamId = d.team.id;
                                 }
-                                let teamStr = "home";
+                                
+                                let teamESPN = "home";
                                 if (targetTeamId === awayTeamData.team.id) {
-                                    teamStr = "away";
+                                    teamESPN = "away";
                                 }
+                                
+                                let teamFifaCode = teamESPN === "home" ? fifaHome : fifaAway;
+                                let finalTeamStr = "home";
+                                if (teamFifaCode === partidoGuardado.fifaAway) {
+                                    finalTeamStr = "away";
+                                }
+                                
                                 let player = d.athletesInvolved && d.athletesInvolved.length > 0 ? (d.athletesInvolved[0].shortName || d.athletesInvolved[0].displayName) : "";
                                 return {
                                     type: d.type ? d.type.text : "Unknown",
                                     min: d.clock ? d.clock.displayValue.replace("'", "") : "0",
-                                    team: teamStr,
+                                    team: finalTeamStr,
                                     detail: player,
                                     athlete: d.athletesInvolved && d.athletesInvolved.length > 0 ? d.athletesInvolved[0] : null
                                 };
