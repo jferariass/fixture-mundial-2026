@@ -45,12 +45,20 @@
 }
 
 .col-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    display: grid;
+    grid-template-rows: repeat(32, 1fr);
     height: 100%;
-    gap: 15px;
+    gap: 0;
+    align-items: center;
+    position: relative;
 }
+
+/* Distribuir los espacios según la ronda (CSS Grid bracket perfecto) */
+#col-r32 .match-card { grid-row: span 2; }
+#col-r16 .match-card { grid-row: span 4; }
+#col-qf .match-card { grid-row: span 8; }
+#col-sf .match-card { grid-row: span 16; }
+#col-final .match-card { grid-row: span 16; }
 
 /* Rediseño de las tarjetas para este formato */
 .match-card {
