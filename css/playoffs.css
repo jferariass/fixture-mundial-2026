@@ -1,8 +1,9 @@
-/* --- SECCIÓN CENTRAL: BRACKET LINEAL (TIPO GOOGLE) --- */
-.google-bracket-container {
+/* --- SECCIÓN CENTRAL: BRACKET DIVIDIDO (TIPO MUNDIAL) --- */
+.split-bracket-container {
     display: flex;
+    justify-content: center;
     overflow-x: auto;
-    gap: 30px;
+    gap: 15px;
     padding: 20px;
     background-color: rgba(12, 45, 15, 0.4);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
@@ -14,22 +15,24 @@
     min-height: 80vh;
 }
 
-.google-bracket-container::-webkit-scrollbar {
-    height: 8px;
+.split-bracket-container::-webkit-scrollbar { height: 8px; }
+.split-bracket-container::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+.split-bracket-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.5); border-radius: 4px; }
+
+.bracket-side {
+    display: flex;
+    gap: 20px;
 }
-.google-bracket-container::-webkit-scrollbar-thumb {
-    background: var(--gold);
-    border-radius: 4px;
-}
-.google-bracket-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
+.bracket-center {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
 }
 
 .bracket-col {
     display: flex;
     flex-direction: column;
-    min-width: 220px;
+    min-width: 200px;
 }
 
 .col-title {
@@ -40,47 +43,55 @@
     padding-bottom: 10px;
     border-bottom: 2px solid rgba(255, 215, 0, 0.3);
     font-family: 'Archivo Black', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
 }
 
 .col-content {
     display: grid;
-    grid-template-rows: repeat(32, minmax(30px, 1fr));
+    grid-template-rows: repeat(16, minmax(35px, 1fr)); /* 16 filas por lado */
     flex-grow: 1;
     gap: 0;
     align-items: center;
     position: relative;
-    min-height: 1000px;
+    min-height: 700px; /* Reducido a la mitad, ya que son la mitad de partidos por columna */
 }
 
-/* Distribuir los espacios según la ronda (CSS Grid bracket perfecto) */
-#col-r32 .match-card { grid-row: span 2; }
-#col-r16 .match-card { grid-row: span 4; }
-#col-qf .match-card { grid-row: span 8; }
-#col-sf .match-card { grid-row: span 16; }
-#col-final .match-card { grid-row: span 16; }
+/* Distribuir los espacios (CSS Grid bracket perfecto de 16 filas) */
+#col-r32-left .match-card, #col-r32-right .match-card { grid-row: span 2; }
+#col-r16-left .match-card, #col-r16-right .match-card { grid-row: span 4; }
+#col-qf-left .match-card, #col-qf-right .match-card { grid-row: span 8; }
+#col-sf-left .match-card, #col-sf-right .match-card { grid-row: span 16; }
 
-/* Conectores visuales horizontales para acentuar el árbol */
-.bracket-col:not(:last-child) .match-card::after {
-    content: '';
-    position: absolute;
-    right: -15px;
-    top: 50%;
-    width: 15px;
-    height: 2px;
-    background-color: rgba(255, 215, 0, 0.4);
-    z-index: 0;
+/* La final y 3er puesto se apilan verticalmente en el centro */
+#final-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
 }
-.bracket-col:not(:first-child) .match-card::before {
-    content: '';
-    position: absolute;
-    left: -15px;
-    top: 50%;
-    width: 15px;
-    height: 2px;
-    background-color: rgba(255, 215, 0, 0.4);
-    z-index: 0;
+#final-container .match-card {
+    grid-row: auto; /* Anula el span */
+}
+
+/* Conectores Lado Izquierdo (Apuntan a la derecha) */
+.bracket-left .bracket-col:not(:last-child) .match-card::after {
+    content: ''; position: absolute; right: -10px; top: 50%; width: 10px; height: 2px;
+    background-color: rgba(255, 215, 0, 0.4); z-index: 0;
+}
+.bracket-left .bracket-col:not(:first-child) .match-card::before {
+    content: ''; position: absolute; left: -10px; top: 50%; width: 10px; height: 2px;
+    background-color: rgba(255, 215, 0, 0.4); z-index: 0;
+}
+
+/* Conectores Lado Derecho (Apuntan a la izquierda) */
+.bracket-right .bracket-col:not(:first-child) .match-card::after {
+    content: ''; position: absolute; right: -10px; top: 50%; width: 10px; height: 2px;
+    background-color: rgba(255, 215, 0, 0.4); z-index: 0;
+}
+.bracket-right .bracket-col:not(:last-child) .match-card::before {
+    content: ''; position: absolute; left: -10px; top: 50%; width: 10px; height: 2px;
+    background-color: rgba(255, 215, 0, 0.4); z-index: 0;
 }
 
 /* Rediseño de las tarjetas para este formato */
@@ -236,22 +247,21 @@
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.25), inset 0 0 10px rgba(255, 215, 0, 0.1);
 }
 
-.match-finished::after {
-    content: '';
-    position: absolute;
-    right: -30px;
-    top: 50%;
-    width: 30px;
-    height: 3px;
+/* Lado Izquierdo: Línea dorada apunta a la derecha */
+.bracket-left .match-finished::after {
+    content: ''; position: absolute; right: -25px; top: 50%; width: 25px; height: 3px;
     background: linear-gradient(90deg, var(--gold), rgba(255,215,0,0));
-    box-shadow: 0 0 10px var(--gold);
-    z-index: 1;
-    border-radius: 2px;
+    box-shadow: 0 0 10px var(--gold); z-index: 1; border-radius: 2px;
 }
+.bracket-left .bracket-col:last-child .match-finished::after { display: none; }
 
-.bracket-col:last-child .match-finished::after {
-    display: none;
+/* Lado Derecho: Línea dorada apunta a la izquierda */
+.bracket-right .match-finished::before {
+    content: ''; position: absolute; left: -25px; top: 50%; width: 25px; height: 3px;
+    background: linear-gradient(270deg, var(--gold), rgba(255,215,0,0));
+    box-shadow: 0 0 10px var(--gold); z-index: 1; border-radius: 2px;
 }
+.bracket-right .bracket-col:last-child .match-finished::before { display: none; }
 
 .winner-team {
     color: var(--gold) !important;

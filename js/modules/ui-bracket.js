@@ -155,22 +155,32 @@ export function actualizarPlayoffsAutomatico() {
     });
 }
 
-/**
- * Renderiza el árbol visual de eliminación directa (Brackets)
- */
 export function renderizarBracket() {
-    const r32C = document.getElementById("r32-container");
-    if (r32C) { r32C.innerHTML = ""; for(let i=1; i<=16; i++) r32C.appendChild(crearCardBracket(`1/16 - #${i}`, `r32-${i}`)); }
+    // 16avos
+    const r32L = document.getElementById("r32-left");
+    if (r32L) { r32L.innerHTML = ""; for(let i=1; i<=8; i++) r32L.appendChild(crearCardBracket(`1/16 - #${i}`, `r32-${i}`)); }
+    const r32R = document.getElementById("r32-right");
+    if (r32R) { r32R.innerHTML = ""; for(let i=9; i<=16; i++) r32R.appendChild(crearCardBracket(`1/16 - #${i}`, `r32-${i}`)); }
     
-    const r16C = document.getElementById("r16-container");
-    if (r16C) { r16C.innerHTML = ""; for(let i=1; i<=8; i++) r16C.appendChild(crearCardBracket(`1/8 - #${i}`, `r16-${i}`)); }
+    // Octavos
+    const r16L = document.getElementById("r16-left");
+    if (r16L) { r16L.innerHTML = ""; for(let i=1; i<=4; i++) r16L.appendChild(crearCardBracket(`1/8 - #${i}`, `r16-${i}`)); }
+    const r16R = document.getElementById("r16-right");
+    if (r16R) { r16R.innerHTML = ""; for(let i=5; i<=8; i++) r16R.appendChild(crearCardBracket(`1/8 - #${i}`, `r16-${i}`)); }
     
-    const qfC = document.getElementById("qf-container");
-    if (qfC) { qfC.innerHTML = ""; for(let i=1; i<=4; i++) qfC.appendChild(crearCardBracket(`1/4 - #${i}`, `qf-${i}`)); }
+    // Cuartos
+    const qfL = document.getElementById("qf-left");
+    if (qfL) { qfL.innerHTML = ""; for(let i=1; i<=2; i++) qfL.appendChild(crearCardBracket(`1/4 - #${i}`, `qf-${i}`)); }
+    const qfR = document.getElementById("qf-right");
+    if (qfR) { qfR.innerHTML = ""; for(let i=3; i<=4; i++) qfR.appendChild(crearCardBracket(`1/4 - #${i}`, `qf-${i}`)); }
     
-    const sfC = document.getElementById("sf-container");
-    if (sfC) { sfC.innerHTML = ""; for(let i=1; i<=2; i++) sfC.appendChild(crearCardBracket(`SEMIFINAL ${i}`, `sf-${i}`)); }
+    // Semifinales
+    const sfL = document.getElementById("sf-left");
+    if (sfL) { sfL.innerHTML = ""; sfL.appendChild(crearCardBracket(`SEMIFINAL 1`, `sf-1`)); }
+    const sfR = document.getElementById("sf-right");
+    if (sfR) { sfR.innerHTML = ""; sfR.appendChild(crearCardBracket(`SEMIFINAL 2`, `sf-2`)); }
     
+    // Final y 3er Puesto
     const finalC = document.getElementById("final-container");
     if (finalC) { 
         finalC.innerHTML = ""; 
