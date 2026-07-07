@@ -68,6 +68,9 @@ export function actualizarPlayoffsAutomatico() {
         // FORZAR PROPAGACIÓN FRONTEND DE GANADORES SI ESTÁN DISPONIBLES
         if (BRACKET_TREE[idPrefijo]) {
             const [p1, p2] = BRACKET_TREE[idPrefijo];
+            let original_t1 = t1;
+            let original_t2 = t2;
+
             if (partidosPlayoffsGoles[p1] && partidosPlayoffsGoles[p1].winner) {
                 if (idPrefijo === "bronze") {
                     t1 = partidosPlayoffsEquipos[p1].t1 === partidosPlayoffsGoles[p1].winner ? partidosPlayoffsEquipos[p1].t2 : partidosPlayoffsEquipos[p1].t1;
@@ -80,6 +83,18 @@ export function actualizarPlayoffsAutomatico() {
                     t2 = partidosPlayoffsEquipos[p2].t1 === partidosPlayoffsGoles[p2].winner ? partidosPlayoffsEquipos[p2].t2 : partidosPlayoffsEquipos[p2].t1;
                 } else {
                     t2 = partidosPlayoffsGoles[p2].winner;
+                }
+            }
+
+            // CORRECCIÓN: Si por desajuste de la API original un equipo quedó duplicado
+            if (t1 === t2 && t1 !== null && t1 !== undefined) {
+                // Si t2 fue propagado por p2, entonces t1 debe ser el equipo restante de la API
+                if (partidosPlayoffsGoles[p2] && partidosPlayoffsGoles[p2].winner === t2) {
+                    t1 = (original_t1 !== t2 && original_t1 !== null) ? original_t1 : original_t2;
+                }
+                // Si t1 fue propagado por p1, entonces t2 debe ser el equipo restante
+                else if (partidosPlayoffsGoles[p1] && partidosPlayoffsGoles[p1].winner === t1) {
+                    t2 = (original_t1 !== t1 && original_t1 !== null) ? original_t1 : original_t2;
                 }
             }
         }
